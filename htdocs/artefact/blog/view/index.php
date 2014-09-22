@@ -126,6 +126,8 @@ if (!$USER->get_account_preference('multipleblogs')) {
         $smarty->assign('hiddenblogsnotification', 1);
     }
 }
+//SB
+$smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
 
 $smarty->assign_by_ref('blog', $blog);
 $smarty->assign_by_ref('posts', $posts);
