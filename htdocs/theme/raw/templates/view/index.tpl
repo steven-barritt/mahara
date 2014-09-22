@@ -2,6 +2,7 @@
 
 {if $GROUP}<h2>{str tag=groupviews section=view}</h2>
 {/if}
+{if !$limitedediting}
             <div class="rbuttons{if $GROUP} pagetabs{/if}">
                 {$createviewform|safe}
                 <form method="post" action="{$WWWROOT}view/choosetemplate.php">
@@ -13,6 +14,7 @@
 {/if}
                 </form>
             </div>
+{/if}
 {if $institution}                {$institutionselector|safe}{/if}
             <div class="grouppageswrap">
 {$searchform|safe}
@@ -29,7 +31,11 @@
                         {if $view.issitetemplate}
                             {$view.displaytitle}
                         {else}
+							{if !$view.submittedto && (!$view.locked || $editlocked) && ($view.type != 'profile' && $view.type != 'dashboard')}								
+    						<a href="{$WWWROOT}view/blocks.php?id={$view.id}">{$view.displaytitle}</a>
+                            {else}
                             <a href="{$view.fullurl}">{$view.displaytitle}</a>
+                            {/if}
                         {/if}
                         </h3>
                         <div class="fr btns2">
