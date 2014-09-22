@@ -139,7 +139,7 @@ if ($viewtheme && !isset($allowedthemes[$viewtheme])) {
     exit;
 }
 
-$javascript = array('views', 'tinymce', 'paginator', 'expandable', 'js/jquery/jquery-ui/js/jquery-ui-1.10.2.min.js', 'tablerenderer', 'artefact/file/js/filebrowser.js', 'lib/pieforms/static/core/pieforms.js','js/jquery/modernizr.custom.js');
+$javascript = array('views', 'tinymce', 'paginator','viewmenu', 'expandable', 'js/jquery/jquery-ui/js/jquery-ui-1.10.2.min.js', 'tablerenderer', 'artefact/file/js/filebrowser.js', 'lib/pieforms/static/core/pieforms.js','js/jquery/modernizr.custom.js');
 $blocktype_js = $view->get_all_blocktype_javascript();
 $javascript = array_merge($javascript, $blocktype_js['jsfiles']);
 $inlinejs = "addLoadEvent( function() {\n" . join("\n", $blocktype_js['initjs']) . "\n});";
@@ -221,7 +221,37 @@ foreach (array_keys($_POST + $_GET) as $key) {
     }
 }
 
+$limit       = param_integer('limit', 10);
+$offset      = param_integer('offset', 0);
+$showcomment = param_integer('showcomment', null);
+// Create the "make feedback private form" now if it's been submitted
+if (param_variable('make_public_submit', null)) {
+    pieform(ArtefactTypeComment::make_public_form(param_integer('comment')));
+}
+else if (param_variable('delete_comment_submit_x', null)) {
+    pieform(ArtefactTypeComment::delete_comment_form(param_integer('comment')));
+}
+
+if ($commenttype = $view->user_comments_allowed($USER)) {
+    $defaultprivate = !empty($releaseform);
+    $moderate = isset($commenttype) && $commenttype === 'private';
+    $addfeedbackform = pieform(ArtefactTypeComment::add_comment_form($defaultprivate, $moderate));
+    $extrastylesheets[] = 'style/jquery.rating.css';
+    $javascript[] = 'jquery.rating';
+}
+
+
 $viewid = $view->get('id');
+$feedback = ArtefactTypeComment::get_comments($limit, $offset, $showcomment, $view);
+
+$javascript = <<<EOF
+var viewid = {$viewid};
+var showmore = {$showmore};
+addLoadEvent(function () {
+    paginator = {$feedback->pagination_js}
+});
+EOF;
+
 $displaylink = $view->get_url();
 if ($new) {
     $displaylink .= (strpos($displaylink, '?') === false ? '?' : '&') . 'new=1';
@@ -236,7 +266,7 @@ $smarty->assign('dashboard', $dashboard);
 if (get_config('blockeditormaxwidth')) {
     $inlinejs .= 'config.blockeditormaxwidth = true;';
 }
-$smarty->assign('INLINEJAVASCRIPT', $inlinejs);
+$smarty->assign('INLINEJAVASCRIPT',$javascript, $inlinejs);
 $viewtype = $view->get('type');
 $viewtitle = $view->get('title');
 $owner = $view->get('owner');
@@ -281,5 +311,46 @@ $smarty->assign('issiteview', isset($institution) && ($institution == 'mahara'))
 if ($view->get('owner') == "0") {
     $smarty->assign('issitetemplate', true);
 }
+//SB
+// If the view has comments turned off, tutors can still leave
+// comments if the view is submitted to their group.
+// Feedback list pagination requires limit/offset params
+
+if ($USER->is_logged_in()) {
+    $objectionform = pieform(objection_form());
+    if ($notrudeform = $view->notrude_form()) {
+        $notrudeform = pieform($notrudeform);
+    }
+}
+
+$viewbeingwatched = (int)record_exists('usr_watchlist_view', 'usr', $USER->get('id'), 'view', $viewid);
+
+
+$smarty->assign('feedback', $feedback);
+$smarty->assign('owner', $owner);
+$smarty->assign('tags', $view->get('tags'));
+$smarty->assign('author', $view->display_author());
+if (isset($addfeedbackform)) {
+    $smarty->assign('enablecomments', 1);
+    $smarty->assign('addfeedbackform', $addfeedbackform);
+}
+if (isset($objectionform)) {
+    $smarty->assign('objectionform', $objectionform);
+    $smarty->assign('notrudeform', $notrudeform);
+}
+$smarty->assign('viewbeingwatched', $viewbeingwatched);
+
+$smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
+if ($owner && $owner == $USER->get('id')) {
+    if ($tutorgroupdata = group_get_user_course_groups($owner, $view->get('id'))) {
+        if (!$view->is_submitted()) {
+            $smarty->assign(
+                'view_group_submission_form',
+                view_group_submission_form($view, $tutorgroupdata, 'view')
+            );
+        }
+    }
+}
+
 
 $smarty->display('view/blocks.tpl');
