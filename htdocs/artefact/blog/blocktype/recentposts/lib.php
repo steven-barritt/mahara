@@ -1,11 +1,27 @@
 <?php
 /**
+ * Mahara: Electronic portfolio, weblog, resume builder and social networking
+ * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
+ *                         http://wiki.mahara.org/Contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package    mahara
  * @subpackage blocktype-recentposts
  * @author     Catalyst IT Ltd
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
- * @copyright  For copyright information on Mahara, please see the README file distributed with this software.
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
  *
  */
 
@@ -52,7 +68,7 @@ class PluginBlocktypeRecentposts extends PluginBlocktype {
             }
             $artefactids = implode(', ', array_map('db_quote', $configdata['artefactids']));
             if (!$mostrecent = get_records_sql_array(
-            'SELECT a.title, ' . db_format_tsfield('a.ctime', 'ctime') . ', p.title AS parenttitle, a.id, a.parent
+            'SELECT a.title, ' . db_format_tsfield('a.ctime', 'ctime') . ', p.title AS parenttitle, a.id, a.parent, a.description
                 FROM {artefact} a
                 JOIN {artefact} p ON a.parent = p.id
                 JOIN {artefact_blog_blogpost} ab ON (ab.blogpost = a.id AND ab.published = 1)
@@ -128,7 +144,7 @@ class PluginBlocktypeRecentposts extends PluginBlocktype {
     }
 
     /**
-     * Recentposts blocktype is only allowed in personal views, because
+     * Recentposts blocktype is only allowed in personal views, because 
      * currently there's no such thing as group/site blogs
      */
     public static function allowed_in_view(View $view) {
