@@ -799,6 +799,7 @@ $string['nocsvresults'] = 'No results found for CSV file';
 $string['exportdownloademailsubject'] = 'Your Leap2A export for %s is ready for download';
 $string['exportdownloademailmessage'] = '%s, your Leap2A export for %s is ready for download. This file will only be available for up to 24 hours after it was generated. Please follow the link below to download the file:';
 $string['exportdownloadurl'] = 'Download exported file';
+$string['limitedediting'] = 'Limited Editing';//SB
 
 // Add User
 $string['adduser'] = 'Add user';
@@ -1127,6 +1128,9 @@ $string['masqueradingreasonrequired'] = 'Require reason for masquerading';
 $string['masqueradingreasonrequireddescription1'] = 'If checked, administrators will be required to enter a reason for masquerading as other users. If the setting "Notify users of masquerading" is enabled, the reason will be included in the notification to the user about the masquerading. The logging of masquerading sessions needs to be turned on in the "Logging settings" for this to work.';
 $string['masqueradingnotified'] = 'Notify users of masquerading';
 $string['masqueradingnotifieddescription1'] = 'If checked, users will be notified when an administrator masqueraded as them. The notification will include who, when and - if enabled under "Require reason for masquerading" - why. The logging of masquerading sessions needs to be turned on in the "Logging settings" for this to work.';
+$string['renamecopies'] = 'Rename Copied Pages';//SB
+$string['renamecopiesdescription'] = 'If checked, Pages will be renamed as Copy Of.';//SB
+
 
 $string['masquerade'] = 'Continue';
 $string['masqueradereason'] = 'Reason';

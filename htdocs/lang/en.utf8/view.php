@@ -233,7 +233,7 @@ $string['blockinstanceconfiguredsuccessfully'] = 'Block configured successfully'
 $string['blockconfigurationrenderingerror'] = 'Configuration failed because the block could not be rendered.';
 
 $string['blocksintructionnoajax'] = 'Select a block and choose where to add it to your page. You can position a block using the arrow buttons in its titlebar.';
-$string['blocksinstructionajax'] = 'This area shows a preview of what your page will look like.<br>Drag blocks below this line to add them to your page layout. You can drag blocks around your page layout to position them.';
+$string['blocksinstructionajax'] = 'This area shows a preview of what your page will look like.';
 
 $string['addblock'] = 'Add block: %s';
 $string['blockcell'] = 'Cell';
@@ -378,6 +378,7 @@ $string['viewswithretainviewrightsmustbecopyable'] = 'You must allow copying bef
 $string['viewscopiedfornewgroupsmustbecopyable'] = 'You must allow copying before you can set a page to be copied for new groups.';
 $string['copynewusergroupneedsloggedinaccess'] = 'Pages copied for new users or groups must give access to logged-in users.';
 $string['viewcopywouldexceedquota'] = 'Copying this page would exceed your file quota.';
+$string['copyfornewgroupmembers'] = 'Copy for new Group members';
 
 $string['blockcopypermission'] = 'Block copy permission';
 $string['blockcopypermissiondesc'] = 'If you allow other users to copy this page, you may choose how this block will be copied';
