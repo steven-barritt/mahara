@@ -2535,7 +2535,8 @@ function institutional_staff_nav() {
  */
 function mahara_standard_nav() {
     global $SESSION;
-
+    global $USER;
+    
     $exportenabled = (plugins_installed('export') && !$SESSION->get('handheld_device')) ? TRUE : FALSE;
 
     $menu = array(
@@ -2550,52 +2551,15 @@ function mahara_standard_nav() {
             'path' => 'content',
             'url'  => 'artefact/internal/index.php', // @todo possibly do path aliasing and dispatch?
             'title' => get_string('Content'),
-            'weight' => 20,
+            'weight' => 30,
             'accesskey' => 'c',
         ),
         'myportfolio' => array(
             'path' => 'myportfolio',
             'url' => 'view/index.php',
             'title' => get_string('myportfolio'),
-            'weight' => 30,
-            'accesskey' => 'p',
-        ),
-        'myportfolio/views' => array(
-            'path' => 'myportfolio/views',
-            'url' => 'view/index.php',
-            'title' => get_string('Views', 'view'),
-            'weight' => 10,
-        ),
-        'myportfolio/share' => array(
-            'path' => 'myportfolio/share',
-            'url' => 'view/share.php',
-            'title' => get_string('sharedbyme', 'view'),
-            'weight' => 30,
-        ),
-        'myportfolio/sharedviews' => array(
-            'path' => 'myportfolio/sharedviews',
-            'url' => 'view/sharedviews.php',
-            'title' => get_string('sharedwithme', 'view'),
-            'weight' => 60,
-        ),
-        'myportfolio/export' => array(
-            'path' => 'myportfolio/export',
-            'url' => 'export/index.php',
-            'title' => get_string('Export', 'export'),
-            'weight' => 70,
-            'ignore' => !$exportenabled,
-        ),
-        'myportfolio/import' => array(
-            'path' => 'myportfolio/import',
-            'url' => 'import/index.php',
-            'title' => get_string('Import', 'import'),
-            'weight' => 80,
-        ),
-        'myportfolio/collection' => array(
-            'path' => 'myportfolio/collection',
-            'url' => 'collection/index.php',
-            'title' => get_string('Collections', 'collection'),
             'weight' => 20,
+            'accesskey' => 'p',
         ),
         'groups' => array(
             'path' => 'groups',
@@ -2610,31 +2574,63 @@ function mahara_standard_nav() {
             'title' => get_string('mygroups'),
             'weight' => 10,
         ),
-        'groups/find' => array(
-            'path' => 'groups/find',
-            'url' => 'group/find.php',
-            'title' => get_string('findgroups'),
-            'weight' => 20,
-        ),
-        'groups/myfriends' => array(
-            'path' => 'groups/myfriends',
-            'url' => 'user/myfriends.php',
-            'title' => get_string('myfriends'),
-            'weight' => 30,
-        ),
-        'groups/findfriends' => array(
-            'path' => 'groups/findfriends',
-            'url' => 'user/find.php',
-            'title' => get_string('findfriends'),
-            'weight' => 40,
-        ),
-        'groups/institutionmembership' => array(
-            'path' => 'groups/institutions',
-            'url' => 'account/institutions.php',
-            'title' => get_string('institutionmembership'),
-            'weight' => 50,
-        ),
     );
+        if(!get_account_preference($USER->id, 'limitedediting')){
+            $menu['myportfolio/views'] = array(
+                'path' => 'myportfolio/views',
+                'url' => 'view/index.php',
+                'title' => get_string('Views', 'view'),
+                'weight' => 10,
+            );
+            $menu['myportfolio/share'] = array(
+                'path' => 'myportfolio/share',
+                'url' => 'view/share.php',
+                'title' => get_string('sharedbyme', 'view'),
+                'weight' => 30,
+            );
+            $menu['myportfolio/sharedviews'] = array(
+                'path' => 'myportfolio/sharedviews',
+                'url' => 'view/sharedviews.php',
+                'title' => get_string('sharedwithme', 'view'),
+                'weight' => 60,
+            );
+            $menu['myportfolio/collection'] = array(
+                'path' => 'myportfolio/collection',
+                'url' => 'collection/index.php',
+                'title' => get_string('Collections', 'collection'),
+                'weight' => 20,
+            );
+            $menu['myportfolio/export'] = array(
+                'path' => 'myportfolio/export',
+                'url' => 'export/index.php',
+                'title' => get_string('Export', 'export'),
+                'weight' => 70,
+                'ignore' => !$exportenabled,
+            );
+            $menu['groups/find'] = array(
+                'path' => 'groups/find',
+                'url' => 'group/find.php',
+                'title' => get_string('findgroups'),
+                'weight' => 20,
+            );
+            $menu['groups/myfriends'] = array(
+                'path' => 'groups/myfriends',
+                'url' => 'user/myfriends.php',
+                'title' => get_string('myfriends'),
+                'weight' => 30,
+            );
+            $menu['groups/findfriends'] = array(
+                'path' => 'groups/findfriends',
+                'url' => 'user/find.php',
+                'title' => get_string('findfriends'),
+                'weight' => 40,
+            );
+            $menu['groups/institutionmembership'] = array(
+                'path' => 'groups/institutions',
+                'url' => 'account/institutions.php',
+                'title' => get_string('institutionmembership'),
+                'weight' => 50,
+            );
 
     if (can_use_skins()) {
         $menu['myportfolio/skins'] = array(
