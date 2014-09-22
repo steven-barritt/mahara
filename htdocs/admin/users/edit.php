@@ -94,6 +94,13 @@ $elements['maildisabled'] = array(
     'title' => get_string('disableemail', 'admin'),
     'help' => true,
 );
+//SB
+$elements['limitedediting'] = array(
+    'type' => 'checkbox',
+    'defaultvalue' => get_account_preference($user->id, 'limitedediting'),
+    'title' => get_string('limitedediting', 'admin'),
+    'help' => true,
+);
 $elements['expiry'] = array(
     'type'         => 'date',
     'title'        => get_string('accountexpiry', 'admin'),
@@ -382,6 +389,8 @@ function edituser_site_submit(Pieform $form, $values) {
         update_send_count($u,true);
     }
     set_account_preference($user->id, 'maildisabled', $values['maildisabled']);
+//SB
+    set_account_preference($user->id, 'limitedediting', $values['limitedediting']);
 
     // process the change of the authinstance and or the remoteuser
     if (isset($values['authinstance']) && isset($values['remoteusername'])) {
