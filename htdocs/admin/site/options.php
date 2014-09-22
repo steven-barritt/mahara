@@ -204,6 +204,13 @@ $siteoptionform = array(
                     'defaultvalue' => get_config('masqueradingnotified'),
                     'disabled'     => in_array('masqueradingnotified', $OVERRIDDEN),
                 ),
+				'renamecopies' => array(
+                    'type'         => 'checkbox',
+                    'title'        => get_string('renamecopies', 'admin'),
+                    'description'  => get_string('renamecopiesdescription', 'admin'),
+                    'defaultvalue' => get_config('renamecopies'),
+                    'disabled'     => in_array('renamecopies', $OVERRIDDEN),
+                ),
                 'showprogressbar' => array(
                     'type'         => 'checkbox',
                     'title'        => get_string('showprogressbar', 'admin'),
