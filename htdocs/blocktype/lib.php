@@ -756,7 +756,9 @@ class BlockInstance {
         $smarty->assign('strmovetitletext', $title == '' ? get_string('movethisblock', 'view') : get_string('moveblock', 'view', "'$title'"));
         $smarty->assign('strconfigtitletext', $title == '' ? get_string('configurethisblock', 'view') : get_string('configureblock', 'view', "'$title'"));
         $smarty->assign('strremovetitletext', $title == '' ? get_string('removethisblock', 'view') : get_string('removeblock', 'view', "'$title'"));
-
+		//SB
+		//		
+		$smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
         if (!$configure && $title) {
             $configdata = $this->get('configdata');
             if (isset($configdata['retractable']) && $configdata['retractable']) {
