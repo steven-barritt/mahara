@@ -1298,6 +1298,46 @@ class User {
         }
         db_commit();
     }
+    /**
+     * Makes a literal copy of a list of views for this user.
+     *
+     * @param array $templateids A list of viewids to copy.
+     */
+    public function copy_views_from_group($templateids, $groupid, $checkviewaccess=true) {
+        if (!$templateids) {
+            // Nothing to do
+            return;
+        }
+        if (!is_array($templateids)) {
+            throw new SystemException('User->copy_views: templateids must be a list of templates to copy for the user');
+        }
+        require_once(get_config('libroot') . 'view.php');
+
+        $views = array();
+        foreach (get_records_select_array('view', 'id IN (' . implode(', ', db_array_to_ph($templateids)) . ')', $templateids, '', 'id, title, description, type') as $result) {
+            $views[$result->id] = $result;
+        }
+
+        db_begin();
+        foreach ($templateids as $tid) {
+            list($view) = View::create_from_template(array(
+                'owner' => $this->get('id'),
+                'title' => $views[$tid]->title,
+                'description' => $views[$tid]->description,
+                'type' => $views[$tid]->type == 'profile' && $checkviewaccess ? 'portfolio' : $views[$tid]->type,
+            ), $tid, $this->get('id'), $checkviewaccess);
+			//SB
+			$access[] = array(
+                    'type'      => 'group',
+                    'id'        => $groupid,
+                    'startdate' => null,
+                    'stopdate'  => null,
+                );
+			$view->set_access($access);
+        }
+        db_commit();
+    }
+
 
     /**
      * Makes a literal copy of a list of collections for this user.
