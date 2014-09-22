@@ -62,7 +62,7 @@ $query  = trim(param_variable('query', ''));
 // pagination params
 $setlimit = true; //Enable choosing page size; list of page sizes has been predefined in function build_pagination()
 $offset = param_integer('offset', 0);
-$limit  = param_integer('limit', 10);
+$limit  = param_integer('limit', 50);
 // Sort options index and list of sort options
 // ORDER BY statements defined in group_user_search function need to be matched
 $sortoptions = array(
