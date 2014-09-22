@@ -1,17 +1,33 @@
 <?php
 /**
+ * Mahara: Electronic portfolio, weblog, resume builder and social networking
+ * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
+ *                         http://wiki.mahara.org/Contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package    mahara
  * @subpackage artefact-blog
  * @author     Catalyst IT Ltd
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
- * @copyright  For copyright information on Mahara, please see the README file distributed with this software.
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
  *
  */
 
 defined('INTERNAL') || die();
 
-/**
+/** 
  * Users can create blogs and blog posts using this plugin.
  */
 class PluginArtefactBlog extends PluginArtefact {
@@ -22,7 +38,7 @@ class PluginArtefactBlog extends PluginArtefact {
             'blogpost',
         );
     }
-
+    
     public static function get_block_types() {
         return array();
     }
@@ -31,15 +47,11 @@ class PluginArtefactBlog extends PluginArtefact {
         return 'blog';
     }
 
-    public static function is_active() {
-        return get_field('artefact_installed', 'active', 'name', 'blog');
-    }
-
     public static function menu_items() {
         global $USER;
         $tab = array(
             'path'   => 'content/blogs',
-            'weight' => 40,
+            'weight' => 10,//SB
         );
         if ($USER->get_account_preference('multipleblogs')) {
             $tab['url']   = 'artefact/blog/index.php';
@@ -105,10 +117,6 @@ class PluginArtefactBlog extends PluginArtefact {
             'blogpost' => array('text'),
         );
     }
-
-    public static function progressbar_link($artefacttype) {
-        return 'artefact/blog/view/index.php';
-    }
 }
 
 /**
@@ -134,6 +142,8 @@ class ArtefactTypeBlog extends ArtefactType {
         if (empty($this->id)) {
             $this->container = 1;
         }
+		
+		
     }
 
     /**
@@ -146,10 +156,10 @@ class ArtefactTypeBlog extends ArtefactType {
         if (empty($this->dirty)) {
             return;
         }
-
+      
         // We need to keep track of newness before and after.
         $new = empty($this->id);
-
+        
         // Commit to the artefact table.
         parent::commit();
 
@@ -170,9 +180,9 @@ class ArtefactTypeBlog extends ArtefactType {
     }
 
     /**
-     * Checks that the person viewing this blog is the owner. If not, throws an
-     * AccessDeniedException. Used in the blog section to ensure only the
-     * owners of the blogs can view or change them there. Other people see
+     * Checks that the person viewing this blog is the owner. If not, throws an 
+     * AccessDeniedException. Used in the blog section to ensure only the 
+     * owners of the blogs can view or change them there. Other people see 
      * blogs when they are placed in views.
      */
     public function check_permission() {
@@ -194,6 +204,8 @@ class ArtefactTypeBlog extends ArtefactType {
      * @return array  A two key array, 'html' and 'javascript'.
      */
     public function render_self($options) {
+        $this->add_to_render_path($options);
+
         if (!isset($options['limit'])) {
             $limit = self::pagination;
         }
@@ -214,7 +226,7 @@ class ArtefactTypeBlog extends ArtefactType {
 
         $template = 'artefact:blog:viewposts.tpl';
 
-        $baseurl = get_config('wwwroot') . 'artefact/artefact.php?artefact=' . $this->id;
+        $baseurl = get_config('wwwroot') . 'view/artefact.php?artefact=' . $this->id;
         if (!empty($options['viewid'])) {
             $baseurl .= '&view=' . $options['viewid'];
         }
@@ -229,7 +241,7 @@ class ArtefactTypeBlog extends ArtefactType {
 
         $smarty = smarty_core();
         if (isset($options['viewid'])) {
-            $smarty->assign('artefacttitle', '<a href="' . get_config('wwwroot') . 'artefact/artefact.php?artefact='
+            $smarty->assign('artefacttitle', '<a href="' . get_config('wwwroot') . 'view/artefact.php?artefact='
                                              . $this->get('id') . '&view=' . $options['viewid']
                                              . '">' . hsc($this->get('title')) . '</a>');
         }
@@ -255,10 +267,10 @@ class ArtefactTypeBlog extends ArtefactType {
         return array('html' => $smarty->fetch('artefact:blog:blog.tpl'), 'javascript' => '');
     }
 
-
+                
     public static function get_icon($options=null) {
         global $THEME;
-        return $THEME->get_url('images/journal.png', false);
+        return $THEME->get_url('images/blog.gif', false, 'artefact/blog');
     }
 
     public static function is_singular() {
@@ -286,7 +298,7 @@ class ArtefactTypeBlog extends ArtefactType {
 
         foreach ($result as &$r) {
             if (!$r->locked) {
-                $r->deleteform = ArtefactTypeBlog::delete_form($r->id, $r->title);
+                $r->deleteform = ArtefactTypeBlog::delete_form($r->id);
             }
         }
 
@@ -296,8 +308,12 @@ class ArtefactTypeBlog extends ArtefactType {
     }
 
     public static function build_blog_list_html(&$blogs) {
+		global $USER;
         $smarty = smarty_core();
         $smarty->assign_by_ref('blogs', $blogs);
+		//SB
+		$smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
+
         $blogs->tablerows = $smarty->fetch('artefact:blog:bloglist.tpl');
         $pagination = build_pagination(array(
             'id' => 'bloglist_pagination',
@@ -337,7 +353,17 @@ class ArtefactTypeBlog extends ArtefactType {
             $artefact->set('licensor', $values['licensor']);
             $artefact->set('licensorurl', $values['licensorurl']);
         }
+
         $artefact->commit();
+        $data = (object) array(
+            'title'       => $values['title'].' files',
+/*            'description' => get_string('filescopiedfromviewtemplate', 'view', $template->get('title')),*/
+            'owner'       => $user->get('id'),
+        );
+        $folder = new ArtefactTypeFolder(0, $data);
+        $folder->commit();
+        $artefact->attach($folder->get('id'));
+
     }
 
     /**
@@ -377,13 +403,25 @@ class ArtefactTypeBlog extends ArtefactType {
     }
 
     public function copy_extra($new) {
-        $new->set('title', get_string('Copyof', 'mahara', $this->get('title')));
+        global $USER;
+		if(get_config('renamecopies')){
+			$new->set('title', get_string('Copyof', 'mahara', $this->get('title')));
+		}
+		$data = (object) array(
+            'title'       => $this->get('title').' files',
+/*            'description' => get_string('filescopiedfromviewtemplate', 'view', $template->get('title')),*/
+            'owner'       => $USER->get('id'),
+        );
+        $folder = new ArtefactTypeFolder(0, $data);
+        $folder->commit();
+//        $new->attach($folder->get('id'));
+
     }
 
     /**
      * Returns the number of posts in this blog that have been published.
      *
-     * The result of this function looked up from the database each time, so
+     * The result of this function looked up from the database each time, so 
      * cache it if you know it's safe to do so.
      *
      * @return int
@@ -397,33 +435,8 @@ class ArtefactTypeBlog extends ArtefactType {
             AND bp.published = 1", array($this->get('id')));
     }
 
-    public static function delete_form($id, $title = '') {
+    public static function delete_form($id) {
         global $THEME;
-
-        $confirm = get_string('deleteblog?', 'artefact.blog');
-
-        // Check if this blog has posts.
-        $postcnt = count_records_sql("
-            SELECT COUNT(*)
-            FROM {artefact} a
-            INNER JOIN {artefact_blog_blogpost} bp ON a.id = bp.blogpost
-            WHERE a.parent = ?
-            ", array($id));
-        if ($postcnt > 0) {
-            $confirm = get_string('deletebloghaspost?', 'artefact.blog', $postcnt);
-
-            // Check if this blog posts used in views.
-            $viewscnt = count_records_sql("
-                SELECT COUNT(DISTINCT(va.view))
-                FROM {artefact} a
-                INNER JOIN {view_artefact} va ON a.id = va.artefact
-                WHERE a.parent = ? OR a.id = ?
-                ", array($id, $id));
-            if ($viewscnt > 0) {
-                $confirm = get_string('deletebloghasview?', 'artefact.blog', $viewscnt);
-            }
-        }
-
         return pieform(array(
             'name' => 'delete_' . $id,
             'successcallback' => 'delete_blog_submit',
@@ -435,11 +448,9 @@ class ArtefactTypeBlog extends ArtefactType {
                 ),
                 'submit' => array(
                     'type' => 'image',
-                    'src' => $THEME->get_url('images/btn_deleteremove.png'),
-                    'alt' => get_string('deletespecific', 'mahara', $title),
-                    'elementtitle' => get_string('delete'),
-                    'confirm' => $confirm,
-                    'value' => get_string('delete'),
+                    'src' => $THEME->get_url('images/icon_close.gif'),
+                    'elementtitle' => get_string('delete', 'artefact.blog'),
+                    'confirm' => get_string('deleteblog?', 'artefact.blog'),
                 ),
             ),
         ));
@@ -518,9 +529,9 @@ class ArtefactTypeBlogPost extends ArtefactType {
      * This method extends ArtefactType::commit() by adding additional data
      * into the artefact_blog_blogpost table.
      *
-     * This method also works out what blockinstances this blogpost is in, and
+     * This method also works out what blockinstances this blogpost is in, and 
      * informs them that they should re-check what artefacts they have in them.
-     * The post content may now link to different artefacts. See {@link
+     * The post content may now link to different artefacts. See {@link 
      * PluginBlocktypeBlogPost::get_artefacts for more information}
      */
     public function commit() {
@@ -530,7 +541,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
 
         db_begin();
         $new = empty($this->id);
-
+      
         parent::commit();
 
         $this->dirty = true;
@@ -551,8 +562,8 @@ class ArtefactTypeBlogPost extends ArtefactType {
         // 1) All blogpost blocktypes with this post in it
         // 2) All blog blocktypes with this posts's blog in it
         //
-        // With these, we tell them to rebuild what artefacts they have in them,
-        // since the post content could have changed and now have links to
+        // With these, we tell them to rebuild what artefacts they have in them, 
+        // since the post content could have changed and now have links to 
         // different artefacts in it
         $blockinstanceids = (array)get_column_sql('SELECT block
             FROM {view_artefact}
@@ -582,7 +593,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
         db_begin();
         $this->detach(); // Detach all file attachments
         delete_records('artefact_blog_blogpost', 'blogpost', $this->id);
-
+      
         parent::delete();
         db_commit();
     }
@@ -602,9 +613,9 @@ class ArtefactTypeBlogPost extends ArtefactType {
 
 
     /**
-     * Checks that the person viewing this blog is the owner. If not, throws an
-     * AccessDeniedException. Used in the blog section to ensure only the
-     * owners of the blogs can view or change them there. Other people see
+     * Checks that the person viewing this blog is the owner. If not, throws an 
+     * AccessDeniedException. Used in the blog section to ensure only the 
+     * owners of the blogs can view or change them there. Other people see 
      * blogs when they are placed in views.
      */
     public function check_permission() {
@@ -613,14 +624,14 @@ class ArtefactTypeBlogPost extends ArtefactType {
             throw new AccessDeniedException(get_string('youarenottheownerofthisblogpost', 'artefact.blog'));
         }
     }
-
+  
     public function describe_size() {
         return $this->count_attachments() . ' ' . get_string('attachments', 'artefact.blog');
     }
 
     public function render_self($options) {
         $smarty = smarty_core();
-        $artefacturl = get_config('wwwroot') . 'artefact/artefact.php?artefact=' . $this->get('id');
+        $artefacturl = get_config('wwwroot') . 'view/artefact.php?artefact=' . $this->get('id');
         if (isset($options['viewid'])) {
             $artefacturl .= '&view=' . $options['viewid'];
         }
@@ -658,12 +669,13 @@ class ArtefactTypeBlogPost extends ArtefactType {
 
         $attachments = $this->get_attachments();
         if ($attachments) {
+            $this->add_to_render_path($options);
             require_once(get_config('docroot') . 'artefact/lib.php');
             foreach ($attachments as &$attachment) {
                 $f = artefact_instance_from_id($attachment->id);
                 $attachment->size = $f->describe_size();
                 $attachment->iconpath = $f->get_icon(array('id' => $attachment->id, 'viewid' => isset($options['viewid']) ? $options['viewid'] : 0));
-                $attachment->viewpath = get_config('wwwroot') . 'artefact/artefact.php?artefact=' . $attachment->id . '&view=' . (isset($options['viewid']) ? $options['viewid'] : 0);
+                $attachment->viewpath = get_config('wwwroot') . 'view/artefact.php?artefact=' . $attachment->id . '&view=' . (isset($options['viewid']) ? $options['viewid'] : 0);
                 $attachment->downloadpath = get_config('wwwroot') . 'artefact/file/download.php?file=' . $attachment->id;
                 if (isset($options['viewid'])) {
                     $attachment->downloadpath .= '&view=' . $options['viewid'];
@@ -686,7 +698,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
 
     public static function get_icon($options=null) {
         global $THEME;
-        return $THEME->get_url('images/journal_entry.png', false);
+        return $THEME->get_url('images/blogpost.gif', false, 'artefact/blog');
     }
 
     public static function is_singular() {
@@ -694,43 +706,6 @@ class ArtefactTypeBlogPost extends ArtefactType {
     }
 
     public static function collapse_config() {
-    }
-
-    /**
-     * This function returns the blog id and offset for a given post.
-     *
-     * @param integer $postid The id of the required blog post
-     * @return object An object containing the required data
-     */
-    public static function get_post_data($postid) {
-        $post = new stdClass();
-
-        $post->blogid = get_field('artefact', 'parent', 'id', $postid, 'artefacttype', 'blogpost');
-
-        if (is_postgres()) {
-            $rownum = get_field_sql("SELECT rownum
-                                    FROM (SELECT id, ROW_NUMBER() OVER (ORDER BY id DESC) AS rownum
-                                        FROM {artefact}
-                                        WHERE parent = ?
-                                        ORDER BY id DESC) AS posts
-                                    WHERE id = ?",
-                    array($post->blogid, $postid));
-        }
-        else if (is_mysql()) {
-            $initvar = execute_sql("SET @row_num = 0");
-            if ($initvar) {
-                $rownum = get_field_sql("SELECT rownum
-                                        FROM (SELECT id, @row_num := @row_num + 1 AS rownum
-                                            FROM {artefact}
-                                            WHERE parent = ?
-                                            ORDER BY id DESC) AS posts
-                                        WHERE id = ?",
-                        array($post->blogid, $postid));
-            }
-        }
-        $post->offset = $rownum - 1;
-
-        return $post;
     }
 
     /**
@@ -786,11 +761,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
         if ($files) {
             safe_require('artefact', 'file');
             foreach ($files as &$file) {
-                $params = array('id' => $file->attachment);
-                if (!empty($viewoptions['viewid'])) {
-                    $params['viewid'] = $viewoptions['viewid'];
-                }
-                $file->icon = call_static_method(generate_artefact_class_name($file->artefacttype), 'get_icon', $params);
+                $file->icon = call_static_method(generate_artefact_class_name($file->artefacttype), 'get_icon', array('id' => $file->attachment));
                 $data[$file->artefact]->files[] = $file;
             }
         }
@@ -813,7 +784,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
             if (is_null($viewoptions)) {
                 // My Blogs area: create forms for changing post status & deleting posts.
                 $post->changepoststatus = ArtefactTypeBlogpost::changepoststatus_form($post->id, $post->published);
-                $post->delete = ArtefactTypeBlogpost::delete_form($post->id, $post->title);
+                $post->delete = ArtefactTypeBlogpost::delete_form($post->id);
             }
             else {
                 $by = $post->author ? display_default_name($post->author) : $post->authorname;
@@ -852,8 +823,6 @@ class ArtefactTypeBlogPost extends ArtefactType {
 
         $posts['tablerows'] = $smarty->fetch($template);
 
-        $setlimit = isset($pagination['setlimit']) ? $pagination['setlimit'] : false;
-
         if ($posts['limit'] && $pagination) {
             $pagination = build_pagination(array(
                 'id' => $pagination['id'],
@@ -863,7 +832,6 @@ class ArtefactTypeBlogPost extends ArtefactType {
                 'jsonscript' => $pagination['jsonscript'],
                 'count' => $posts['count'],
                 'limit' => $posts['limit'],
-                'setlimit' => $setlimit,
                 'offset' => $posts['offset'],
                 'numbersincludefirstlast' => false,
                 'resultcounttextsingular' => get_string('post', 'artefact.blog'),
@@ -874,7 +842,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
         }
     }
 
-    /**
+    /** 
     /**
      * This function creates a new blog post.
      *
@@ -892,7 +860,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
         return true;
     }
 
-    /**
+    /** 
      * This function updates an existing blog post.
      *
      * @param User
@@ -953,7 +921,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
         ));
     }
 
-    public static function delete_form($id, $title = '') {
+    public static function delete_form($id) {
         global $THEME;
         return pieform(array(
             'name' => 'delete_' . $id,
@@ -969,11 +937,9 @@ class ArtefactTypeBlogPost extends ArtefactType {
                 ),
                 'submit' => array(
                     'type' => 'image',
-                    'src' => $THEME->get_url('images/btn_deleteremove.png'),
-                    'alt' => get_string('deletespecific', 'mahara', $title),
-                    'elementtitle' => get_string('delete'),
+                    'src' => $THEME->get_url('images/icon_close.gif'),
+                    'elementtitle' => get_string('delete', 'artefact.blog'),
                     'confirm' => get_string('deleteblogpost?', 'artefact.blog'),
-                    'value' => get_string('delete'),
                 ),
             ),
         ));
@@ -1008,7 +974,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
         $wwwroot = get_config('wwwroot');
 
         return array(
-            '_default' => $wwwroot . 'artefact/blog/view/index.php?blogpost=' . $id,
+            '_default'                                  => $wwwroot . 'artefact/blog/post.php?blogpost=' . $id,
         );
     }
 
@@ -1078,14 +1044,10 @@ class ArtefactTypeBlogPost extends ArtefactType {
     }
 
     /**
-     * Looks through the blog post text for links to download artefacts, and
+     * Looks through the blog post text for links to download artefacts, and 
      * returns the IDs of those artefacts.
      */
     public function get_referenced_artefacts_from_postbody() {
         return artefact_get_references_in_html($this->get('description'));
-    }
-
-    public static function is_countable_progressbar() {
-        return true;
     }
 }
