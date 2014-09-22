@@ -3853,7 +3853,7 @@ class View {
      *
      */
     public static function view_search($query=null, $ownerquery=null, $ownedby=null, $copyableby=null, $limit=null, $offset=0,
-                                       $extra=true, $sort=null, $types=null, $collection=false, $accesstypes=null, $tag=null) {
+                                       $extra=true, $sort=null, $types=null, $collection=false, $accesstypes=null, $tag=null,$copynewuser=false) {
         global $USER;
         $admin = $USER->get('admin');
         $loggedin = $USER->is_logged_in();
@@ -3899,7 +3899,11 @@ class View {
             $where .= '
                 AND (v.template = 1 OR (v.' . self::owner_sql($copyableby) . '))';
         }
-
+		//SB
+		if($copynewuser){
+            $where .= '
+                AND (v.copynewuser != 0)';
+		}
         $like = db_ilike();
 
         if ($query) { // Include matches on the title, description, tag or user
@@ -4322,7 +4326,7 @@ class View {
      * Get views which have been explicitly shared to a group and are
      * not owned by the group excluding the view in collections
      */
-    public static function get_sharedviews_data($limit=10, $offset=0, $groupid) {
+    public static function get_sharedviews_data($limit=10, $offset=0, $groupid, $copynewuser=false) {
         global $USER;
         $userid = $USER->get('id');
         require_once(get_config('libroot') . 'group.php');
@@ -4332,9 +4336,12 @@ class View {
         $from = '
             FROM {view} v
             INNER JOIN {view_access} a ON (a.view = v.id)
-            INNER JOIN {group_member} m ON (a.group = m.group AND (a.role = m.role OR a.role IS NULL))
-            WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?)
-               AND NOT EXISTS (SELECT 1 FROM {collection_view} cv WHERE cv.view = v.id)';
+            INNER JOIN {group_member} m ON (a.group = m.group AND (a.role = m.role OR a.role IS NULL))';
+		if($copynewuser){
+            $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?) AND v.copynewuser';
+		}else{
+            $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?)';
+		}
         $ph = array($groupid, $userid, $groupid);
 
         $count = count_records_sql('SELECT COUNT(DISTINCT(v.id)) ' . $from, $ph);
