@@ -904,8 +904,17 @@ function group_remove_user($groupid, $userid=null, $force=false) {
     if (!$force && !group_user_can_leave($groupid, $userid)) {
         throw new AccessDeniedException(get_string('usercantleavegroup', 'group'));
     }
-    delete_records('group_member', 'group', $groupid, 'member', $userid);
+	//SB remove access records user shouldnt be able to share with a group they are not a member of
+	$viewaccess = get_records_sql_array("SELECT v.id FROM {view} v
+            INNER JOIN {view_access} a ON
+                v.id=a.view	 
+			WHERE v.owner = ? AND a.group = ?", array($userid, $groupid));
 
+	foreach($viewaccess as $view){
+	    delete_records('view_access', 'view', $view->id);
+	}
+
+    delete_records('group_member', 'group', $groupid, 'member', $userid);
     global $USER;
     $USER->reset_grouproles();
 
@@ -1414,6 +1423,24 @@ function group_get_default_artefact_permissions($groupid) {
     }
     return $permissions;
 }
+
+/**SB
+ * Gets group type
+ *
+ * @param int $groupid ID of group to get type for
+ * @return array
+ */
+function group_get_type($groupid) {
+    $roles = get_records_sql_assoc('SELECT "role", see_submitted_views, gr.grouptype FROM {grouptype_roles} gr
+        INNER JOIN {group} g ON g.grouptype = gr.grouptype
+        WHERE g.id = ?', array($groupid));
+	$finaltype = "";
+    foreach ($roles as $role) {
+        $finaltype = $role->grouptype;
+    }
+    return $finaltype;
+}
+
 
 // Retrieve a list of group admins
 function group_get_admins($groupids) {
@@ -2144,22 +2171,36 @@ function group_can_create_groups() {
 }
 
 /* Returns groups containing a given member which accept view submissions */
-function group_get_user_course_groups($userid=null) {
+function group_get_user_course_groups($userid=null, $viewid=null) {
     if (is_null($userid)) {
         global $USER;
         $userid = $USER->get('id');
     }
-    if ($groups = get_records_sql_array(
-        "SELECT g.id, g.name
-        FROM {group_member} u
-        INNER JOIN {group} g ON (u.group = g.id AND g.deleted = 0)
-        WHERE u.member = ?
-        AND g.submittableto = 1
-        ORDER BY g.name
-        ", array($userid))) {
-        return $groups;
-    }
-    return array();
+	if(is_null($viewid)){
+		if ($groups = get_records_sql_array(
+			"SELECT g.id, g.name
+			FROM {group_member} u
+			INNER JOIN {group} g ON (u.group = g.id AND g.deleted = 0)
+			WHERE u.member = ?
+			AND g.submittableto = 1
+			ORDER BY g.name
+			", array($userid))) {
+			return $groups;
+		}
+	}else{
+		if ($groups = get_records_sql_array(
+			"SELECT g.id, g.name
+				FROM  {view_access} va
+				INNER JOIN  {view} v ON v.id = va.view
+				INNER JOIN  {group} g ON g.id = va.group
+				INNER JOIN {group_member} u ON u.group = g.id
+				WHERE v.id = ? AND u.member = ?
+				AND g.submittableto =1",array($viewid,$userid))){
+			return $groups;
+		}
+	}
+
+     return array();
 }
 
 function group_display_settings($group) {
