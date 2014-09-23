@@ -1,27 +1,11 @@
 <?php
 /**
- * Mahara: Electronic portfolio, weblog, resume builder and social networking
- * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
- *                         http://wiki.mahara.org/Contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package    mahara
  * @subpackage artefact-blog
  * @author     Catalyst IT Ltd
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 2006-2009 Catalyst IT Ltd http://catalyst.net.nz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
+ * @copyright  For copyright information on Mahara, please see the README file distributed with this software.
  *
  */
 
@@ -37,14 +21,15 @@ require_once('license.php');
 
 safe_require('artefact', 'blog');
 safe_require('artefact', 'file');
-
-/* 
+if (!PluginArtefactBlog::is_active()) {
+    throw new AccessDeniedException(get_string('plugindisableduser', 'mahara', get_string('blog','artefact.blog')));
+}
+/*
  * For a new post, the 'blog' parameter will be set to the blog's
  * artefact id.  For an existing post, the 'blogpost' parameter will
  * be set to the blogpost's artefact id.
- * if there is no 'blog' parameter then we are coming from somewhere random and need to select the the blog first
  */
-$posttype = 0;
+$posttype = 0; //SB new type for posts 
 $blogpost = param_integer('blogpost', param_integer('id', 0));
 if (!$blogpost) {
 /*
@@ -59,12 +44,12 @@ if (!$blogpost) {
 	}
 	else{
 		if (!get_record('artefact', 'id', $blog, 'owner', $USER->get('id'))) {
-			// Blog security is also checked closer to when blogs are added, this 
-			// check ensures that malicious users do not even see the screen for 
+			// Blog security is also checked closer to when blogs are added, this
+			// check ensures that malicious users do not even see the screen for
 			// adding a post to a blog that is not theirs
 			throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
 		}
-		$pagetitle = get_string('newblogpost', 'artefact.blog', get_field('artefact', 'title', 'id', $blog));
+	    $pagetitle = get_string('newblogpost', 'artefact.blog', get_field('artefact', 'title', 'id', $blog));
 		if($posttype == 0){
 			$focuselement = 'title';
 		}elseif($posttype == 3){
@@ -75,8 +60,8 @@ if (!$blogpost) {
     $description = '';
     $tags = array($tagselect);
     $checked = '';
-	$attachments = array();
-	define('TITLE', $pagetitle);
+    $attachments = array();
+    define('TITLE', $pagetitle);
 }
 else {
     $blogpostobj = new ArtefactTypeBlogPost($blogpost);
@@ -363,6 +348,7 @@ $form = pieform($tempform);
  */
 $wwwroot = get_config('wwwroot');
 $noimagesmessage = json_encode(get_string('noimageshavebeenattachedtothispost', 'artefact.blog'));
+
 $javascript = <<<EOF
 
 
@@ -424,23 +410,22 @@ function blogpostImageWindow(ui, v) {
 
     t.windowManager.open(template);
 }
-
 function editpost_callback(form, data) {
-
-    	editpost_filebrowser.callback(form, data);
+    editpost_filebrowser.callback(form, data);
 };
-
 function editpost_urlcallback(form, data){
 	if(data.goto != null){
 		location.href = data.goto;
 	}
 }
 
-
 EOF;
 
 $smarty = smarty(array(), array(), array(), array(
-    'tinymcesetup' => "ed.addCommand('mceImage', blogpostImageWindow);",
+    'tinymceconfig' => '
+        plugins: "textcolor,hr,link,maharaimage,table,emoticons,spellchecker,paste,code,fullscreen",
+        image_filebrowser: "editpost_filebrowser",
+    ',
     'sideblocks' => array(
         array(
             'name'   => 'quota',
@@ -487,7 +472,8 @@ function buildimgshtml($imgs){
 	return $imghtml;
 }
 
-/** 
+
+/**
  * This function get called to cancel the form submission. It returns to the
  * blog list.
  */
@@ -530,10 +516,17 @@ function editpost_submit(Pieform $form, $values) {
     $blogpost = $postobj->get('id');
 
     // Attachments
-    // $new = is_array($values['filebrowser']['selected']) ? $values['filebrowser']['selected'] : array();
 	if($values['filebrowser'] != NULL) {
-	    $old = $postobj->attachment_id_list();
+		$old = $postobj->attachment_id_list();
+		// $new = is_array($values['filebrowser']['selected']) ? $values['filebrowser']['selected'] : array();
 		$new = is_array($values['filebrowser']) ? $values['filebrowser'] : array();
+		// only allow the attaching of files that exist and are editable by user
+		foreach ($new as $key => $fileid) {
+			$file = artefact_instance_from_id($fileid);
+			if (!($file instanceof ArtefactTypeFile) || !$USER->can_publish_artefact($file)) {
+				unset($new[$key]);
+			}
+		}
 		if (!empty($new) || !empty($old)) {
 			foreach ($old as $o) {
 				if (!in_array($o, $new)) {
@@ -560,7 +553,6 @@ function editpost_submit(Pieform $form, $values) {
         'message' => get_string('blogpostsaved', 'artefact.blog'),
         'goto'    => get_config('wwwroot') . 'artefact/blog/view/index.php?id=' . $blog,
     );
-	//var_dump($result);
     if ($form->submitted_by_js()) {
         // Redirect back to the blog page from within the iframe
         $SESSION->add_ok_msg($result['message']);
