@@ -662,7 +662,7 @@ class BlockInstance {
     public function render_editing($configure=false, $new=false, $jsreply=false) {
         safe_require('blocktype', $this->get('blocktype'));
         $movecontrols = array();
-
+		global $USER;
         $blocktypeclass = generate_class_name('blocktype', $this->get('blocktype'));
         try {
             $title = $this->get_title();

@@ -17,6 +17,7 @@ define('SECTION_PAGE', 'blocks');
 require(dirname(dirname(__FILE__)) . '/init.php');
 require_once(get_config('libroot') . 'view.php');
 require_once(get_config('libroot') . 'group.php');
+require_once(get_config('libroot') . 'objectionable.php');
 
 $id = param_integer('id', 0); // if 0, we're editing our profile.
 $new = param_boolean('new', false);
@@ -315,14 +316,12 @@ if ($view->get('owner') == "0") {
 // If the view has comments turned off, tutors can still leave
 // comments if the view is submitted to their group.
 // Feedback list pagination requires limit/offset params
-
 if ($USER->is_logged_in()) {
     $objectionform = pieform(objection_form());
-    if ($notrudeform = $view->notrude_form()) {
+    if ($notrudeform = notrude_form()) {
         $notrudeform = pieform($notrudeform);
     }
 }
-
 $viewbeingwatched = (int)record_exists('usr_watchlist_view', 'usr', $USER->get('id'), 'view', $viewid);
 
 
