@@ -1556,7 +1556,7 @@ div.rel {
 /******************** Main navigation ********************/
 .main-nav {
     clear: both;
-    font-size: 1.333em;
+    font-size: 1.1667em;
     white-space: nowrap;
     background: #EEEEEE;
 }
@@ -1584,7 +1584,7 @@ div.rel {
 .main-nav li a:link,
 .main-nav li a:visited,
 .main-nav li a:active {
-    padding: 10px;
+    padding: 5px;
     display: inline-block;
     text-decoration: none;
     font-weight: bold;
