@@ -16,7 +16,7 @@
                         <span class="s dull">{str tag=submittedforassessment section=view}</span>
                     {elseif  $limitedediting}
                     {else}
-                        <a href="{$WWWROOT}artefact/blog/settings/index.php?id={$blog->id}" title="{str tag=settings}"><img src="{theme_url filename='images/manage.gif'}" alt="{str tag=settings}"></a>
+                        <a href="{$WWWROOT}artefact/blog/settings/index.php?id={$blog->id}" title="{str tag=settings}"><img src="{theme_url filename='images/btn_configure.png'}" alt="{str tag=settings}"></a>
                             {$blog->deleteform|safe}
                     {/if}
                 </span>
