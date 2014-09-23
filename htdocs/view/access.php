@@ -169,8 +169,9 @@ $form['elements']['more'] = array(
 
 $js = '';
 
-if ($institution) {
-    if ($institution == 'mahara') {
+//SB need to determine if the page is shared with a project group
+//if ($institution) {
+    if ($institution && $institution == 'mahara') {
         $form['elements']['more']['elements']['copynewuser'] = array(
             'type'         => 'checkbox',
             'title'        => get_string('copyfornewusers', 'view'),
@@ -194,7 +195,7 @@ if ($institution) {
             );
         }
     }
-    else {
+    else if($institution) {
         require_once('institution.php');
         $i = new Institution($institution);
         $instname = hsc($i->displayname);
@@ -205,7 +206,54 @@ if ($institution) {
             'defaultvalue' => $view->get('copynewuser'),
         );
     }
-} else {
+	else{
+        $form['elements']['more']['elements']['copynewuser'] = array(
+            'type'         => 'checkbox',
+            'title'        => get_string('copyfornewgroupmembers', 'view'),
+            'description'  => get_string('copyfornewmembersdescription1', 'view', 'shared Project groups'),
+            'defaultvalue' => $view->get('template') && $view->get('copynewuser'),
+        );
+        $copyoptions = array('copynewuser');
+        $needsaccess = array('copynewuser');
+	}
+    $copyoptionstr = json_encode($copyoptions);
+    $needsaccessstr = json_encode($needsaccess);
+    $js .= <<<EOF
+function update_copy_options() {
+    if ($('editaccess_template').checked) {
+        forEach({$copyoptionstr}, function (id) {
+            removeElementClass($('editaccess_'+id+'_container'), 'hidden');
+        });
+    }
+    else {
+        forEach({$copyoptionstr}, function (id) {
+            addElementClass($('editaccess_'+id+'_container'), 'hidden');
+        });
+        forEach({$needsaccessstr}, function (id) {
+            $('editaccess_'+id).checked = false;
+        });
+        update_loggedin_access();
+    }
+}
+function update_loggedin_access() {
+    if (some({$needsaccessstr}, function (id) { return $('editaccess_'+id).checked; })) {
+        ensure_loggedin_access();
+    }
+    else {
+        relax_loggedin_access();
+    }
+}
+addLoadEvent(function() {
+    update_copy_options();
+    connect('editaccess_template', 'onclick', update_copy_options);
+    forEach({$needsaccessstr}, function (id) {
+        connect('editaccess_'+id, 'onclick', update_loggedin_access);
+    });
+});
+EOF;
+
+//} else {
+if(!$institution){
     $form['elements']['more']['elements']['retainview'] = array(
         'type'         => 'checkbox',
         'title'        => get_string('retainviewrights1', 'view'),
@@ -345,6 +393,21 @@ function ptimetotime($ptime) {
 function editaccess_validate(Pieform $form, $values) {
     global $SESSION, $institution, $group;
 
+    if ($institution && $values['copynewuser'] && !$values['template']) {
+        $form->set_error('copynewuser', get_string('viewscopiedfornewusersmustbecopyable', 'view'));
+    }
+    $createforgroup = false;
+    if ($institution == 'mahara') {
+        foreach (group_get_grouptypes() as $grouptype) {
+            if ($values['copyfornewgroups_'.$grouptype]) {
+                $createforgroup = true;
+                break;
+            }
+        }
+        if ($createforgroup && !$values['template']) {
+            $form->set_error('copyfornewgroups', get_string('viewscopiedfornewgroupsmustbecopyable', 'view'));
+        }
+    }
     $retainview = isset($values['retainview']) ? $values['retainview'] : false;
     if ($retainview && !$values['template']) {
         $form->set_error('retainview', get_string('viewswithretainviewrightsmustbecopyable', 'view'));
@@ -447,8 +510,8 @@ function editaccess_submit(Pieform $form, $values) {
     );
 
     $toupdate = array();
-
-    if ($institution) {
+//SB
+//    if ($institution) {
         if (isset($values['copynewuser'])) {
             $viewconfig['copynewuser'] = (int) $values['copynewuser'];
         }
@@ -461,7 +524,7 @@ function editaccess_submit(Pieform $form, $values) {
             }
             $viewconfig['copynewgroups'] = $createfor;
         }
-    }
+//    }
     if (isset($values['collections'])) {
         foreach ($values['collections'] as $cid) {
             if (!isset($collections[$cid])) {
