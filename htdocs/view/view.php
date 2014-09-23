@@ -247,7 +247,7 @@ $can_edit = $USER->can_edit_view($view) && !$submittedgroup && !$view->is_submit
 
 $viewgroupform = false;
 if ($owner && $owner == $USER->get('id')) {
-    if ($tutorgroupdata = group_get_user_course_groups()) {
+    if ($tutorgroupdata = group_get_user_course_groups($owner, $view->get('id'))) {
         if (!$view->is_submitted()) {
             $viewgroupform = view_group_submission_form($view, $tutorgroupdata, 'view');
         }
