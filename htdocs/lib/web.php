@@ -2631,6 +2631,7 @@ function mahara_standard_nav() {
                 'title' => get_string('institutionmembership'),
                 'weight' => 50,
             );
+        }
 
     if (can_use_skins()) {
         $menu['myportfolio/skins'] = array(
