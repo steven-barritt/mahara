@@ -47,7 +47,7 @@ if ($group && !group_within_edit_window($group)) {
 }
 
 $new = param_boolean('new', 0);
-
+$owner    = $view->get('owner');//SB
 if ($new) {
     define('TITLE', get_string('edittitleanddescription', 'view'));
 }
@@ -247,5 +247,17 @@ if (get_config('viewmicroheaders')) {
     $smarty->assign('microheadertitle', $view->display_title(true, false, false));
 }
 $smarty->assign('issiteview', isset($institution) && ($institution == 'mahara'));
+$smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
+if ($owner && $owner == $USER->get('id')) {
+    if ($tutorgroupdata = group_get_user_course_groups($owner, $view->get('id'))) {
+        if (!$view->is_submitted()) {
+            $smarty->assign(
+                'view_group_submission_form',
+                view_group_submission_form($view, $tutorgroupdata, 'view')
+            );
+        }
+    }
+}
+
 
 $smarty->display('view/edit.tpl');
