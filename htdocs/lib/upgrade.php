@@ -27,8 +27,9 @@ require_once('ddl.php');
  *
  * @param string $name The name of the plugin to check. If no name is specified,
  *                     all plugins are checked.
- * @return mixed If a name is specified, an obect will be returned with upgrade data
- *                     about the requested plugin.
+ * @return mixed If a name is specified, an object will be returned with upgrade data
+ *                     about the requested component (which can be "core", "local", or a plugin).
+ *                     If the component desn't need to be updated, an empty array will be returned.
  *               If no name is specified, an array of such objects will be returned.
  *                     It will also include an array key "settings", which will be an array
  *                     that may contain metadata about the upgrade/install process.
@@ -43,6 +44,7 @@ function check_upgrades($name=null) {
     $newinstallcount = 0;
     $installing = false;
     $disablelogin = false;
+    $newinstalls = array();
 
     require('version.php');
     if (isset($config->disablelogin) && !empty($config->disablelogin)) {
@@ -230,12 +232,6 @@ function check_upgrades($name=null) {
             }
             $plugininfo = new StdClass;
             $plugininfo->install = true;
-            if ($newinstall) {
-                $plugininfo->from = get_string('notinstalled', 'admin');
-                $plugininfo->fromrelease = get_string('notinstalled', 'admin');
-                $plugininfo->newinstall = true;
-                $newinstallcount ++;
-            }
             $plugininfo->to = $config->version;
             $plugininfo->torelease = $config->release;
             if (property_exists($config, 'requires_config')) {
@@ -254,12 +250,18 @@ function check_upgrades($name=null) {
                 $plugininfo->to = get_string('notinstalled', 'admin');
                 $plugininfo->torelease = get_string('notinstalled', 'admin');
                 $plugininfo->errormsg = $exc->getMessage();
-                $toupgrade[$pluginkey] = $plugininfo;
-
-                continue;
             }
 
-            $toupgrade[$pluginkey] = $plugininfo;
+            if ($newinstall) {
+                $plugininfo->from = get_string('notinstalled', 'admin');
+                $plugininfo->fromrelease = get_string('notinstalled', 'admin');
+                $plugininfo->newinstall = true;
+                $newinstallcount ++;
+                $newinstalls[$pluginkey] = $plugininfo;
+            }
+            else {
+                $toupgrade[$pluginkey] = $plugininfo;
+            }
         }
         else if ($config->version > $pluginversion) {
             if (isset($config->minupgradefrom) && isset($config->minupgraderelease)
@@ -301,18 +303,24 @@ function check_upgrades($name=null) {
     }
 
     // if we've just asked for one, don't return an array...
-    if (!empty($name) && count($toupgrade) == 1) {
-        $upgrade = new StdClass;
-        $upgrade->name = $name;
-        foreach ((array)$toupgrade[$name] as $key => $value) {
-            $upgrade->{$key} = $value;
+    if (!empty($name)){
+        if (count($toupgrade) == 1) {
+            $upgrade = new StdClass;
+            $upgrade->name = $name;
+            foreach ((array)$toupgrade[$name] as $key => $value) {
+                $upgrade->{$key} = $value;
+            }
+            $upgrade->disablelogin = $disablelogin;
+            return $upgrade;
         }
-        $upgrade->disablelogin = $disablelogin;
-        return $upgrade;
+        else {
+            return array();
+        }
     }
 
     // Nothing needed to be upgraded or installed
     if (count($toupgrade) == 0) {
+        if (!empty($name))
         $disablelogin = false;
     }
 
@@ -320,6 +328,7 @@ function check_upgrades($name=null) {
     uksort($toupgrade, 'sort_upgrades');
     $settings['disablelogin'] = $disablelogin;
     $settings['newinstallcount'] = $newinstallcount;
+    $settings['newinstalls'] = $newinstalls;
     $settings['toupgradecount'] = $toupgradecount;
     $toupgrade['settings'] = $settings;
     return $toupgrade;
