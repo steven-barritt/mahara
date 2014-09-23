@@ -848,7 +848,7 @@ class BlockInstance {
         if (!empty($renderedform)) {
             return $renderedform;
         }
-
+		global $USER;
         safe_require('blocktype', $this->get('blocktype'));
         $blocktypeclass = generate_class_name('blocktype', $this->get('blocktype'));
         $elements = call_static_method($blocktypeclass, 'instance_config_form', $this, $this->get_view()->get('template'));
@@ -878,6 +878,8 @@ class BlockInstance {
                 'expandtext'    => get_string('setblocktitle'),
             );
         }
+//		$elements = array();
+			if(!get_account_preference($USER->id, 'limitedediting')){
         $elements = array_merge(
             array(
                 'title' => $titleelement,
@@ -915,6 +917,7 @@ class BlockInstance {
                 ),
             )
         );
+			}
 
         if ($new) {
             $cancel = get_string('remove');
