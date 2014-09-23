@@ -18,6 +18,7 @@ $offset  = param_integer('offset', 0);
 $limit   = param_integer('limit', 10);
 $baseurl = get_config('wwwroot') . 'artefact/internal/notes.php';
 $params  = array();
+global $USER;
 
 if ($group = param_integer('group', null)) {
     define('MENUITEM', 'groups');
@@ -151,9 +152,11 @@ if ($data) {
             }
         }
     }
-    foreach ($data as $id => $n) {
-        $n->deleteform = pieform(deletenote_form($id, $n));
-    }
+	if(!get_account_preference($USER->id, 'limitedediting')){
+		foreach ($data as $id => $n) {
+			$n->deleteform = pieform(deletenote_form($id, $n));
+		}
+	}
 }
 
 // Get the attached files.
