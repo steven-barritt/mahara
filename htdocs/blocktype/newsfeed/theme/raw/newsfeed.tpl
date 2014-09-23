@@ -12,11 +12,11 @@
                 </div>
             	<div class="newsfeedpost">
                     Posted {str tag='postedin' section='blocktype.blog/recentposts'} - 
-                    <a href="{$WWWROOT}view/artefact.php?artefact={$post->parent}&amp;view={$post->view}">{$post->parenttitle}</a>
+                    <a href="{$WWWROOT}artefact/artefact.php?artefact={$post->parent}&amp;view={$post->view}">{$post->parenttitle}</a>
                     
                     
                     <br />
-                    <h2><a href="{$WWWROOT}view/artefact.php?artefact={$post->id}&amp;view={$post->view}">{$post->title}</a></h2>
+                    <h2><a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&amp;view={$post->view}">{$post->title}</a></h2>
                     <br />
                     <br style="clear:both"/>
                     <div class="postdescription">{clean_html($post->description)|safe}</div>    
