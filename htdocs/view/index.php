@@ -58,4 +58,8 @@ $smarty->assign('query', param_variable('query', null));
 $smarty->assign('querystring', get_querystring());
 $smarty->assign('searchform', $searchform);
 $smarty->assign('createviewform', $createviewform);
+//SB
+$smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
+
+
 $smarty->display('view/index.tpl');
