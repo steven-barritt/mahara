@@ -463,6 +463,9 @@ ul.colnav li.selected span {
 #tabcontent #page.collapsed {
     margin-left: 49px;
 }
+#tabcontent #page.fullwidth {
+	margin-left:0px;
+}
 #page #bottom-pane {
     padding: 10px;
     min-height: 435px;

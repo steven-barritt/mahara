@@ -1,11 +1,11 @@
 
 {if $MAINNAV}
         <div id="main-nav" class="{if $ADMIN || $INSTITUTIONALADMIN || $STAFF || $INSTITUTIONALSTAFF}{if $DROPDOWNMENU}dropdown-adminnav {else}adminnav {/if}{/if}main-nav">
-            <h3 class="rd-nav-title">{if $ADMIN || $INSTITUTIONALADMIN || $STAFF || $INSTITUTIONALSTAFF}ADMIN {/if}MENU<span class="rd-arrow"></span></h3>
+            <h3 class="rd-nav-title"><a href="#">{if $ADMIN || $INSTITUTIONALADMIN || $STAFF || $INSTITUTIONALSTAFF}{str tag=admin} {/if}{str tag=menu}<span class="rd-arrow"></span></a></h3>
             <ul id="{if $DROPDOWNMENU}dropdown-nav{else}nav{/if}">
 {strip}
 {foreach from=$MAINNAV item=item}
-                <li class="{if $item.path}{$item.path}{else}dashboard{/if}{if $item.selected} selected{/if}{if $DROPDOWNMENU} dropdown-nav-home{/if}"><span><a href="{$WWWROOT}{$item.url}"{if $item.accesskey} accesskey="{$item.accesskey}"{/if} class="{if $item.path}{$item.path}{else}dashboard{/if}">{$item.title}</a></span>
+                <li class="{if $item.path}{$item.path}{else}dashboard{/if}{if $item.selected} selected{/if}{if $DROPDOWNMENU} dropdown-nav-home{/if}"><span><a href="{$WWWROOT}{$item.url}"{if $item.accesskey} accesskey="{$item.accesskey}"{/if} class="{if $item.path}{$item.path}{else}dashboard{/if}">{if $item.accessibletitle && !$DROPDOWNMENU}<span aria-hidden="true" role="presentation">{/if}{$item.title}{if $item.accessibletitle && !$DROPDOWNMENU}</span> <span class="accessible-hidden">({$item.accessibletitle})</span>{/if}{if $DROPDOWNMENU && $item.submenu} <span class="accessible-hidden">({str tag=dropdownmenu})</span>{/if}</a></span>
 {if $item.submenu}
                     <ul class="{if $DROPDOWNMENU}dropdown-sub {/if}rd-subnav">
 {strip}

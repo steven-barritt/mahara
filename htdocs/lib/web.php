@@ -2549,7 +2549,7 @@ function mahara_standard_nav() {
         ),
         'content' => array(
             'path' => 'content',
-            'url'  => 'artefact/internal/index.php', // @todo possibly do path aliasing and dispatch?
+            'url'  => 'artefact/blog/index.php', // @todo possibly do path aliasing and dispatch?
             'title' => get_string('Content'),
             'weight' => 30,
             'accesskey' => 'c',

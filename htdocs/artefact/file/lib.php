@@ -45,7 +45,7 @@ class PluginArtefactFile extends PluginArtefact {
                 'path' => 'content/profileicons',
                 'url' => 'artefact/file/profileicons.php',
                 'title' => get_string('profileicons', 'artefact.file'),
-                'weight' => 20,
+                'weight' => 50,
             ),
         );
     }

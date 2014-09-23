@@ -23,6 +23,10 @@ $id = param_integer('id', 0); // if 0, we're editing our profile.
 $new = param_boolean('new', false);
 $profile = param_boolean('profile');
 $dashboard = param_boolean('dashboard');
+$showmore = param_boolean('showmore');
+if (!$showmore) {
+    $showmore = 0;
+}
 
 if (empty($id)) {
     if (!empty($profile)) {
