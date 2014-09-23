@@ -107,7 +107,7 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
 					$commentcount = ArtefactTypeComment::count_comments($empty, $ids);
 	                $data->commentcount = $commentcount ? $commentcount[(int)$data->id]->comments : 0;
 	            }
-		        $data->artefacturl = get_config('wwwroot') . 'view/artefact.php?artefact=' . $data->id.'&view='.$data->view;
+		        $data->artefacturl = get_config('wwwroot') . 'artefact/artefact.php?artefact=' . $data->id.'&view='.$data->view;
 
             }
 		}
