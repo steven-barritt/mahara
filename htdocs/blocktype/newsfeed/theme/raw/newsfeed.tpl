@@ -6,7 +6,7 @@
 
             <div class="friendcell">
                     <a href="{profile_url($post->user)}">
-                       <img src="{profile_icon_url user=$post->user maxwidth=60 maxheight=60}" alt="">
+                       <img src="{profile_icon_url user=$post->user maxwidth=40 maxheight=40}" alt="">
                     </a>
                     <div><a href="{profile_url($post->user)}">{$post->user|display_default_name|escape}</a></div>
                 </div>
