@@ -2226,7 +2226,7 @@ class ArtefactTypeImage extends ArtefactTypeFile {
             $url .= '&size=' . $options['size'];
         }
         else {
-            $url .= '&maxheight=24&maxwidth=24';
+            $url .= '&maxheight=300&maxwidth=300';
         }
 
         return $url;
