@@ -399,6 +399,8 @@ if ($viewgroupform) {
     $smarty->assign('view_group_submission_form', $viewgroupform);
 }
 
+$smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
+
 $smarty->display('view/view.tpl');
 
 mahara_log('views', "$viewid"); // Log view visits

@@ -8,7 +8,9 @@
     {if $new}
       <a class="btn" href="{$editurl}">{str tag=back}</a>
     {else}
+    	{if !$limitedediting}
       <a title="{str tag=editthisview section=view}" href="{$editurl}" class="btn editview">{str tag=editthisview section=view}</a>
+      	{/if}
     {/if}
   {/strip}{/if}
   {if $mnethost}<a href="{$mnethost.url}" class="btn">{str tag=backto arg1=$mnethost.name}</a>{/if}

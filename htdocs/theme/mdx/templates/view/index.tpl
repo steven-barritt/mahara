@@ -32,14 +32,14 @@
                             {$view.displaytitle}
                         {else}
 							{if !$view.submittedto && (!$view.locked || $editlocked) && ($view.type != 'profile' && $view.type != 'dashboard')}								
-    						<a href="{$WWWROOT}view/blocks.php?id={$view.id}">{$view.displaytitle}</a>
+    						<a href="{$WWWROOT}view/view.php?id={$view.id}">{$view.displaytitle}</a>
                             {else}
                             <a href="{$view.fullurl}">{$view.displaytitle}</a>
                             {/if}
                         {/if}
                         </h3>
                         <div class="fr btns2">
-{if !$view.submittedto && (!$view.locked || $editlocked)}
+{if !$view.submittedto && (!$view.locked || $editlocked) && !$limitedediting}
                             <a href="{$WWWROOT}view/blocks.php?id={$view.id}&{$querystring}" title="{str tag ="editcontentandlayout" section="view"}"><img src="{theme_url filename='images/btn_edit.png'}" alt="{str(tag=editspecific arg1=$view.displaytitle)|escape:html|safe}"></a>
 {/if}
 {if !$view.submittedto && $view.removable && (!$view.locked || $editlocked ) && !$limitedediting}
