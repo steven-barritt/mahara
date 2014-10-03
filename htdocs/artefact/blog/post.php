@@ -31,6 +31,7 @@ if (!PluginArtefactBlog::is_active()) {
  */
 $posttype = 0; //SB new type for posts 
 $blogpost = param_integer('blogpost', param_integer('id', 0));
+$focuselement = 'title';
 if (!$blogpost) {
 /*
  *  For a new post, a tag can be set from tagged blogpost block
@@ -488,6 +489,7 @@ function editpost_submit(Pieform $form, $values) {
     db_begin();
     $postobj = new ArtefactTypeBlogPost($blogpost, null);
     $postobj->set('title', $values['title']);
+    $postobj->set('description', $values['description']);
 	if($values['blogtype'] == 0 || $values['blogtype'] == 2){
 	    $postobj->set('description', $values['description']);
 	}
@@ -516,37 +518,35 @@ function editpost_submit(Pieform $form, $values) {
     $blogpost = $postobj->get('id');
 
     // Attachments
-	if($values['filebrowser'] != NULL) {
-		$old = $postobj->attachment_id_list();
-		// $new = is_array($values['filebrowser']['selected']) ? $values['filebrowser']['selected'] : array();
-		$new = is_array($values['filebrowser']) ? $values['filebrowser'] : array();
-		// only allow the attaching of files that exist and are editable by user
-		foreach ($new as $key => $fileid) {
-			$file = artefact_instance_from_id($fileid);
-			if (!($file instanceof ArtefactTypeFile) || !$USER->can_publish_artefact($file)) {
-				unset($new[$key]);
-			}
-		}
-		if (!empty($new) || !empty($old)) {
-			foreach ($old as $o) {
-				if (!in_array($o, $new)) {
-					try {
-						$postobj->detach($o);
-					}
-					catch (ArtefactNotFoundException $e) {}
-				}
-			}
-			foreach ($new as $n) {
-				if (!in_array($n, $old)) {
-					try {
-						$postobj->attach($n);
-					}
-					catch (ArtefactNotFoundException $e) {}
-				}
-			}
-		}
-	    db_commit();
-	}
+    $old = $postobj->attachment_id_list();
+    // $new = is_array($values['filebrowser']['selected']) ? $values['filebrowser']['selected'] : array();
+    $new = is_array($values['filebrowser']) ? $values['filebrowser'] : array();
+    // only allow the attaching of files that exist and are editable by user
+    foreach ($new as $key => $fileid) {
+        $file = artefact_instance_from_id($fileid);
+        if (!($file instanceof ArtefactTypeFile) || !$USER->can_publish_artefact($file)) {
+            unset($new[$key]);
+        }
+    }
+    if (!empty($new) || !empty($old)) {
+        foreach ($old as $o) {
+            if (!in_array($o, $new)) {
+                try {
+                    $postobj->detach($o);
+                }
+                catch (ArtefactNotFoundException $e) {}
+            }
+        }
+        foreach ($new as $n) {
+            if (!in_array($n, $old)) {
+                try {
+                    $postobj->attach($n);
+                }
+                catch (ArtefactNotFoundException $e) {}
+            }
+        }
+    }
+    db_commit();
 
     $result = array(
         'error'   => false,
