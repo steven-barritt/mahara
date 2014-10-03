@@ -832,6 +832,9 @@ class BlockInstance {
                 $smarty->assign('retractedonload', $configdata['retractedonload']);
             }
         }
+		if (method_exists($classname, 'allow_inlineediting')) {
+            $smarty->assign('inlineediting', call_static_method($classname, 'allow_inlineediting', $this));
+        }
 
         return $smarty->fetch('view/blocktypecontainerviewing.tpl');
     }
@@ -852,7 +855,7 @@ class BlockInstance {
         safe_require('blocktype', $this->get('blocktype'));
         $blocktypeclass = generate_class_name('blocktype', $this->get('blocktype'));
         $elements = call_static_method($blocktypeclass, 'instance_config_form', $this, $this->get_view()->get('template'));
-
+		$limitedediting = get_account_preference($USER->id, 'limitedediting');
         // Block types may specify a method to generate a default title for a block
         $hasdefault = method_exists($blocktypeclass, 'get_instance_title');
 
@@ -861,7 +864,7 @@ class BlockInstance {
         $retractable = (isset($configdata['retractable']) ? $configdata['retractable'] : false);
         $retractedonload = (isset($configdata['retractedonload']) ? $configdata['retractedonload'] : $retractable);
 
-        if (call_static_method($blocktypeclass, 'override_instance_title', $this)) {
+        if (call_static_method($blocktypeclass, 'override_instance_title', $this) || $limitedediting ) {
             $titleelement = array(
                 'type' => 'hidden',
                 'value' => $title,
@@ -879,7 +882,6 @@ class BlockInstance {
             );
         }
 //		$elements = array();
-			if(!get_account_preference($USER->id, 'limitedediting')){
         $elements = array_merge(
             array(
                 'title' => $titleelement,
@@ -900,6 +902,10 @@ class BlockInstance {
                     'value' => $new,
                 ),
             ),
+            $elements);
+		
+			if(!$limitedediting){
+        $elements = array_merge(
             $elements,
             array (
                 'retractable' => array(

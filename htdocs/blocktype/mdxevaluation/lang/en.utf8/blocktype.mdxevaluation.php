@@ -27,7 +27,7 @@
 
 defined('INTERNAL') || die();
 
-$string['title'] = 'Self Evaluation';
+$string['title'] = 'Evaluation';
 $string['description1'] = 'Self Evaluation block';
 $string['viewstoshow'] = 'Maximum number of pages to show';
 $string['viewstoshowdescription'] = 'Between 1 and 100';
@@ -44,10 +44,15 @@ $string['studentship'] = 'Studentship';
 $string['studentshipdescription'] = 'Engagment with the subject matter, course activities, group discussions etc, attendance.';
 $string['workbook'] = 'Workbook';
 $string['workbookdescription'] = 'Depth and quality of workbook entries, showing experimentation, development, and self reflection.';
-$string['selfmark'] = 'Selfmark';
-$string['selfmarkdescription'] = 'Selfmark';
+$string['grade'] = 'Grade';
+$string['gradedescription'] = 'Grade';
+$string['evaluationtype'] = 'Type of Evaluation';
+$string['evaluationtypedescription'] = 'Type of evaluation, Self - only the page owner can edit, Peer - only other users can edit, Tutor - only tutors of groups that the page has been submitted to can edit.';
+$string['inlineediting'] = 'Inline Editing';
+$string['inlineeditingdescription'] = 'Allow Inline Editing';
 $string['exc'] = 'Exc';
 $string['vgood'] = 'V.Good';
 $string['good'] = 'Good';
 $string['pass'] = 'Pass';
 $string['fail'] = 'Fail';
+$string['post'] = 'Update';

@@ -1938,6 +1938,13 @@ function getoptions_country() {
 function get_help_icon($plugintype, $pluginname, $form, $element, $page='', $section='') {
     global $THEME;
 
+//SB - this isn't tested with all forms etc it just allows you to have several forms with 
+// the same name _id on a page and still see the help
+	if($form != NULL){
+		if(strpos($form, '_') > 0){
+			$form = substr($form, 0, strpos($form, '_'));
+		}
+	}
     return ' <span class="help"><a href="" onclick="'.
         hsc(
             'contextualHelp(' . json_encode($form) . ',' .
