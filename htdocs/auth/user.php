@@ -1524,6 +1524,11 @@ class LiveUser extends User {
                     throw new AccessTotallyDeniedException(get_string('accesstotallydenied_institutionsuspended', 'mahara', $authinstance->displayname, $sitename));
                     return false;
                 }
+				//SUCCESS - reset login tries
+				$record =get_record('usr', 'id', $user->id, null, null, null, null, 'id, logintries');
+				$record->logintries = 0;
+				update_record('usr', $record, false);
+
 
                 return true;
             }
