@@ -46,11 +46,34 @@ class PluginBlocktypeGallery extends PluginBlocktype {
         );
     }
 
+    public static function allow_inlineediting(BlockInstance $instance) {
+		global $USER;
+        $userid = (!empty($USER) ? $USER->get('id') : 0);
+        //$view = 
+        $configdata = $instance->get('configdata');
+		$view = $instance->get_view();
+		require_once('group.php');
+        if(isset($configdata['inlineediting']) && $configdata['inlineediting'] && $view->get('owner') == $userid && !$view->is_submitted()){				
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $configdata = $instance->get('configdata'); // this will make sure to unserialize it for us
         $configdata['viewid'] = $instance->get('view');
         $style = isset($configdata['style']) ? intval($configdata['style']) : 2;
         $copyright = null; // Needed to set Panoramio copyright later...
+        $formstr = '';
+		global $USER;
+        $userid = (!empty($USER) ? $USER->get('id') : 0);
+        if (!$editing && $userid != 0 && self::allow_inlineediting($instance)) {
+			
+	        $formstr .= self::inline_form($instance, false);
+	        $formstr .= self::gallery_js($instance);
+        }
 
         switch ($style) {
             case 0: // thumbnails
@@ -404,6 +427,8 @@ class PluginBlocktypeGallery extends PluginBlocktype {
         }
         $smarty->assign('frame', get_config_plugin('blocktype', 'gallery', 'photoframe'));
         $smarty->assign('copyright', $copyright);
+        $smarty->assign('form', $formstr);
+        
 
         return $smarty->fetch('blocktype:gallery:' . $template . '.tpl');
     }
@@ -576,8 +601,103 @@ class PluginBlocktypeGallery extends PluginBlocktype {
                 ),
                 'defaultvalue' => (isset($configdata['width'])) ? $configdata['width'] : '75',
             ),
+            'inlineediting' => array(
+                    'type'         => 'checkbox',
+                    'title'        => get_string('inlineediting', 'blocktype.mdxevaluation'),
+                    'description'  => get_string('inlineeditingdescription', 'blocktype.mdxevaluation'),
+                    'defaultvalue' => (isset($configdata['inlineediting'])) ? $configdata['inlineediting'] : false
+            )
+
         );
     }
+
+
+    public function gallery_js() {
+        $js = <<<EOF
+function gallery_success(form, data) {
+		window.location.replace(data.goto);
+        
+    }
+EOF;
+        return "<script>$js</script>";
+    }
+
+public function gallery_submit(Pieform $form, $values) {
+        $instance = new BlockInstance($values['instance']);
+
+        $redirect = get_config('wwwroot').'/view/view.php?id=' . $instance->get('view');
+        //$redirect = '/view/index.php';
+
+        $result = array(
+            'block'    => $values['instance'],
+            'goto' => $redirect,
+        );
+
+        $form->reply(PIEFORM_OK, $result);
+    }
+
+
+    public function inline_form(BlockInstance $instance, $descriptions=true) {
+        require_once('pieforms/pieform.php');
+		safe_require('artefact', 'file');
+
+		global $USER;
+        $configdata = $instance->get('configdata');
+
+        $view = $instance->get_view();
+		$folder = $configdata['artefactid'];
+		$highlight = null;
+        $elements = array (
+            'files' => array (
+					'type' => 'filebrowser',
+					'folder'       => $folder,
+					'highlight'    => $highlight,
+					'browse'       => 1,
+            		'page'         => View::make_base_url(),
+					'filters'		=> array('filetype' => array('image/jpeg','image/png','image/gif','image/tiff')),
+					'config'       => array(
+						'upload'          => true,
+						'uploadagreement' => get_config_plugin('artefact', 'file', 'uploadagreement'),
+						'resizeonuploaduseroption' => get_config_plugin('artefact', 'file', 'resizeonuploaduseroption'),
+						'resizeonuploaduserdefault' => $USER->get_account_preference('resizeonuploaduserdefault'),
+						'createfolder'    => false,
+						'edit'            => true,
+						'select'          => false,
+						'alwaysopen'		=> false,
+						'nobrowse'		=> true,
+						)
+            		),
+            'configdata' => array(
+                    'type'         => 'hidden',
+                    'value'        => $configdata
+            		),
+			'instance' => array(
+                    'type' => 'hidden',
+                    'value' => $instance->get('id'),
+                	),
+			'submit' => array(
+                    'type' => 'submit',
+                    'value' => get_string('update'),
+                	)
+
+
+        );
+        return pieform(array(
+            'name'      => 'instconf_'.$instance->get('id'),
+			'id'		=> 'instconf',
+            'renderer'  => 'maharatable',
+            'autofocus' => false,
+            'jsform'    => true,
+            'plugintype' => 'blocktype',
+            'pluginname' => 'gallery',
+            'validatecallback' => array('PluginBlocktypeGallery', 'gallery_validate'),
+            'successcallback' => array('PluginBlocktypeGallery', 'gallery_submit'),
+            'jssuccesscallback' => 'gallery_success',
+            'elements' => $elements
+			)
+        );;
+	}
+
 
     public static function instance_config_validate($form, $values) {
         global $USER;
