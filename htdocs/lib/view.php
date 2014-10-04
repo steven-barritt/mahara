@@ -3473,6 +3473,9 @@ class View {
                 case 'mostvisited':
                     $order = 'v.visits DESC,';
                     break;
+                case 'submitted':
+                    $order = 'v.submittedgroup ASC,';
+                    break;
                 case 'mostcomments':
                     $select .= ', COUNT(DISTINCT acc.artefact) AS commentcount';
                     $from .= '

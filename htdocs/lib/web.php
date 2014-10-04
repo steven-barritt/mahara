@@ -2563,7 +2563,7 @@ function mahara_standard_nav() {
         ),
         'myportfolio' => array(
             'path' => 'myportfolio',
-            'url' => 'view/index.php',
+            'url' => 'view/index.php?orderby=submitted',
             'title' => get_string('myportfolio'),
             'weight' => 20,
             'accesskey' => 'p',
