@@ -179,6 +179,8 @@ function pieform_element_filebrowser(Pieform $form, $element) {
         $params .= '&institution=' . $institution;
     }
     $smarty->assign('folderparams', $params);
+//    $smarty->assign('nobrowse', 1);
+//    $smarty->assign('steve', 'bob');
 
     return $smarty->fetch('artefact:file:form/filebrowser.tpl');
 }
@@ -273,6 +275,7 @@ function pieform_element_filebrowser_build_filelist($form, $element, $folder, $h
     $editmeta = (int) ($userid && !$editable && !empty($element['config']['tag']));
     $querybase = $element['page'] . (strpos($element['page'], '?') === false ? '?' : '&');
     $prefix = $form->get_name() . '_' . $element['name'];
+	$nobrowse = (int) $element['config']['nobrowse'];
 
     $filters = isset($element['filters']) ? $element['filters'] : null;
     $filedata = ArtefactTypeFileBase::get_my_files_data($folder, $userid, $group, $institution, $filters);
@@ -285,6 +288,8 @@ function pieform_element_filebrowser_build_filelist($form, $element, $folder, $h
     $smarty->assign('publishing', $publishing);
     $smarty->assign('showtags', $showtags);
     $smarty->assign('editmeta', $editmeta);
+    $smarty->assign('nobrowse', $nobrowse);
+    
     $smarty->assign('filelist', $filedata);
     $smarty->assign('querybase', $querybase);
     $smarty->assign('prefix', $prefix);

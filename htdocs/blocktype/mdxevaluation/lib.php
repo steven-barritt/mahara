@@ -52,7 +52,7 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
         $configdata = $instance->get('configdata');
 		$view = $instance->get_view();
 		require_once('group.php');
-        if($configdata['inlineediting']){
+        if(isset($configdata['inlineediting']) && $configdata['inlineediting']){
 			if($configdata['evaltype'] == 1){
 				//if it is self evaluation then the owner has to equal the user
 				//and the view has to be not locked or submitted
@@ -88,25 +88,12 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $formstr = '';
 		global $USER;
-		// here we need to check the type of evaluation self - peer - tutor
-		// then depending on the type we check access
-		// if self eval the user has to match owner of the view
-		//else if peer then user has to not match owner of view
-		// else if tutor then user has to have tutor rights to the group it is submitted to
-		//this means the page has to be submitted before a tutor grade can be given.
-		//$returnstr .= '<div id="bob">';
         $userid = (!empty($USER) ? $USER->get('id') : 0);
-        if (!$editing && $userid != 0) {
+        if (!$editing && $userid != 0 && self::allow_inlineediting($instance)) {
 			
-//			$returnstr .= '<div class="blockinstance-controls"><input type="image" src="http://localhost:8888/mahara/htdocs/theme/raw/static/images/btn_edit.png" class="configurebutton" name="action_configureblockinstance_id_'.'{$id}" alt="'.'{$strconfigtitletext}"</div>';
-			/*<input type="image" src="http://localhost:8888/mahara/htdocs/theme/raw/static/images/btn_edit.png" class="configurebutton" name="action_configureblockinstance_id_1113" alt="">*/
-			//$returnstr .= '</div>';
-            //$returnstr .= self::wallpost_js();
-//			$returnstr .= '<div class="inline-form hidden" id="mdxevaluation_'.$instance->get('id').'">';
 	        $formstr .= self::evaluation_form($instance, false);
-//			$returnstr .= '</div>';
+            $formstr .= self::mdxevaluation_js();
         }
-		//$returnstr .= '</div>';
         $configdata = $instance->get('configdata');
         $smarty = smarty_core();
         $smarty->assign('research', $configdata['research']);
@@ -155,10 +142,11 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
                     'type'         => 'hidden',
                     'value' 		=> $configdata['retractedonload'],
                 	),				
-			'submit' => array(
-                    'type' => 'submit',
-                    'value' => get_string('post', 'blocktype.mdxevaluation'),
-                	)
+			'action_configureblockinstance_id_' . $instance->get('id') => array(
+                    'type' => 'submitcancel',
+                    'value' => array(get_string('update'),get_string('cancel')),
+		            'goto' => View::make_base_url(),
+                	),
 					)
 					);
         $returnstr .= pieform(array(
@@ -173,7 +161,7 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
 //            'templatedir' => pieform_template_dir('wallpost.php', 'blocktype/wall'),
             'validatecallback' => array('PluginBlocktypeMdxevaluation', 'mdxevaluation_validate'),
             'successcallback' => array('PluginBlocktypeMdxevaluation', 'mdxevaluation_submit'),
-            //'jssuccesscallback' => 'mdxevaluation_success',
+            'jssuccesscallback' => 'mdxevaluation_success',
             'elements' => $elements
 			)
         );
@@ -368,6 +356,19 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
 		);
 	}
 	
+	
+    public function mdxevaluation_js() {
+        $js = <<<EOF
+function mdxevaluation_success(form, data) {
+		window.location.replace(data.goto);
+        
+    }
+EOF;
+        return "<script>$js</script>";
+    }
+
+	
+	
 public function mdxevaluation_submit(Pieform $form, $values) {
         global $SESSION, $USER;
         $instance = new BlockInstance($values['instance']);
@@ -381,88 +382,19 @@ public function mdxevaluation_submit(Pieform $form, $values) {
         unset($values['change']);
         unset($values['new']);
 
-        // make sure that user is allowed to publish artefact. This is to stop
-        // hacking of form value to attach other users private data.
-/*        $badattachment = false;
-        if (!empty($values['artefactid'])) {
-            $badattachment = !$this->verify_attachment_permissions($values['artefactid']);
-        }
-        if (!empty($values['artefactids'])) {
-            $badattachment = !$this->verify_attachment_permissions($values['artefactids']);
-        }
-        if ($badattachment) {
-            $result['message'] = get_string('unrecoverableerror', 'error');
-            $form->set_error(null, $result['message']);
-            $form->reply(PIEFORM_ERR, $result);
-            exit();
-        }*/
 
-        $redirect = '/view/view.php?id=' . $instance->get('view');
-/*        if (param_boolean('new', false)) {
-            $redirect .= '&new=1';
-        }
-        if ($category = param_alpha('c', '')) {
-            $redirect .= '&c='. $category;
-        }*/
+        $redirect = get_config('wwwroot').'/view/view.php?id=' . $instance->get('view');
+        //$redirect = '/view/index.php';
 
         $result = array(
+            'block'    => $values['instance'],
             'goto' => $redirect,
         );
 
-/*        if (is_callable(array(generate_class_name('blocktype', $this->get('blocktype')), 'instance_config_save'))) {
-            try {
-                $values = call_static_method(generate_class_name('blocktype', $this->get('blocktype')), 'instance_config_save', $values, $this);
-            }
-            catch (MaharaException $e) {
-                $result['message'] = $e instanceof UserException ? $e->getMessage() : get_string('unrecoverableerror', 'error');
-                $form->set_error(null, $result['message']);
-                $form->reply(PIEFORM_ERR, $result);
-            }
-        }*/
-
-//        $title = (isset($values['title'])) ? $values['title'] : '';
-//        unset($values['title']);
-
-        // A block may return a list of other blocks that need to be
-        // redrawn after configuration of this block.
-//        $torender = !empty($values['_redrawblocks']) && $form->submitted_by_js() ? $values['_redrawblocks'] : array();
-//        unset($values['_redrawblocks']);
 
         $instance->set('configdata', $values);
-//        $this->set('title', $title);
-
-/*        try {
-            $rendered = $this->render_editing(false, false, $form->submitted_by_js());
-        }
-        catch (HTMLPurifier_Exception $e) {
-            $message = get_string('blockconfigurationrenderingerror', 'view') . ' ' . $e->getMessage();
-            $form->reply(PIEFORM_ERR, array('message' => $message));
-        }
-*/
 		$rendered = '';
         $instance->commit();
-
-/*        $result = array(
-            'error'   => false,
-            'message' => get_string('blockinstanceconfiguredsuccessfully', 'view'),
-            'data'    => $rendered,
-            'blockid' => $instance->get('id'),
-            'viewid'  => $instance->get('view'),
-            'goto'    => $redirect,
-        );*/
-
-        // Render all the other blocks in the torender list
-/*        $result['otherblocks'] = array();
-        foreach ($torender as $blockid) {
-            if ($blockid != $result['blockid']) {
-                $otherblock = new BlockInstance($blockid);
-                $result['otherblocks'][] = array(
-                    'blockid' => $blockid,
-                    'data'    => $otherblock->render_editing(false, false, true),
-                );
-            }
-        }
-*/
         $form->reply(PIEFORM_OK, $result);
     }
 

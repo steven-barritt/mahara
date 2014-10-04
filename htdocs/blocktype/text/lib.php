@@ -26,7 +26,15 @@ class PluginBlocktypeText extends SystemBlocktype {
     }
 
     public static function render_instance(BlockInstance $instance, $editing=false) {
-        $configdata = $instance->get('configdata');
+        $formstr = '';
+		global $USER;
+        $userid = (!empty($USER) ? $USER->get('id') : 0);
+        if (!$editing && $userid != 0 && self::allow_inlineediting($instance)) {
+			
+	        $formstr .= self::inline_form($instance, false);
+	        $formstr .= self::text_js($instance);
+        }
+		$configdata = $instance->get('configdata');
         $smarty = smarty_core();
         if (array_key_exists('text', $configdata)) {
             $smarty->assign('text', $configdata['text']);
@@ -34,12 +42,127 @@ class PluginBlocktypeText extends SystemBlocktype {
         else {
             $smarty->assign('text', '');
         }
+        $smarty->assign('form',$formstr);
         return $smarty->fetch('blocktype:text:content.tpl');
     }
+
+    public function inline_form(BlockInstance $instance, $descriptions=true) {
+        require_once('pieforms/pieform.php');
+
+        $configdata = $instance->get('configdata');
+        if (!$height = get_config('blockeditorheight')) {
+            $cfheight = param_integer('cfheight', 0);
+            $height = $cfheight ? $cfheight * 0.7 : 150;
+        }
+
+        $view = $instance->get_view();
+        $text = '';
+        if (array_key_exists('text', $configdata)) {
+            $text = $configdata['text'];
+        }
+
+        $elements = array (
+            'text' => array (
+					'type' => 'wysiwyg',
+					'width' => '100%',
+					'height' => $height . 'px',
+					'defaultvalue' => $text,
+					'rules' => array('maxlength' => 65536),
+            		),
+            'inlineediting' => array(
+                    'type'         => 'hidden',
+                    'value'        => $configdata['inlineediting']
+            		),
+            'retractable' => array(
+                    'type'         => 'hidden',
+                    'value' 		=> $configdata['retractable'],
+                	),				
+			'retractedonload' => array(
+                    'type'         => 'hidden',
+                    'value' 		=> $configdata['retractedonload'],
+                	),				
+			'instance' => array(
+                    'type' => 'hidden',
+                    'value' => $instance->get('id'),
+                	),
+			'action_configureblockinstance_id_' . $instance->get('id') => array(
+                    'type' => 'submitcancel',
+                    'value' => array(get_string('update'),get_string('cancel')),
+		            'goto' => View::make_base_url(),
+                	),
+
+        );
+        return pieform(array(
+            'name'      => 'instconf_'.$instance->get('id'),
+			'id'		=> 'instconf',
+            'renderer'  => 'maharatable',
+            'autofocus' => false,
+            'jsform'    => true,
+            'plugintype' => 'blocktype',
+            'pluginname' => 'text',
+            'validatecallback' => array('PluginBlocktypeText', 'text_validate'),
+            'successcallback' => array('PluginBlocktypeText', 'text_submit'),
+            'jssuccesscallback' => 'text_success',
+            'elements' => $elements
+			)
+        );;
+	}
+
+    public function text_js() {
+        $js = <<<EOF
+function text_success(form, data) {
+		window.location.replace(data.goto);
+        
+    }
+EOF;
+        return "<script>$js</script>";
+    }
+
+
+public function text_submit(Pieform $form, $values) {
+
+        global $SESSION, $USER;
+        $instance = new BlockInstance($values['instance']);
+
+        // Destroy form values we don't care about
+        unset($values['sesskey']);
+        unset($values['blockinstance']);
+        unset($values['action_configureblockinstance_id_' . $instance->get('id')]);
+        unset($values['blockconfig']);
+        unset($values['id']);
+        unset($values['change']);
+        unset($values['new']);
+
+        $redirect = get_config('wwwroot').'/view/view.php?id=' . $instance->get('view');
+
+        $result = array(
+            'goto' => $redirect,
+        );
+
+        $instance->set('configdata', $values);
+		$rendered = '';
+        $instance->commit();
+        $form->reply(PIEFORM_OK, $result);
+}
 
     public static function has_instance_config() {
         return true;
     }
+
+    public static function allow_inlineediting(BlockInstance $instance) {
+		global $USER;
+        $userid = (!empty($USER) ? $USER->get('id') : 0);
+        //$view = 
+        $configdata = $instance->get('configdata');
+		$view = $instance->get_view();
+		require_once('group.php');
+        if(isset($configdata['inlineediting']) && $configdata['inlineediting'] && $view->get('owner') == $userid && !$view->is_submitted()){				
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 
     public static function instance_config_form($instance) {
         require_once('license.php');
@@ -64,6 +187,13 @@ class PluginBlocktypeText extends SystemBlocktype {
                 'defaultvalue' => $text,
                 'rules' => array('maxlength' => 65536),
             ),
+            'inlineediting' => array(
+                    'type'         => 'checkbox',
+                    'title'        => get_string('inlineediting', 'blocktype.mdxevaluation'),
+                    'description'  => get_string('inlineeditingdescription', 'blocktype.mdxevaluation'),
+                    'defaultvalue' => (isset($configdata['inlineediting'])) ? $configdata['inlineediting'] : false
+            )
+
         );
         return $elements;
     }
