@@ -339,6 +339,9 @@ else {
     $smarty->assign('pageheadinghtml', $view->display_title(false));
 }
 
+$smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
+
+
 if (!$restrictedview) {
     $smarty->assign('viewcontent', $viewcontent);
 }
