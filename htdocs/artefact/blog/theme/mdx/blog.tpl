@@ -1,7 +1,8 @@
-{if ($editing)}
-<div class="right">
-    <span> <a class="btn" href="{$WWWROOT}artefact/blog/post.php?blog={$blogid}" target="_blank">{str tag='shortcutnewentry' section='artefact.blog'}</a> </span>
-</div>
+{if !$blog->get('locked') && $isowner}
+                <a href="{$WWWROOT}artefact/blog/post.php?blog={$blog->get('id')}&type=1"><img src="{theme_url filename='images/photo.png'}" width="30px"/></a>
+<a href="{$WWWROOT}artefact/blog/post.php?blog={$blog->get('id')}&type=2"><img src="{theme_url filename='images/text.png'}" width="30px" /></a>
+<a href="{$WWWROOT}artefact/blog/post.php?blog={$blog->get('id')}&type=3"><img src="{theme_url filename='images/link.png'}" width="30px" /></a>
+<a href="{$WWWROOT}artefact/blog/post.php?blog={$blog->get('id')}&type=0"><img src="{theme_url filename='images/html.png'}" width="30px" /></a>
 {/if}
 {if !$options.hidetitle}
 <h2>{$artefacttitle|safe}</h2>

@@ -39,7 +39,7 @@ class PluginBlocktypeBlog extends PluginBlocktype {
     }
 
     public static function render_instance(BlockInstance $instance, $editing=false) {
-        global $exporter;
+        global $exporter, $USER;
         $configdata = $instance->get('configdata');
 
         $result = '';
@@ -95,6 +95,8 @@ class PluginBlocktypeBlog extends PluginBlocktype {
             $smarty->assign('blockid', $instance->get('id'));
             $smarty->assign('editing', $editing);
             $smarty->assign('blogid', $blog->get('id'));
+			$smarty->assign_by_ref('blog', $blog);
+			$smarty->assign('isowner',$USER->get('id') == $blog->get('owner'));
             $smarty->assign('posts', $posts);
 
             $result = $smarty->fetch('artefact:blog:blog.tpl');

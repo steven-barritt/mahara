@@ -128,7 +128,7 @@ if (!$USER->get_account_preference('multipleblogs')) {
 }
 //SB
 $smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
-
+$smarty->assign('isowner',$USER->get('id') == $blog->get('owner'));
 $smarty->assign_by_ref('blog', $blog);
 $smarty->assign_by_ref('posts', $posts);
 $smarty->display('artefact:blog:view.tpl');
