@@ -66,7 +66,7 @@ class PluginBlocktypeGroupMembers extends SystemBlocktype {
         }
 
         require_once('searchlib.php');
-        $groupmembers = get_group_user_search_results($groupid, '', 0, $numtoshow, '', $order);
+        $groupmembers = get_group_user_search_results($groupid, '', 0, $numtoshow, '', $order,null,'nameatoz');
 
         if ($groupmembers['count']) {
             $smarty = smarty_core();
@@ -113,6 +113,7 @@ class PluginBlocktypeGroupMembers extends SystemBlocktype {
                 'description' => get_string('options_order_desc', 'blocktype.groupmembers'),
                 'defaultvalue' => !empty($configdata['order']) ? $configdata['order'] : 'latest',
                 'options' => array(
+                    'name' => get_string('name','blocktype.groupmembers'),
                     'latest' => get_string('Latest','blocktype.groupmembers'),
                     'random' => get_string('Random','blocktype.groupmembers'),
                 ),
