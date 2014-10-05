@@ -1538,6 +1538,28 @@ function group_format_editwindow($group) {
     return $formatted;
 }
 
+function get_group_list($type = null, $category = null){
+	$where = '';
+	if($type != null){
+		$where = ' WHERE g.grouptype = ?';
+		if($category){
+			$where .= ' AND gc.title = ?';
+		}
+		$groups = get_records_sql_array("
+				SELECT g.id, g.name, gc.title 
+				FROM {group} g 
+				INNER JOIN {group_category} gc on g.category = gc.id ".$where." AND g.deleted = 0 ORDER BY g.name",
+				array($type, $category)
+			);
+	}else{
+		$groups = get_records_sql_array("
+				SELECT g.id, g.name 
+				FROM {group} g WHERE g.deleted = 0 ORDER BY g.name
+				",array());
+    }
+    return $groups;
+}
+
 /*
  * Used by admin/groups/groups.php and admin/groups/groups.json.php for listing groups.
  */
@@ -2156,6 +2178,18 @@ function group_get_member_ids($group, $roles=null, $includedeleted=false) {
         WHERE g.id = ? ' . ($includedeleted ? '' : ' AND g.deleted = 0') . $rolesql,
         array($group)
     );
+}
+
+
+//SB just tells me if a user is in the group
+function group_is_member($userid,$groupid){
+	$groupmember = get_record_select('group_member', '{group} = ? AND {member} = ?', array($groupid,$userid), 'role');
+	if ($groupmember) {
+		return true;
+	}else{
+		return false;
+	}
+
 }
 
 function group_can_create_groups() {

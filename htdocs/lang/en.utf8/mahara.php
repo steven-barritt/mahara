@@ -33,6 +33,7 @@ $string['update']  = 'Update';
 $string['change']  = 'Change';
 $string['send']    = 'Send';
 $string['go']      = 'Go';
+$string['reset']      = 'Reset';
 $string['configfor']     = 'Configuration for';
 $string['default'] = 'Default';
 $string['upload']  = 'Upload';

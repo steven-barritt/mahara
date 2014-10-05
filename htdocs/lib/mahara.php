@@ -1717,6 +1717,7 @@ function handle_event($event, $data) {
     $plugintypes = plugin_types_installed();
     foreach ($plugintypes as $name) {
         $cache_key = "{$event}__{$name}";
+
         if (!isset($eventsubs_cache[$cache_key])) {
             $eventsubs_cache[$cache_key] = get_records_array($name . '_event_subscription', 'event', $event);
         }

@@ -14,6 +14,9 @@ define('INSTITUTIONALADMIN', 1);
 define('MENUITEM', 'configusers');
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 require_once(get_config('docroot') . 'lib/antispam.php');
+require_once(get_config('docroot') . 'lib/view.php');
+require_once(get_config('libroot') . 'group.php');
+
 
 define('TITLE', get_string('bulkactions', 'admin'));
 
@@ -153,6 +156,131 @@ if (is_using_probation()) {
 }
 
 // Delete users
+$resetprofileform = pieform(array(
+    'name'     => 'resetprofile',
+    'class'    => 'bulkactionform resetprofile',
+    'renderer' => 'oneline',
+    'elements' => array(
+        'users' => $userelement,
+        'title'        => array(
+            'type'         => 'html',
+            'class'        => 'bulkaction-title',
+            'value'        => get_string('resetprofile', 'admin') . ': ',
+        ),
+        'delete' => array(
+            'type'        => 'submit',
+            'confirm'     => get_string('confirmresetprofile', 'admin'),
+            'value'       => get_string('reset'),
+        ),
+    ),
+));
+
+$resetdashboardform = pieform(array(
+    'name'     => 'resetdashboard',
+    'class'    => 'bulkactionform resetdashboard',
+    'renderer' => 'oneline',
+    'elements' => array(
+        'users' => $userelement,
+        'title'        => array(
+            'type'         => 'html',
+            'class'        => 'bulkaction-title',
+            'value'        => get_string('resetdashboard', 'admin') . ': ',
+        ),
+        'delete' => array(
+            'type'        => 'submit',
+            'confirm'     => get_string('confirmresetdashboard', 'admin'),
+            'value'       => get_string('reset'),
+        ),
+    ),
+));
+
+$groups = get_group_list('project','Archive Group');
+$options = array();
+foreach($groups as $group){
+	$options[$group->id] = $group->name;
+}
+
+$archivepagesform = pieform(array(
+    'name'     => 'archivepages',
+    'class'    => 'bulkactionform archivepages',
+    'renderer' => 'oneline',
+    'elements' => array(
+        'users' => $userelement,
+        'title'        => array(
+            'type'         => 'html',
+            'class'        => 'bulkaction-title',
+            'value'        => get_string('archivepages', 'admin') . ': ',
+        ),
+        'group' => array(
+            'type'        => 'select',
+            'options'	 => $options,
+        ),
+        'delete' => array(
+            'type'        => 'submit',
+            'confirm'     => get_string('confirmarchivepages', 'admin'),
+            'value'       => get_string('archive', 'admin'),
+        ),
+    ),
+));
+
+
+$allgroups = get_group_list();
+$grpoptions = array();
+foreach($allgroups as $group){
+	$grpoptions[$group->id] = $group->name;
+}
+
+$addtogroupform = pieform(array(
+    'name'     => 'addtogroup',
+    'class'    => 'bulkactionform addtogroup',
+    'renderer' => 'oneline',
+    'elements' => array(
+        'users' => $userelement,
+        'title'        => array(
+            'type'         => 'html',
+            'class'        => 'bulkaction-title',
+            'value'        => get_string('addtogroup', 'admin') . ': ',
+        ),
+        'group' => array(
+            'type'        => 'select',
+            'options'	 => $grpoptions,
+        ),
+        'delete' => array(
+            'type'        => 'submit',
+            'confirm'     => get_string('confirmaddtogroup', 'admin'),
+            'value'       => get_string('addtogroup', 'admin'),
+        ),
+    ),
+));
+
+
+
+$setlimitededitingform = pieform(array(
+    'name'     => 'setlimitedediting',
+    'class'    => 'bulkactionform setlimitedediting',
+    'renderer' => 'oneline',
+    'elements' => array(
+        'users' => $userelement,
+        'title'        => array(
+            'type'         => 'html',
+            'class'        => 'bulkaction-title',
+            'value'        => get_string('setlimitedediting', 'admin') . ': ',
+        ),
+        'limitedediting'        => array(
+            'type'         => 'checkbox',
+            'class'        => 'bulkaction-title',
+            'defaultvalue'        => false,
+        ),
+        'delete' => array(
+            'type'        => 'submit',
+            'confirm'     => get_string('confirmsetlimitedediting', 'admin'),
+            'value'       => get_string('update'),
+        ),
+    ),
+));
+
+
+// Delete users
 $deleteform = pieform(array(
     'name'     => 'delete',
     'class'    => 'bulkactionform delete',
@@ -177,6 +305,11 @@ $smarty->assign('PAGEHEADING', TITLE);
 $smarty->assign('users', $users);
 $smarty->assign('changeauthform', $changeauthform);
 $smarty->assign('suspendform', $suspendform);
+$smarty->assign('resetprofileform', $resetprofileform);
+$smarty->assign('archivepagesform', $archivepagesform);
+$smarty->assign('setlimitededitingform', $setlimitededitingform);
+$smarty->assign('resetdashboardform', $resetdashboardform);
+$smarty->assign('addtogroupform', $addtogroupform);
 $smarty->assign('deleteform', $deleteform);
 $smarty->assign('probationform', $probationform);
 $smarty->display('admin/users/bulk.tpl');
@@ -296,6 +429,112 @@ function delete_submit(Pieform $form, $values) {
     $SESSION->add_ok_msg(get_string('bulkdeleteuserssuccess', 'admin', count($users)));
     redirect('/admin/users/search.php');
 }
+
+function resetprofile_submit(Pieform $form, $values) {
+    global $users, $editable, $SESSION;
+	
+    db_begin();
+
+    foreach ($users as $user) {
+    	    
+    	$tmpuser = new User();
+    	$tmpuser->find_by_id($user->id);
+    	$tmpuser->delete_profile_view();
+    	$tmpuser->install_profile_view();	
+//        delete_user($user->id);
+    }
+
+    db_commit();
+
+    $SESSION->add_ok_msg(get_string('bulkresetprofileuserssuccess', 'admin', count($users)));
+    redirect('/admin/users/search.php');
+}
+function resetdashboard_submit(Pieform $form, $values) {
+    global $users, $editable, $SESSION;
+	
+    db_begin();
+
+    foreach ($users as $user) {
+    	    
+    	$tmpuser = new User();
+    	$tmpuser->find_by_id($user->id);
+    	$tmpuser->delete_dashboard_view();
+    	$tmpuser->install_dashboard_view();	
+//        delete_user($user->id);
+    }
+
+    db_commit();
+
+    $SESSION->add_ok_msg(get_string('bulkresetdashboarduserssuccess', 'admin', count($users)));
+    redirect('/admin/users/search.php');
+}
+
+
+function archivepages_submit(Pieform $form, $values) {
+    global $users, $editable, $SESSION;
+	
+
+    foreach ($users as $user) {
+    	    
+        db_begin();
+        execute_sql("
+            UPDATE {view}
+            SET submittedgroup = ?,
+                submittedtime = current_timestamp,
+                submittedhost = NULL,
+                submittedstatus = 1
+            WHERE type = 'portfolio' AND owner = ?",
+            array($values['group'], $user->id)
+        );
+
+
+        ArtefactType::update_locked($user->id);
+        db_commit();
+
+//        delete_user($user->id);
+    }
+
+    $SESSION->add_ok_msg(get_string('bulkarchivepagesuserssuccess', 'admin', count($users)));
+    redirect('/admin/users/search.php');
+}
+
+function setlimitedediting_submit(Pieform $form, $values) {
+    global $users, $editable, $SESSION;
+	
+    db_begin();
+
+    foreach ($users as $user) {
+    	    
+    	$tmpuser = new User();
+    	$tmpuser->find_by_id($user->id);
+    	$tmpuser->set_account_preference('limitedediting',$values['limitedediting']);
+//        delete_user($user->id);
+    }
+
+    db_commit();
+
+    $SESSION->add_ok_msg(get_string('bulkarchivepagesuserssuccess', 'admin', count($users)));
+    redirect('/admin/users/search.php');
+}
+
+function addtogroup_submit(Pieform $form, $values) {
+    global $users, $editable, $SESSION;
+	
+    db_begin();
+
+    foreach ($users as $user) {
+  		//need to check that they are not already a member!!
+  		if(!group_is_member($user->id,$values['group'])){
+  			group_add_user($values['group'],$user->id );	
+  		}    
+    }
+
+    db_commit();
+
+    $SESSION->add_ok_msg(get_string('bulkresetdashboarduserssuccess', 'admin', count($users)));
+    redirect('/admin/users/search.php');
+}
+
 
 function probation_submit(Pieform $form, $values) {
     global $SESSION, $users;

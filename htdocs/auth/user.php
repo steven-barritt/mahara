@@ -498,12 +498,44 @@ class User {
         return $this->get_view_by_type('profile');
     }
 
+
+	public function delete_profile_view(){
+        $views = $this->get('views');
+        if (isset($views['profile'])) {
+            $viewid = $views['profile'];
+        }
+        else {
+            $viewid = get_field('view', 'id', 'type', 'profile', 'owner', $this->get('id'));
+        }
+		//if it doesnt exist we don;t need to do anything
+        if($viewid){ 
+        	$view = new View($viewid);     
+			$view->delete();
+		}
+	}
+
+
+	public function delete_dashboard_view(){
+        $views = $this->get('views');
+        if (isset($views['dashboard'])) {
+            $viewid = $views['dashboard'];
+        }
+        else {
+            $viewid = get_field('view', 'id', 'type', 'dashboard', 'owner', $this->get('id'));
+        }
+		//if it doesnt exist we don;t need to do anything
+        if($viewid){ 
+        	$view = new View($viewid);     
+			$view->delete();
+		}
+	}
+
     /**
      * Installs a user's profile view.
      *
      * @return View
      */
-    protected function install_profile_view() {
+    public function install_profile_view() {
         static $systemprofileviewid = null;
 
         db_begin();
@@ -557,7 +589,7 @@ class User {
      *
      * @return View
      */
-    protected function install_dashboard_view() {
+    public function install_dashboard_view() {
         static $systemdashboardviewid = null;
 
         db_begin();

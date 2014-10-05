@@ -2428,6 +2428,7 @@ function add_user_to_autoadd_groups($eventdata) {
 }
 
 
+
 /**
  * This function installs the site's default profile view
  *
