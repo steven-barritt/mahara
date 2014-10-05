@@ -1,5 +1,5 @@
 {include file="header.tpl"}
-			{if !limitedediting}
+			{if !$limitedediting}
             <div class="rbuttons">
                 <a class="btn" href="{$WWWROOT}artefact/blog/new/index.php">{str section="artefact.blog" tag="addblog"}</a>
             </div>
