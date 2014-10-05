@@ -479,6 +479,11 @@ class PluginSearchInternal extends PluginSearch {
                     $where .= ' AND u.id'
                         . PluginSearchInternal::match_expression($f['type'], $f['string'], $values, $ilike);
                 }
+                else if($f['field'] == 'group'){
+                    $where .= '
+                            AND u.id IN (
+                                SELECT member FROM {group_member} gm WHERE gm.group = '.$f['string']. ')';
+                }
                 else {
                     $where .= ' AND u.' . $f['field']
                         . PluginSearchInternal::match_expression($f['type'], $f['string'], $values, $ilike);

@@ -53,6 +53,14 @@
                 {$loggedindate|safe}
             </span>
         </div>
+        <div class="group-filter">
+            <label for="group">{str tag="groupfilter" section="admin"}</label>
+            <select name="group" id="group">
+            {foreach from=$groups item=g}
+                <option value="{$g['id']}"{if $search->loggedin === $g['id']} selected="selected"{/if}>{$g['name']}</option>
+            {/foreach}
+            </select>
+        </div>
         <div class="duplicateemail-filter">
             <label for="duplicateemail">{str tag="duplicateemailfilter" section="admin"}</label>
             <input type="checkbox" name="duplicateemail" id="duplicateemail" value="1"{if $search->duplicateemail} checked{/if}>

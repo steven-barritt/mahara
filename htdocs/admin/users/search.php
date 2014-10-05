@@ -28,6 +28,7 @@ $search = (object) array(
     'loggedin'       => param_alpha('loggedin', 'any'),
     'loggedindate'   => param_variable('loggedindate', strftime(get_string('strftimedatetimeshort'))),
     'duplicateemail' => param_boolean('duplicateemail', false),
+    'group'			 => param_integer('group',null),
 );
 
 $offset  = param_integer('offset', 0);
@@ -86,10 +87,18 @@ addLoadEvent(function() {
 })
 EOF;
 
+$groups = get_group_list(null,null);
+$options = array(null);
+foreach($groups as $group){
+	$options[] = array('id' => $group->id, 'name' => $group->name);
+}
+
+
 $smarty = smarty(array('adminusersearch', 'paginator'), array(), array('ascending' => 'mahara', 'descending' => 'mahara'));
 $smarty->assign('search', $search);
 $smarty->assign('limit', $limit);
 $smarty->assign('loggedintypes', $loggedintypes);
+$smarty->assign('groups', $options);
 $smarty->assign('loggedindate', $loggedindate);
 $smarty->assign('alphabet', explode(',', get_string('alphabet')));
 $smarty->assign('institutions', $institutions);

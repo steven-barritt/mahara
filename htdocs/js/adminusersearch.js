@@ -18,6 +18,7 @@ function UserSearch(pager) {
         self.rewriteQueryButton();
         self.rewriteCheckboxes();
         self.rewriteLoggedInFilter();
+        self.rewriteGroupFilter();
         self.rewriteDuplicateEmailFilter();
 
         paginatorProxy.addObserver(self);
@@ -170,6 +171,16 @@ function UserSearch(pager) {
             pager.params.offset = 0;
             pager.params.loggedindate = $j(this).val();
             pager.sendQuery();
+        });
+    };
+
+    this.rewriteGroupFilter = function() {
+        $j('#group').change(function() {
+            var type = $j(this).val();
+            pager.params.offset = 0;
+            pager.params.group = type;
+            pager.sendQuery();
+            return false;
         });
     };
 

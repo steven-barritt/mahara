@@ -724,6 +724,14 @@ $string['expiredusers'] = 'Expired users';
 $string['expired'] = 'Expired';
 $string['unexpireusers'] = 'Reactivate expired users';
 $string['usersreactivated'] = 'Users reactivated';
+$string['resetprofile'] = 'Reset Profile Page';
+$string['confirmresetprofile'] = 'Are you sure you want to reset the select users profile pages?';
+$string['resetdashboard'] = 'Reset Dashboard Page';
+$string['confirmresetdashboard'] = 'Are you sure you want to reset the select users Dashboard pages?';
+$string['archive'] = 'Archive';
+$string['archivepages'] = 'Archive all Pages to group';
+$string['confirmarchivepages'] = 'Are you sure you want to Archive all the select users pages?';
+$string['groupfilter'] = 'Filter by Group';
 
 // User account settings
 $string['accountsettings'] = 'Account settings';
@@ -1061,6 +1069,9 @@ $string['someusersnotinauthinstanceinstitution'] = 'Some of the users you have s
 $string['bulkchangeauthmethodsuccess'] = 'Reset authentication method for %d user(s)';
 $string['bulkchangeauthmethodresetpassword'] = 'You have chosen an authentication method that requires a password. %d user(s) do not have a password and will not be able to log in until their passwords are reset.';
 $string['bulkdeleteuserssuccess'] = 'Deleted %d user(s)';
+$string['bulkresetprofileuserssuccess'] = 'Reset %d user(s)';
+$string['bulkresetdashboarduserssuccess'] = 'Reset %d user(s)';
+$string['bulkarchivepagesuserssuccess'] = 'Archived %d user(s) pages';
 $string['bulkprobationpointssuccess'] = array(
     0 => 'Set probation points to %2$d for %1$d user',
     1 => 'Set probation points to %2$d for %1$d users'
@@ -1069,7 +1080,8 @@ $string['selectedusers'] = 'Selected users';
 $string['remoteuser'] = 'Remote username';
 $string['userreports'] = 'User reports';
 $string['userreportsdescription'] = 'View or download information about the users you selected on the search page.';
-
+$string['setlimitedediting'] = 'Set Limited Editing';
+$string['confirmsetlimitedediting'] = 'Are you sure you want to set limited editing for these users';
 // general stuff
 $string['notificationssaved'] = 'Notification settings saved';
 $string['onlyshowingfirst'] = 'Only showing first';

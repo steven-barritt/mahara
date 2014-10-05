@@ -269,6 +269,15 @@ function get_admin_user_search_results($search, $offset, $limit) {
             'string' => array_unique($archivesubmissionsusers),
         );
     }
+    // Filter by group
+    if(isset($search->group)){
+            $constraints[] = array(
+                'field'  => 'group',
+                'type'   => 'equals',
+                'string' => $search->group,
+            );
+    }
+    
     // Filter by duplicate emails
     if (!empty($search->duplicateemail)) {
         $duplicateemailartefacts = get_column_sql('
@@ -385,7 +394,7 @@ function get_admin_user_search_results($search, $offset, $limit) {
 function build_admin_user_search_results($search, $offset, $limit) {
     global $USER, $THEME;
 
-    $wantedparams = array('query', 'f', 'l', 'sortby', 'sortdir', 'loggedin', 'loggedindate', 'duplicateemail', 'institution');
+    $wantedparams = array('query', 'f', 'l', 'sortby', 'sortdir', 'loggedin', 'loggedindate', 'duplicateemail', 'institution'. 'group');
     $params = array();
     foreach ($search as $k => $v) {
         if (!in_array($k, $wantedparams)) {
