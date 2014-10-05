@@ -2,6 +2,7 @@
 	{$form|safe}
 </div>
 <div class="blockinstance-content-view">    
+	{if $viewable}
     <table class="mdxevaluation">
         <thead>
             <tr>
@@ -69,5 +70,8 @@
             </tr>
         </tbody>
     </table>
+    {else}
+    	<p>You cannot view this item.</p><p> If you are a Tutor the page must be submitted for assessment before you can grade it.</p>
+    {/if}
 </div>  
     

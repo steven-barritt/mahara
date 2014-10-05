@@ -85,6 +85,40 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
 			return false;
 		}
 	}
+	
+	public static function can_view_this_instance(BlockInstance $instance){
+		global $USER;
+        $userid = (!empty($USER) ? $USER->get('id') : 0);
+        //$view = 
+        $configdata = $instance->get('configdata');
+		$view = $instance->get_view();
+		require_once('group.php');
+        if(isset($configdata['evaltype'])){
+        	//Special case for tutor feedback - only the owner and tutors can see this
+			if($configdata['evaltype'] == 3){
+				//Page must be submitted AND
+				// User must be a tutor of the group that it is submitted to
+				if($view->get('owner') == $userid){
+					return true; //always let the owner see the evaluation
+				}
+				else{
+					//for now it only lets the tutor of the gorup see it but should let all tutors see it.
+					$submitteddata = $view->submitted_to();
+					if($submitteddata != NULL && group_user_can_assess_submitted_views($submitteddata['id'],$userid)){
+						return true;
+					}else{
+						return false;
+					}
+				}
+			}else{
+				return true;
+			}
+		}else{
+			//we have to return true for older version of the instance where tutor didnt appear
+			return true;
+		}
+	}
+	
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $formstr = '';
 		global $USER;
@@ -96,6 +130,7 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
         }
         $configdata = $instance->get('configdata');
         $smarty = smarty_core();
+        $smarty->assign('viewable',self::can_view_this_instance($instance));
         $smarty->assign('research', $configdata['research']);
         $smarty->assign('concept', $configdata['concept']);
         $smarty->assign('technical', $configdata['technical']);
