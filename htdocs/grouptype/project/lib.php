@@ -27,6 +27,7 @@
 
 defined('INTERNAL') || die();
 require_once('view.php');
+require_once(get_config('libroot') . 'group.php');
 class PluginGrouptypeProject extends PluginGrouptype {
 
     public static function postinst($prevversion) {
@@ -50,22 +51,6 @@ class PluginGrouptypeProject extends PluginGrouptype {
     public static function copy_template_page($event, $eventdata) {
 		//SB this is where we have to fnd the pages shared with group and with copynewuser
 		//then we need to call the user function copy template page with the page
-		//rray(5) { ["member"]=> int(25) ["group"]=> int(16) ["ctime"]=> string(19) "2014-09-21 13:52:47" ["role"]=> string(6) "member" ["method"]=> string(8) "internal" }
-		/*$limit   = param_integer('limit', 5);
-    $offset  = param_integer('offset', 0);
-
-    $data = View::view_search(null, null, (object) array('group' => $group->id), null, $limit, $offset);
-    // Add a copy view form for all templates in the list
-    foreach ($data->data as &$v) {
-        if ($v['template']) {
-            $v['copyform'] = pieform(create_view_form(null, null, $v['id']));
-        }
-    }
-$query=null, $ownerquery=null, $ownedby=null, $copyableby=null, $limit=null, $offset=0,
-                                       $extra=true, $sort=null, $types=null, $collection=false, $accesstypes=null, $tag=null, $copynewuser=false	*/
-	    //var_dump($user['group']);
-		//We need to check wether the calling group is actually of the type Project as the event handler doesn;t seem to do this
-//		$type = group_get_type($eventdata['group']);
 		if(group_get_type($eventdata['group']) == 'project'){
 			$sharedviews = View::get_sharedviews_data(0,0,$eventdata['group'],true);
 			$sharedviews = $sharedviews->data;
@@ -76,37 +61,10 @@ $query=null, $ownerquery=null, $ownedby=null, $copyableby=null, $limit=null, $of
 			
 			$userobj = new User();
 			$userobj->find_by_id($eventdata['member']);
-	//		var_dump($userobj);
-	//		bob::bob();
+			//var_dump($userobj);
 			$userobj->copy_views_from_group($ids,$eventdata['group']);
 		}
 		
-//		var_dump($ids);
-/*		
-		var_dump($data);
-		Bob::bob();
-        $templateid = $values['usetemplate'];
-        unset($values['usetemplate']);
-        list($view, $template, $copystatus) = View::create_from_template($values, $templateid);
-        if (isset($copystatus['quotaexceeded'])) {
-            $SESSION->add_error_msg(get_string('viewcopywouldexceedquota', 'view'));
-            redirect(get_config('wwwroot') . 'view/choosetemplate.php');
-        }
-        $SESSION->add_ok_msg(get_string('copiedblocksandartefactsfromtemplate', 'view',
-            $copystatus['blocks'],
-            $copystatus['artefacts'],
-            $template->get('title'))
-        );
- 
-		var_dump($USER->name);
-		//var_dump($user);
-		*/
-/*        $name = display_name($user, null, true);
-        $blog = new ArtefactTypeBlog(0, (object) array(
-            'title'       => get_string('defaultblogtitle', 'artefact.blog', $name),
-            'owner'       => $user['id'],
-        ));
-        $blog->commit();*/
     }
 	
 
