@@ -154,7 +154,7 @@ function smarty($javascript = array(), $headers = array(), $pagestrings = array(
                     $toolbar = array(
                         null,
                         '"toolbar_toggle | bold italic underline | bullist numlist  indent outdent | link unlink | image | code | fullscreen"',
-                        '"alignleft aligncenter alignright alignjustify | subscript superscript | forecolor backcolor | removeformat pastetext | fullscreen"',
+                        '"alignleft aligncenter alignright alignjustify | subscript superscript | forecolor backcolor | removeformat pastetext"',
                         '"formatselect | fontselect | fontsizeselect | table "',
                     );
 
