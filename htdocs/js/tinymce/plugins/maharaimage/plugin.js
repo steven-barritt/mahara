@@ -105,22 +105,23 @@ tinymce.PluginManager.add('maharaimage', function(editor) {
 
 			widthCtrl = win.find('#width')[0];
 			heightCtrl = win.find('#height')[0];
+			if(widthCtrl != null && heightCtrl != null){
+				newWidth = widthCtrl.value();
+				newHeight = heightCtrl.value();
 
-			newWidth = widthCtrl.value();
-			newHeight = heightCtrl.value();
-
-			if (win.find('#constrain')[0].checked() && width && height && newWidth && newHeight) {
-				if (width != newWidth) {
-					newHeight = Math.round((newWidth / width) * newHeight);
-					heightCtrl.value(newHeight);
-				} else {
-					newWidth = Math.round((newHeight / height) * newWidth);
-					widthCtrl.value(newWidth);
+				if (win.find('#constrain')[0].checked() && width && height && newWidth && newHeight) {
+					if (width != newWidth) {
+						newHeight = Math.round((newWidth / width) * newHeight);
+						heightCtrl.value(newHeight);
+					} else {
+						newWidth = Math.round((newHeight / height) * newWidth);
+						widthCtrl.value(newWidth);
+					}
 				}
-			}
 
-			width = newWidth;
-			height = newHeight;
+				width = newWidth;
+				height = newHeight;
+			}
 		}
 
 		function onSubmitForm() {
@@ -132,12 +133,12 @@ tinymce.PluginManager.add('maharaimage', function(editor) {
 				}
 
 				imgElm.onload = function() {
-					if (!data.width && !data.height) {
-						dom.setAttribs(imgElm, {
-							width: imgElm.clientWidth,
-							height: imgElm.clientHeight
-						});
-					}
+//					if (!data.width && !data.height) {
+//						dom.setAttribs(imgElm, {
+//							width: imgElm.clientWidth,
+//							height: imgElm.clientHeight
+//						});
+//					}
 
 					selectImage();
 				};
@@ -290,20 +291,6 @@ tinymce.PluginManager.add('maharaimage', function(editor) {
 			{name: 'src', type: 'filepicker', filetype: 'image', label: 'Source', onchange: srcChange},
 			imageListCtrl,
 			{name: 'alt', type: 'textbox', label: 'Image description'},
-			{
-				type: 'container',
-				label: 'Dimensions',
-				layout: 'flex',
-				direction: 'row',
-				align: 'center',
-				spacing: 5,
-				items: [
-					{name: 'width', type: 'textbox', maxLength: 5, size: 3, onchange: recalcSize},
-					{type: 'label', text: 'x'},
-					{name: 'height', type: 'textbox', maxLength: 5, size: 3, onchange: recalcSize},
-					{name: 'constrain', type: 'checkbox', checked: true, text: 'Constrain proportions'}
-				]
-			}
 		];
 
 		function updateStyle() {
