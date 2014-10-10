@@ -8,16 +8,15 @@
                     <a href="{profile_url($post->user)}">
                        <img src="{profile_icon_url user=$post->user maxwidth=40 maxheight=40}" alt="">
                     </a>
-                    <div><a href="{profile_url($post->user)}">{$post->user|display_default_name|escape}</a></div>
                 </div>
             	<div class="newsfeedpost">
+                    <div><a href="{profile_url($post->user)}">{$post->user|display_default_name|escape}</a></div>
                     Posted {str tag='postedin' section='blocktype.blog/recentposts'} - 
                     <a href="{$WWWROOT}artefact/artefact.php?artefact={$post->parent}&amp;view={$post->view}">{$post->parenttitle}</a>
                     
                     
                     <br />
-                    <h2><a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&amp;view={$post->view}">{$post->title}</a></h2>
-                    <br />
+                    <strong><a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&amp;view={$post->view}">{$post->title}</a></strong>
                     <br style="clear:both"/>
                     <div class="postdescription">{clean_html($post->description)|safe}</div>    
 
