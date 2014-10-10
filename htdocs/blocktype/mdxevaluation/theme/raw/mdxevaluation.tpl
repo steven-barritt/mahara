@@ -6,7 +6,7 @@
     <table class="mdxevaluation">
         <thead>
             <tr>
-            <th></th><th>{str tag='exc' section='blocktype.mdxevaluation'}</th><th>{str tag='vgood' section='blocktype.mdxevaluation'}</th><th>{str tag='good' section='blocktype.mdxevaluation'}</th><th>{str tag='pass' section='blocktype.mdxevaluation'}s</th><th>{str tag='fail' section='blocktype.mdxevaluation'}</th>
+            <th></th><th>{str tag='exc' section='blocktype.mdxevaluation'}</th><th>{str tag='vgood' section='blocktype.mdxevaluation'}</th><th>{str tag='good' section='blocktype.mdxevaluation'}</th><th>{str tag='pass' section='blocktype.mdxevaluation'}</th><th>{str tag='fail' section='blocktype.mdxevaluation'}</th>
             </tr>
             </thead>
         <tbody>
