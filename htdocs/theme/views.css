@@ -633,6 +633,11 @@ div.blockinstance-header .retractor {
 	height:auto;
     max-width: 100%;
 }
+.blockinstance-content a img {
+	height:auto;
+    max-width: 100%;
+}
+
 table.maharatable tr#instconf_readonlymsg_container td,
 table.maharatable tr#instconf_otherblocksmsg_container td {
     background-color: #FEE7E7;
