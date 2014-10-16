@@ -73,9 +73,12 @@ $smarty->display('view/reset.tpl');
 
 function resetview_submit(Pieform $form, $values) {
     global $SESSION, $USER, $viewid, $groupid, $institution, $goto;
-    $view = new View($viewid, null);
-    $view->delete();
-    add_group_homepage($groupid,false);
+    //TODO Add code to reset dashboards and profile pages
+	if($groupid){
+	    $view = new View($viewid, null);
+		$view->delete();
+		add_group_homepage($groupid,false);
+	}
     //TODO figure out what I have to do to reset the page.
 /*    if (View::can_remove_viewtype($view->get('type')) || $USER->get('admin')) {
         $view->delete();
