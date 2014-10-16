@@ -630,6 +630,7 @@ div.blockinstance-header .retractor {
     margin: 5px 0;
 }
 .blockinstance-content div a img {
+	height:auto;
     max-width: 100%;
 }
 table.maharatable tr#instconf_readonlymsg_container td,

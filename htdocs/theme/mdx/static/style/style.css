@@ -646,27 +646,27 @@ ul.actionlist li.notbtn a {
 }
 
 
-#postlist .postdescription img{
+.postlist .postdescription img{
 	max-width:100%;
 	height:auto;
 }
 
-#postlist .published{
+.postlist .published{
 	background-color:#F4F7FF;
 }
 
-#postlist{
+.postlist{
 width:100%;
 max-width:500px;
 }
-#postlist .viewpost{
+.postlist .viewpost{
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
 	background-color:#F4F7FF;
 	padding:10px;
 	width:95%;
-	max-width:750px;
+	max-width:500px;
 
 }
 
@@ -677,12 +677,12 @@ max-width:500px;
 	background-color:#F4F7FF;
 	padding:10px;
 	width:95%;
-	max-width:750px;
+	max-width:500px;
 }
 
 
 #blogpost img{
-	width:100%;
+	max-width:100%;
 }
 
 .recentblogpost li{
@@ -696,6 +696,20 @@ max-width:500px;
 	margin-left:5px;
 	width:40px;
 	height:40px;
+}
+
+.owner .friendcell{
+	display:inline-block;
+	float:none;
+	margin-top:5px;
+	margin-right:5px;
+	margin-left:5px;
+	width:40px;
+	height:40px;
+}
+
+.sharedpage{
+	display:inline-block;
 }
 
 .newsfeedpost .postdescription{

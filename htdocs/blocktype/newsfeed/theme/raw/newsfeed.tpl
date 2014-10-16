@@ -1,5 +1,5 @@
 {if $posts}
-<div id="postlist">
+<div id="postlist" class="postlist">
     <ul class="recentblogpost">
     {foreach from=$posts item=post}
         <li>

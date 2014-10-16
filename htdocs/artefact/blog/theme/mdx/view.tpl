@@ -17,7 +17,7 @@
                 {if $blog->get('tags')}<p class="tags s"><label>{str tag=tags}:</label> {list_tags owner=$blog->get('owner') tags=$blog->get('tags')}</p>{/if}</div>
 
                 {if $posts}
-				<div id="postlist">
+				<div id="postlist" class="postlist">
                     {$posts.tablerows|safe}
 				</div>
                 <div id="blogpost_page_container" class="hidden">{$posts.pagination|safe}</div>
