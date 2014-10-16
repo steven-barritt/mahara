@@ -3623,7 +3623,7 @@ class View {
             $limit = $userlimit;
         }
         $offset = param_integer('offset', 0);
-        $orderby = param_variable('orderby', null);
+        $orderby = param_variable('orderby', 'atoz');
 
         $query  = param_variable('query', null);
         $tag    = param_variable('tag', null);
@@ -3669,6 +3669,7 @@ class View {
                                        'latestviewed' => get_string('latestviewed', 'view'),
                                        'mostvisited' => get_string('mostvisited', 'view'),
                                        'mostcomments' => get_string('mostcomments', 'view'),
+                                       'submitted' => get_string('submitted', 'view'),
                                        ),
                     'defaultvalue' => $orderby,
                 ),
@@ -4329,7 +4330,7 @@ class View {
      * Get views which have been explicitly shared to a group and are
      * not owned by the group excluding the view in collections
      */
-    public static function get_sharedviews_data($limit=10, $offset=0, $groupid, $copynewuser=false) {
+    public static function get_sharedviews_data($limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false) {
         global $USER;
         $userid = $USER->get('id');
         require_once(get_config('libroot') . 'group.php');
@@ -4339,23 +4340,25 @@ class View {
         $from = '
             FROM {view} v
             INNER JOIN {view_access} a ON (a.view = v.id)
-            INNER JOIN {group_member} m ON (a.group = m.group AND (a.role = m.role OR a.role IS NULL))';
+            INNER JOIN {group_member} m ON (a.group = m.group AND (a.role = m.role OR a.role IS NULL))
+            INNER JOIN {usr} u ON (v.owner = u.id)
+            LEFT OUTER JOIN {collection_view} cv ON (v.id = cv.view)';
 		if($copynewuser){
             $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?) AND v.copynewuser';
 		}else{
-            $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?)';
+            $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?) AND cv.view IS NULL';
 		}
         $ph = array($groupid, $userid, $groupid);
 
         $count = count_records_sql('SELECT COUNT(DISTINCT(v.id)) ' . $from, $ph);
         $viewdata = get_records_sql_assoc('
             SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid ' . $from . '
-            ORDER BY v.title, v.id',
+            ORDER BY u.firstname, v.title, v.id',
             $ph, $offset, $limit
         );
 
         if ($viewdata) {
-            View::get_extra_view_info($viewdata, false);
+            View::get_extra_view_info($viewdata, false, true, $getbloginfo);
         }
         else {
             $viewdata = array();
@@ -4416,7 +4419,7 @@ class View {
         );
     }
 
-    public static function get_extra_view_info(&$viewdata, $getartefacts=true, $gettags=true) {
+    public static function get_extra_view_info(&$viewdata, $getartefacts=true, $gettags=true, $getbloginfo=false) {
         if ($viewdata) {
             // Get view owner details for display
             $owners = array();
@@ -4435,6 +4438,40 @@ class View {
             }
 
             $viewidlist = join(',', array_map('intval', array_keys($viewdata)));
+            
+            //TODO look for a blog artifact and if it exists then get the number of posts and the most recent post date.
+            if($getbloginfo){
+                $artefacts = get_records_sql_array("SELECT va.view, va.artefact, a.title, a.artefacttype, t.plugin
+                    FROM {view_artefact} va
+                    INNER JOIN {artefact} a ON va.artefact = a.id
+                    INNER JOIN {artefact_installed_type} t ON a.artefacttype = t.name
+                    WHERE va.view IN (" . $viewidlist . ")
+                    AND t.name = 'blog'
+                    GROUP BY va.view, va.artefact, a.title, a.artefacttype, t.plugin
+                    ORDER BY a.title, va.artefact", '');
+                if ($artefacts) {
+                    foreach ($artefacts as $artefactrec) {
+                        safe_require('artefact', $artefactrec->plugin);
+                        $classname = generate_artefact_class_name($artefactrec->artefacttype);
+                        $artefactobj = new $classname($artefactrec->artefact, array('title' => $artefactrec->title));
+                        $artefactobj->set('dirty', false);
+                        if (!$artefactobj->in_view_list()) {
+                            continue;
+                        }
+                        $artname = $artefactobj->display_title(30);
+                        $bloglink = get_config('wwwroot').'artefact/artefact.php?artefact='.$artefactrec->artefact.'&view='.$viewdata[$artefactrec->view]->id;
+                        if (strlen($artname)) {
+                            $viewdata[$artefactrec->view]->artefacts[] = array('id'    => $artefactrec->artefact,
+                                                                               'title' => $artname,
+                                                                               'postcount' => $artefactobj->count_published_posts(),
+                                                                               'latestpost' => format_date(strtotime($artefactobj->latest_published_post())),
+                                                                               'bloglink' => $bloglink);
+                    	}
+                    	
+                    }
+                }
+            }
+            
             if ($getartefacts) {
                 $artefacts = get_records_sql_array('SELECT va.view, va.artefact, a.title, a.artefacttype, t.plugin
                     FROM {view_artefact} va

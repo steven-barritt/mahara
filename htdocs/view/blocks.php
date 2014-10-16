@@ -230,21 +230,21 @@ $limit       = param_integer('limit', 10);
 $offset      = param_integer('offset', 0);
 $showcomment = param_integer('showcomment', null);
 // Create the "make feedback private form" now if it's been submitted
-if (param_variable('make_public_submit', null)) {
+/*if (param_variable('make_public_submit', null)) {
     pieform(ArtefactTypeComment::make_public_form(param_integer('comment')));
 }
 else if (param_variable('delete_comment_submit_x', null)) {
     pieform(ArtefactTypeComment::delete_comment_form(param_integer('comment')));
 }
-
-if ($commenttype = $view->user_comments_allowed($USER)) {
+*/
+/*if ($commenttype = $view->user_comments_allowed($USER)) {
     $defaultprivate = !empty($releaseform);
     $moderate = isset($commenttype) && $commenttype === 'private';
     $addfeedbackform = pieform(ArtefactTypeComment::add_comment_form($defaultprivate, $moderate));
     $extrastylesheets[] = 'style/jquery.rating.css';
     $javascript[] = 'jquery.rating';
 }
-
+*/
 
 $viewid = $view->get('id');
 $feedback = ArtefactTypeComment::get_comments($limit, $offset, $showcomment, $view);
@@ -320,20 +320,20 @@ if ($view->get('owner') == "0") {
 // If the view has comments turned off, tutors can still leave
 // comments if the view is submitted to their group.
 // Feedback list pagination requires limit/offset params
-if ($USER->is_logged_in()) {
+/*if ($USER->is_logged_in()) {
     $objectionform = pieform(objection_form());
     if ($notrudeform = notrude_form()) {
         $notrudeform = pieform($notrudeform);
     }
 }
 $viewbeingwatched = (int)record_exists('usr_watchlist_view', 'usr', $USER->get('id'), 'view', $viewid);
+*/
 
-
-$smarty->assign('feedback', $feedback);
+//$smarty->assign('feedback', $feedback);
 $smarty->assign('owner', $owner);
 $smarty->assign('tags', $view->get('tags'));
 $smarty->assign('author', $view->display_author());
-if (isset($addfeedbackform)) {
+/*if (isset($addfeedbackform)) {
     $smarty->assign('enablecomments', 1);
     $smarty->assign('addfeedbackform', $addfeedbackform);
 }
@@ -342,9 +342,9 @@ if (isset($objectionform)) {
     $smarty->assign('notrudeform', $notrudeform);
 }
 $smarty->assign('viewbeingwatched', $viewbeingwatched);
-
+*/
 $smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
-if ($owner && $owner == $USER->get('id')) {
+/*if ($owner && $owner == $USER->get('id')) {
     if ($tutorgroupdata = group_get_user_course_groups($owner, $view->get('id'))) {
         if (!$view->is_submitted()) {
             $smarty->assign(
@@ -353,7 +353,7 @@ if ($owner && $owner == $USER->get('id')) {
             );
         }
     }
-}
+}*/
 
 
 $smarty->display('view/blocks.tpl');

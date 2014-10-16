@@ -26,7 +26,11 @@ $offset = param_integer('offset', 0);
 $groupid = param_integer('group');
 
 $group_homepage_view = group_get_homepage_view($groupid);
-$bi = group_get_homepage_view_groupview_block($groupid);
+
+if($blockid = param_integer('block', null)){
+
+	$bi = new BlockInstance($blockid);
+//$bi = group_get_homepage_view_groupview_block($groupid);
 
 if (!can_view_view($group_homepage_view)) {
     json_reply(true, get_string('accessdenied', 'error'));
@@ -54,5 +58,5 @@ if (!empty($configdata['showsharedcollections']) && isset($sharedcollections)) {
     );
     PluginBlocktypeGroupViews::render_items($sharedcollections, 'blocktype:groupviews:sharedcollections.tpl', $configdata, $pagination);
 }
-
+}
 json_reply(false, array('data' => $sharedcollections));

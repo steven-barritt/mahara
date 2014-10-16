@@ -93,13 +93,15 @@ class PluginBlocktypeGroupViews extends SystemBlocktype {
             return '';
         }
 
-        $data = self::get_data($groupid, $editing);
+        $data = self::get_data($groupid, $editing, $instance);
+        //var_dump($data);
+        //bob::bob();
 
         $dwoo = smarty_core();
         $dwoo->assign('group', $data['group']);
         $dwoo->assign('groupid', $data['group']->id);
         $baseurl = $instance->get_view()->get_url();
-        $baseurl .= (strpos($baseurl, '?') === false ? '?' : '&') . 'group=' . $groupid;
+        $baseurl .= (strpos($baseurl, '?') === false ? '?' : '&') . 'group=' . $groupid.'&block='.$instance->get('id');
 
         if (!empty($configdata['showgroupviews']) && isset($data['groupviews'])) {
             $groupviews = (array)$data['groupviews'];
@@ -230,7 +232,7 @@ class PluginBlocktypeGroupViews extends SystemBlocktype {
         return 'shallow';
     }
 
-    protected static function get_data($groupid, $editing=false) {
+    protected static function get_data($groupid, $editing=false, $bi=null) {
         global $USER;
 
         if(!defined('GROUP')) {
@@ -240,7 +242,7 @@ class PluginBlocktypeGroupViews extends SystemBlocktype {
         $group = group_current_group();
         $role = group_user_access($group->id);
         if ($role) {
-            $bi = group_get_homepage_view_groupview_block($group->id);
+            //$bi = group_get_homepage_view_groupview_block($group->id);
             $configdata = $bi->get('configdata');
             $limit = isset($configdata['count']) ? intval($configdata['count']) : 5;
             $limit = ($limit > 0) ? $limit : 5;
@@ -256,8 +258,13 @@ class PluginBlocktypeGroupViews extends SystemBlocktype {
 
             // For group members, display a list of views that others have
             // shared to the group
-            $data['sharedviews'] = View::get_sharedviews_data($limit, 0, $group->id);
+            $data['sharedviews'] = View::get_sharedviews_data($limit, 0, $group->id, false, true);
             foreach ($data['sharedviews']->data as &$view) {
+            	//SB TODO - get some extra info for each page based on user activity
+            	//create a function called get page activity
+            	//shows last update and number of posts in any blog attached to the page.
+            	// maybe even a link directly to the blog
+            	
                 if (!$editing && isset($view['template']) && $view['template']) {
                     $view['form'] = pieform(create_view_form($group, null, $view->id));
                 }

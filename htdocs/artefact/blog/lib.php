@@ -419,7 +419,32 @@ class ArtefactTypeBlog extends ArtefactType {
             FROM {artefact} a
             LEFT JOIN {artefact_blog_blogpost} bp ON a.id = bp.blogpost
             WHERE a.parent = ?
-            AND bp.published = 1", array($this->get('id')));
+            AND bp.published = 1 ", array($this->get('id')));
+    }
+
+
+    /**
+     * Returns the date of the last post in this blog that has been published.
+     *
+     * The result of this function looked up from the database each time, so
+     * cache it if you know it's safe to do so.
+     *
+     * @return int
+     */
+    public function latest_published_post() {
+        $returnstr = get_field_sql("
+            SELECT a.mtime
+            FROM {artefact} a
+            LEFT JOIN {artefact_blog_blogpost} bp ON a.id = bp.blogpost
+            WHERE a.parent = ?
+            AND bp.published = 1
+			ORDER by a.mtime desc
+			limit 1", array($this->get('id')));
+		if($returnstr != null){
+			return $returnstr;
+		}else{
+			return "";
+		}
     }
 
     public static function delete_form($id, $title = '') {

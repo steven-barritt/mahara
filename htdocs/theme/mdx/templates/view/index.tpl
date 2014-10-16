@@ -45,6 +45,10 @@
 {if !$view.submittedto && $view.removable && (!$view.locked || $editlocked ) && !$limitedediting}
                             <a href="{$WWWROOT}view/delete.php?id={$view.id}&{$querystring}" title="{str tag=deletethisview section=view}"><img src="{theme_url filename='images/btn_deleteremove.png'}" alt="{str(tag=deletespecific arg1=$view.displaytitle)|escape:html|safe}"></a>
 {/if}
+                        {if !$view.removable && !$limitedediting}
+						<a href="{$WWWROOT}view/reset.php?id={$view.id}&{$querystring}" title="{str tag ="resetlayout" section="view"}"><img src="{theme_url filename='images/btn_copy.png'}" alt="{str(tag=editspecific arg1=$view.displaytitle)|escape:html|safe}"></a>
+                        {/if}
+
                         </div>{* rbuttons *}
 {if $view.submittedto}
                         <div class="detail submitted-viewitem">{$view.submittedto|clean_html|safe}</div>

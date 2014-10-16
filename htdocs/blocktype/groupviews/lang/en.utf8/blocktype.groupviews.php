@@ -25,3 +25,9 @@ $string['displaysubmissionsdesc'] = 'Show a list of pages and collections submit
 $string['defaulttitledescription'] = 'A default title will be generated if you leave the title field blank';
 $string['itemstoshow'] = 'Entries per page';
 $string['itemstoshowdesc'] = 'The number of pages or collections shown for each section. Maximum: 100';
+$string['posts'] = array(
+	'1 Post',
+	'%s Posts'
+);
+$string['latestpost'] = 'Latest post : ';
+$string['workbook'] = 'Workbook';

@@ -506,6 +506,17 @@ function group_create($data) {
     }
     $data['id'] = $id;
     // install the homepage
+    add_group_homepage($id,$data['public']);
+    
+    handle_event('creategroup', $data);
+    db_commit();
+
+    return $id;
+}
+
+
+function add_group_homepage($id,$public){
+    // install the homepage
     if ($t = get_record('view', 'type', 'grouphomepage', 'template', 1, 'owner', 0)) {
         require_once('view.php');
         $template = new View($t->id, (array)$t);
@@ -518,15 +529,10 @@ function group_create($data) {
     }
     insert_record('view_access', (object) array(
         'view'       => $homepage->get('id'),
-        'accesstype' => $data['public'] ? 'public' : 'loggedin',
+        'accesstype' => $public ? 'public' : 'loggedin',
         'ctime'      => db_format_timestamp(time()),
     ));
-    handle_event('creategroup', $data);
-    db_commit();
-
-    return $id;
 }
-
 
 /**
  * Update details of an existing group.

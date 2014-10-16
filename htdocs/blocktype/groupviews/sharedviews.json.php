@@ -25,8 +25,12 @@ require_once(get_config('libroot') . 'group.php');
 $offset = param_integer('offset', 0);
 $groupid = param_integer('group');
 
+if($blockid = param_integer('block', null)){
+
+	$bi = new BlockInstance($blockid);
+
 $group_homepage_view = group_get_homepage_view($groupid);
-$bi = group_get_homepage_view_groupview_block($groupid);
+//$bi = group_get_homepage_view_groupview_block($groupid);
 
 if (!can_view_view($group_homepage_view)) {
     json_reply(true, get_string('accessdenied', 'error'));
@@ -40,7 +44,7 @@ if (!isset($configdata['showsharedviews'])) {
 $limit = isset($configdata['count']) ? intval($configdata['count']) : 5;
 $limit = ($limit > 0) ? $limit : 5;
 
-$sharedviews = (array)View::get_sharedviews_data($limit, $offset, $groupid);
+$sharedviews = (array)View::get_sharedviews_data($limit, $offset, $groupid, false, true);
 foreach ($sharedviews['data'] as &$view) {
     if (isset($view['template']) && $view['template']) {
         $view['form'] = pieform(create_view_form($group_homepage_view, null, $view->id));
@@ -59,5 +63,5 @@ if (!empty($configdata['showsharedviews']) && isset($sharedviews)) {
     );
     PluginBlocktypeGroupViews::render_items($sharedviews, 'blocktype:groupviews:sharedviews.tpl', $configdata, $pagination);
 }
-
+}
 json_reply(false, array('data' => $sharedviews));
