@@ -33,7 +33,7 @@
                             {assign var='author_link_index' value=`$author_link_index+1`}
                         {/if}
                     {else}
-                        <a href="{profile_url($view.user)}">{$view.sharedby}</a>
+                        <a href="{profile_url($view.user)}">{$view.user|display_default_name|escape}</a>
                     {/if}
                 {else}
                     {$view.sharedby}
