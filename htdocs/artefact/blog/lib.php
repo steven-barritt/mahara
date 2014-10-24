@@ -820,7 +820,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
                 a.id, a.title, a.description, a.author, a.authorname, ' .
                 db_format_tsfield('a.ctime', 'ctime') . ', ' . db_format_tsfield('a.mtime', 'mtime') . ',
                 a.locked, bp.published, a.allowcomments ' . $from . '
-            ORDER BY bp.published ASC, a.ctime DESC, a.id DESC',
+            ORDER BY bp.published DESC, a.ctime DESC, a.id DESC',
             array($id),
             $offset, $limit
         );
@@ -957,6 +957,10 @@ class ArtefactTypeBlogPost extends ArtefactType {
         $artefact->set('title', $values['title']);
         $artefact->set('description', $values['description']);
         $artefact->set('published', $values['published']);
+    	if($values['published']){
+			$artefact->ctime = $artefact->mtime = time();
+		}
+
         $artefact->set('tags', $values['tags']);
         if (get_config('licensemetadata')) {
             $artefact->set('license', $values['license']);
@@ -1034,6 +1038,8 @@ class ArtefactTypeBlogPost extends ArtefactType {
      *
      * @param $newpoststatus: boolean 1=published, 0=draft
      * @return boolean
+     * when it does so it should also change the posted date so that it is relevant
+     * TODO::
      */
     public function changepoststatus($newpoststatus) {
         if (!$this->id) {
@@ -1045,6 +1051,12 @@ class ArtefactTypeBlogPost extends ArtefactType {
                 'published' => (int) $newpoststatus
         );
 
+		if($newpoststatus){
+			$this->ctime = $this->mtime = time();
+			$this->dirty = true;
+			$this->commit();
+		}
+		
         if (get_field('artefact_blog_blogpost', 'COUNT(*)', 'blogpost', $this->id)) {
             update_record('artefact_blog_blogpost', $data, 'blogpost');
         }

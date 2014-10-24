@@ -116,6 +116,7 @@ if($blog){
 	$bl = ArtefactTypeBlog::get_blog_list(0,0);
 	$bls = $bl[1];
 	$blogs = array();
+	$blogs[] = NULL;
 	foreach($bls as $rs){
 		if(!$rs->locked){
 			$blogs[$rs->id] = $rs->title;
@@ -125,7 +126,10 @@ if($blog){
 		'title' => get_string('blog', 'artefact.blog'),
 		'type' => 'select',
         'options' => $blogs,
-		'defaultvalue' => $blog,
+		'defaultvalue' => NULL,
+		'rules' => array(
+			'required' => true
+		),
 	);
 }
 $elements['blogtype'] = array(
@@ -509,6 +513,9 @@ function editpost_submit(Pieform $form, $values) {
         $postobj->set('licensorurl', $values['licensorurl']);
     }
     $postobj->set('published', !$values['draft']);
+	if(!$values['draft']){
+		$postobj->set('ctime',time());
+	}
     $postobj->set('allowcomments', (int) $values['allowcomments']);
     if (!$blogpost) {
         $postobj->set('parent', $blog);
