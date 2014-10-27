@@ -552,6 +552,11 @@ input.newblockhere {
 .rowspacer {
     background: #FFF;
 }
+#column-container img {
+	height:auto;
+    max-width: 100%;
+}
+
 /******************** Blocks ********************/
 .blockinstance {
     margin: 0;
@@ -954,6 +959,7 @@ nav#collection-nav ul li {
     margin-left: 5px;
 }
 .groupviewsection .owner {
+	display:inline-block;
     font-weight: normal;
     font-size: 0.857em;
 }
