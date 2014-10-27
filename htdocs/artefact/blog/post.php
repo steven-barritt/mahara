@@ -116,7 +116,7 @@ if($blog){
 	$bl = ArtefactTypeBlog::get_blog_list(0,0);
 	$bls = $bl[1];
 	$blogs = array();
-	$blogs[] = NULL;
+	$blogs[] = NULL; //add an empty option
 	foreach($bls as $rs){
 		if(!$rs->locked){
 			$blogs[$rs->id] = $rs->title;
