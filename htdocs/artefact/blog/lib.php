@@ -281,7 +281,7 @@ class ArtefactTypeBlog extends ArtefactType {
          FROM {artefact} b LEFT JOIN {artefact} p ON (p.parent = b.id AND p.artefacttype = 'blogpost')
          WHERE b.owner = ? AND b.artefacttype = 'blog'
          GROUP BY b.id, b.title, b.description, b.locked
-         ORDER BY b.title", array($USER->get('id')), $offset, $limit))
+         ORDER BY b.locked, b.title", array($USER->get('id')), $offset, $limit))
             || ($result = array());
 
         foreach ($result as &$r) {
