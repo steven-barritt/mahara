@@ -41,11 +41,18 @@ function pieform_rule_validateoptions(Pieform $form, $field, $element) {/*{{{*/
 
     $options = $element['type'] == 'select' ? pieform_element_select_get_options($element) : $element['options'];
     $allowedvalues = array_keys($options);
+    //error_log(var_dump($allowedvalues));
+    //error_log(var_dump($field));
+    //bob::bob();
     foreach ($field as $key) {
         if (!in_array($key, $allowedvalues)) {
             return sprintf($form->i18n('rule', 'validateoptions', 'validateoptions', $element), Pieform::hsc($key));
         }
+        //still dont like this but works for now
+        if($key == '0'){
+    		return sprintf($form->i18n('rule', 'validateoptions', 'validateoptions', $element), Pieform::hsc($key));
+        }
     }
-    return sprintf($form->i18n('rule', 'validateoptions', 'validateoptions', $element), Pieform::hsc($key));
+//    return sprintf($form->i18n('rule', 'validateoptions', 'validateoptions', $element), Pieform::hsc($key));
     
 }/*}}}*/
