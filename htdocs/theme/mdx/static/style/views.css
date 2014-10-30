@@ -10,13 +10,13 @@
 /******************** Collection navigation ********************/
 /* Collections */
 #collectionnavwrap {
-    background: #F3F7EC;
+    background: #d4eaf4;
 }
 ul.colnav li a,
 ul.colnav li a:link,
 ul.colnav li a:visited,
 ul.colnav li a:active {
-    background: #d6e0c5;
+    background: #b2cfdd;
 }
 
 /******************** Blocktype icons panel ********************/
