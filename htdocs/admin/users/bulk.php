@@ -245,6 +245,17 @@ $addtogroupform = pieform(array(
             'type'        => 'select',
             'options'	 => $grpoptions,
         ),
+        'copy_title'        => array(
+            'type'         => 'html',
+            'class'        => 'bulkaction-title',
+            'value'        => get_string('addtogroupcopyviews', 'admin') . ': ',
+        ),
+        'copy_views'        => array(
+            'type'         => 'checkbox',
+            'label'			=> 'Copy Views',
+            'class'        => 'bulkaction-title',
+            'defaultvalue'        => true,
+        ),
         'delete' => array(
             'type'        => 'submit',
             'confirm'     => get_string('confirmaddtogroup', 'admin'),
@@ -525,7 +536,7 @@ function addtogroup_submit(Pieform $form, $values) {
     foreach ($users as $user) {
   		//need to check that they are not already a member!!
   		if(!group_is_member($user->id,$values['group'])){
-  			group_add_user($values['group'],$user->id );	
+  			group_add_user($values['group'],$user->id, null, 'internal',$values['copy_views'] );	
   		}    
     }
 

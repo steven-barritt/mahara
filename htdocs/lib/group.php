@@ -839,13 +839,14 @@ function group_delete($groupid, $shortname=null, $institution=null, $notifymembe
  * @param int $userid
  * @param string $role
  */
-function group_add_user($groupid, $userid, $role=null, $method='internal') {
+function group_add_user($groupid, $userid, $role=null, $method='internal', $copy_views = true) {
     $groupid = group_param_groupid($groupid);
     $userid  = group_param_userid($userid);
 
     $gm = new StdClass;
     $gm->member = $userid;
     $gm->group = $groupid;
+    $gm->copy_views = $copy_views;
     $gm->ctime =  db_format_timestamp(time());
     if (!$role) {
         $role = get_field_sql('SELECT gt.defaultrole FROM {grouptype} gt, {group} g WHERE g.id = ? AND g.grouptype = gt.name', array($groupid));
