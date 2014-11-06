@@ -51,7 +51,7 @@ class PluginGrouptypeProject extends PluginGrouptype {
     public static function copy_template_page($event, $eventdata) {
 		//SB this is where we have to fnd the pages shared with group and with copynewuser
 		//then we need to call the user function copy template page with the page
-		if(group_get_type($eventdata['group']) == 'project'){
+		if(group_get_type($eventdata['group']) == 'project' && $eventdata['copy_views']){
 			$sharedviews = View::get_sharedviews_data(0,0,$eventdata['group'],true);
 			$sharedviews = $sharedviews->data;
 			$ids = array();

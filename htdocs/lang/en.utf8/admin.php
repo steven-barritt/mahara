@@ -1082,6 +1082,10 @@ $string['userreports'] = 'User reports';
 $string['userreportsdescription'] = 'View or download information about the users you selected on the search page.';
 $string['setlimitedediting'] = 'Set Limited Editing';
 $string['confirmsetlimitedediting'] = 'Are you sure you want to set limited editing for these users';
+$string['addtogroup'] = 'Add to Group';
+$string['confirmaddtogroup'] = 'Are you sure you want to add these users to this group.';
+$string['addtogroupcopyviews'] = 'Copy Views';
+
 // general stuff
 $string['notificationssaved'] = 'Notification settings saved';
 $string['onlyshowingfirst'] = 'Only showing first';

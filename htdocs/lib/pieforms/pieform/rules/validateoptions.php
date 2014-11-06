@@ -49,7 +49,7 @@ function pieform_rule_validateoptions(Pieform $form, $field, $element) {/*{{{*/
             return sprintf($form->i18n('rule', 'validateoptions', 'validateoptions', $element), Pieform::hsc($key));
         }
         //still dont like this but works for now
-        if($key == '0'){
+        if($element['type'] == 'select' && $key == '0'){
     		return sprintf($form->i18n('rule', 'validateoptions', 'validateoptions', $element), Pieform::hsc($key));
         }
     }
