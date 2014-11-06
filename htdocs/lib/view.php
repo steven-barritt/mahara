@@ -3841,6 +3841,7 @@ class View {
      * - v is visible to u at t (in view_access_usr)
      * - v is visible to all roles of group g at t, and u is a member of g (view_access_group)
      * - v is visible to users with role r of group g at t, and u is a member of g with role r (view_access_group)
+     * - SB - or u is staff in which case they should be able to see any students page
      *
      * @param string   $query       Search string
      * @param string   $ownerquery  Search string for owner
@@ -3854,12 +3855,13 @@ class View {
      * @param bool     $collection  Use query against collection names and descriptions
      * @param array    $accesstypes Only return views visible due to the given access types
      * @param array    $tag         Only return views with this tag
-     *
+     * @param bool		$copynewuser	only get views which can be copied to new users of a group
      */
     public static function view_search($query=null, $ownerquery=null, $ownedby=null, $copyableby=null, $limit=null, $offset=0,
                                        $extra=true, $sort=null, $types=null, $collection=false, $accesstypes=null, $tag=null,$copynewuser=false) {
         global $USER;
         $admin = $USER->get('admin');
+        //$staff = $USER->get('staff');
         $loggedin = $USER->is_logged_in();
         $viewerid = $USER->get('id');
 
@@ -3988,6 +3990,8 @@ class View {
 
         $accesssql = array();
 
+		//var_dump($accesstypes);
+		//bob::bob();
         foreach ($accesstypes as $t) {
             if ($t == 'public') {
                 $accesssql[] = "v.id IN ( -- public access
@@ -4053,6 +4057,16 @@ class View {
                                     AND (va.stopdate IS NULL OR va.stopdate > current_timestamp)
                             )";
                 $whereparams[] = $viewerid;
+            }
+            else if ($t == 'staff') {
+                $accesssql[] = "v.id IN ( -- staff access any shared page
+                                SELECT DISTINCT va.view
+                                FROM {view_access} va
+                                WHERE (va.startdate IS NULL OR va.startdate < current_timestamp)
+                                    AND (va.stopdate IS NULL OR va.stopdate > current_timestamp)
+                                GROUP BY va.view
+                           )";
+                //$whereparams[] = $viewerid;
             }
         }
 
@@ -4352,7 +4366,7 @@ class View {
 
         $count = count_records_sql('SELECT COUNT(DISTINCT(v.id)) ' . $from, $ph);
         $viewdata = get_records_sql_assoc('
-            SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid ' . $from . '
+            SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid,'. db_format_tsfield('v.submittedtime', 'submittedtime') . $from . '
             ORDER BY u.firstname, v.title, v.id',
             $ph, $offset, $limit
         );
@@ -4461,6 +4475,7 @@ class View {
                         $artname = $artefactobj->display_title(30);
                         $bloglink = get_config('wwwroot').'artefact/artefact.php?artefact='.$artefactrec->artefact.'&view='.$viewdata[$artefactrec->view]->id;
                         if (strlen($artname)) {
+                        	$viewdata[$artefactrec->view]->postcount = $artefactobj->count_published_posts();
                             $viewdata[$artefactrec->view]->artefacts[] = array('id'    => $artefactrec->artefact,
                                                                                'title' => $artname,
                                                                                'postcount' => $artefactobj->count_published_posts(),

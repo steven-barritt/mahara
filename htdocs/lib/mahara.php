@@ -2185,6 +2185,7 @@ function can_view_view($view, $user_id=null) {
         return true;
     }
 
+
     $now = time();
     $dbnow = db_format_timestamp($now);
 
@@ -2257,6 +2258,9 @@ function can_view_view($view, $user_id=null) {
     $access = View::user_access_records($view_id, $user_id);
 
     if (empty($access)) {
+    	if($view->is_staff_or_admin_for_page()){
+    		return true;
+    	}
         return false;
     }
 
@@ -2280,6 +2284,7 @@ function can_view_view($view, $user_id=null) {
     if ($SESSION->get('mnetuser')) {
         $mnettoken = get_cookie('mviewaccess:'.$view_id);
     }
+    
 
     foreach ($access as &$a) {
         if ($a->accesstype == 'public' && $allowedbyoverride) {

@@ -34,6 +34,7 @@ class PluginBlocktypeMyviews extends SystemBlocktype {
     }
 
     public static function render_instance(BlockInstance $instance, $editing=false) {
+
         $userid = $instance->get_view()->get('owner');
         if (!$userid) {
             return '';
@@ -42,7 +43,29 @@ class PluginBlocktypeMyviews extends SystemBlocktype {
         $smarty = smarty_core();
 
         // Get viewable views
-        $views = View::view_search(null, null, (object) array('owner' => $userid), null, null, 0, true, null, array('portfolio'));
+             /* @param string   $query       Search string
+     * @param string   $ownerquery  Search string for owner
+     * @param StdClass $ownedby     Only return views owned by this owner (owner, group, institution)
+     * @param StdClass $copyableby  Only return views copyable by this owner (owner, group, institution)
+     * @param integer  $limit
+     * @param integer  $offset
+     * @param bool     $extra       Return full set of properties on each view including an artefact list
+     * @param array    $sort        Order by, each element of the array is an array containing "column" (string) and "desc" (boolean)
+     * @param array    $types       List of view types to filter by
+     * @param bool     $collection  Use query against collection names and descriptions
+     * @param array    $accesstypes Only return views visible due to the given access types
+     * @param array    $tag         Only return views with this tag
+     * @param bool		$copynewuser	only get views which can be copied to new users of a group
+*/
+        //TODO - in here get if the current user is institution staff then pass this to the search in order to get all pages
+        $accesstypes = null;
+    	global $USER;
+        $staff = $USER->get('staff');
+        if($staff){
+        	$accesstypes = array('staff');
+        }
+        
+        $views = View::view_search(null, null, (object) array('owner' => $userid), null, null, 0, true, null, array('portfolio'),false,$accesstypes);
         $views = $views->count ? $views->data : array();
         $smarty->assign('VIEWS',$views);
         return $smarty->fetch('blocktype:myviews:myviews.tpl');
