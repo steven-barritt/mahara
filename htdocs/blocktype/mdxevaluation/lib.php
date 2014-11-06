@@ -97,14 +97,21 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
         	//Special case for tutor feedback - only the owner and tutors can see this
 			if($configdata['evaltype'] == 3){
 				//Page must be submitted AND
-				// User must be a tutor of the group that it is submitted to
+				// User must be a tutor of the group that it is submitted to 
+				// or Tutor or institution staff / admin can view it but not edit it 
 				if($view->get('owner') == $userid){
-					return true; //always let the owner see the evaluation
+					//always let the owner see the evaluation
+					//but not if it is unpublished
+					if(!isset($configdata['published']) || $configdata['published']){
+						return true; 
+					}else{
+						return false;
+					}
 				}
 				else{
 					//for now it only lets the tutor of the gorup see it but should let all tutors see it.
-					$submitteddata = $view->submitted_to();
-					if($submitteddata != NULL && group_user_can_assess_submitted_views($submitteddata['id'],$userid)){
+					//$submitteddata = $view->submitted_to();
+					if(group_user_can_assess_submitted_views($view->get('id'),$userid) || $view->is_staff_or_admin_for_page()){
 						return true;
 					}else{
 						return false;
@@ -138,6 +145,7 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
         $smarty->assign('studentship', $configdata['studentship']);
         $smarty->assign('workbook', $configdata['workbook']);
         $smarty->assign('selfmark', $configdata['selfmark']);
+        $smarty->assign('published', isset($configdata['published']) ? $configdata['published'] : true);
         $smarty->assign('form', $formstr);
         $smarty->assign('id', $instance->get('id'));
 		return $smarty->fetch('blocktype:mdxevaluation:mdxevaluation.tpl');
@@ -279,7 +287,7 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
         $configdata = $instance->get('configdata');
 
 		//TODO : get the data from the DB rather than the config data
-		return array(
+		$returnarr = array(
             'research' => array(
 			'type' => 'radio',
             'title' => get_string('research', 'blocktype.mdxevaluation'),
@@ -382,13 +390,25 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
             //'description' => get_string('selfmarkdescription', 'blocktype.mdxevaluation'),
 			'options' => array(
                                    1 => '1',2 => '2',3 => '3',4 => '4',5 => '5',6 => '6',7 => '7',8 => '8',9 => '9',10 => '10'
-								   ,11 => '11',12 => '12',13 => '13',14 => '14',15 => '15',16 => '16',17 => '17'
+								   ,11 => '11',12 => '12',13 => '13',14 => '14',15 => '15',16 => '16',17 => '17',20 =>'20'
                                    ),
-            'defaultvalue' => (isset($configdata['selfmark'])) ? intval($configdata['selfmark']) : 17,
+            'defaultvalue' => (isset($configdata['selfmark'])) ? intval($configdata['selfmark']) : 20,
 			'rules' => array('required'    => true),
                 'help' => true,
 			)
 		);
+		if(isset($configdata['evaltype']) && $configdata['evaltype'] == 3){
+			$returnarr = array_merge($returnarr,array(
+			'published' => array(
+                    'type'         => 'checkbox',
+                    'title'        => get_string('published', 'blocktype.mdxevaluation'),
+                    'description'  => get_string('publisheddesc', 'blocktype.mdxevaluation'),
+                    'defaultvalue' => (isset($configdata['published'])) ? $configdata['published'] : false
+                	)
+                )
+            );
+		}
+		return $returnarr;
 	}
 	
 	
@@ -398,6 +418,8 @@ function mdxevaluation_success(form, data) {
 		window.location.replace(data.goto);
         
     }
+
+    
 EOF;
         return "<script>$js</script>";
     }

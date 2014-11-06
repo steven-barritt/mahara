@@ -3,7 +3,11 @@
 </div>
 <div class="blockinstance-content-view">    
 	{if $viewable}
-    <table class="mdxevaluation">
+	{if !$published}
+	<h4>Unpublished</h4>
+	{/if}
+	
+    <table class="mdxevaluation {if $published}published{else}unpublished{/if}">
         <thead>
             <tr>
             <th></th><th>{str tag='exc' section='blocktype.mdxevaluation'}</th><th>{str tag='vgood' section='blocktype.mdxevaluation'}</th><th>{str tag='good' section='blocktype.mdxevaluation'}</th><th>{str tag='pass' section='blocktype.mdxevaluation'}</th><th>{str tag='fail' section='blocktype.mdxevaluation'}</th>
@@ -72,6 +76,7 @@
     </table>
     {else}
     	<p>You cannot view this item.</p><p> If you are a Tutor the page must be submitted for assessment before you can grade it.</p>
+    	<p>If this is your page the project hasn't been graded yet.</p>
     {/if}
 </div>  
     

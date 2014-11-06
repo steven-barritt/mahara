@@ -21,17 +21,16 @@ $wwwroot = get_config('wwwroot');
 $needsubdomain = get_config('cleanurlusersubdomains');
 
 $setlimit = true;
-$limit = param_integer('limit', 10);
+$limit = param_integer('limit', 100);
 $offset = param_integer('offset', 0);
-$sort = param_variable('sort', 'title');
+$sort = param_variable('sort', 'sharedby');
 $direction = param_variable('direction', 'asc');
 $group = group_current_group();
 $role = group_user_access($group->id);
 if (!group_role_can_access_report($group, $role)) {
     throw new AccessDeniedException();
 }
-
-$sharedviews = View::get_sharedviews_data(0, null, $group->id);
+$sharedviews = View::get_sharedviews_data(0, null, $group->id,false,true);
 $sharedviewscount = $sharedviews->count;
 $sharedviews = $sharedviews->data;
 foreach ($sharedviews as &$data) {
@@ -43,6 +42,35 @@ foreach ($sharedviews as &$data) {
     $view = new View($data['id']);
     $comments = ArtefactTypeComment::get_comments(0, 0, null, $view);
 
+	$selfgrade = 20;
+	$peergrade = 20;
+	$tutorgrade = 20;
+    require_once(get_config('docroot') . 'blocktype/lib.php');
+	
+	$sql = "SELECT bi.*
+            FROM {block_instance} bi
+            WHERE bi.view = ?
+            AND bi.blocktype = 'mdxevaluation'
+            ";
+    if (!$evaldata = get_records_sql_array($sql, array($data['id']))) {
+        $$evaldata = array();
+    }
+	
+	foreach ($evaldata as $eval){
+		$bi = new BlockInstance($eval->id, (array)$eval);
+		$configdata = $bi->get('configdata');
+		if(isset($configdata['evaltype'])){
+			if($configdata['evaltype'] == 1){
+				$selfgrade = $configdata['selfmark'];
+			}elseif($configdata['evaltype'] == 2){
+				$peergrade = $configdata['selfmark'];
+			}elseif($configdata['evaltype'] == 3){
+				$published = isset($configdata['published']) ? $configdata['published'] : true;
+				$tutorgrade = $configdata['selfmark'];
+			}
+		}		
+	}
+	
     $extcommenters = 0;
     $membercommenters = 0;
     $extcomments = 0;
@@ -84,6 +112,11 @@ foreach ($sharedviews as &$data) {
 
     sorttablebycolumn($commenters, 'count', 'desc');
     $data['mcommenters'] = $membercommenters;
+    $data['selfgrade'] = intval($selfgrade);
+    $data['peergrade'] = intval($peergrade);
+    $data['tutorgrade'] = intval($tutorgrade);
+    $data['publishedgrade'] = $published;
+    $data['postcount'] = isset($data['postcount']) ? $data['postcount'] : 0;
     $data['ecommenters'] = $extcommenters;
     $data['mcomments'] = $membercomments;
     $data['ecomments'] = $extcomments;
@@ -91,7 +124,7 @@ foreach ($sharedviews as &$data) {
     $data['baseurl'] = $needsubdomain ? $view->get_url(true) : ($wwwroot . $view->get_url(false));
 }
 
-if (in_array($sort, array('title', 'sharedby', 'mcomments', 'ecomments'))) {
+if (in_array($sort, array('title', 'sharedby', 'mcomments', 'ecomments','submittedtime','postcount', 'selfgrade','peergrade','tutorgrade'))) {
     sorttablebycolumn($sharedviews, $sort, $direction);
 }
 $sharedviews = array_slice($sharedviews, $offset, $limit);
