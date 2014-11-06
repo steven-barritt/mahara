@@ -11,11 +11,13 @@
 <div id="blogdescription">{$description|clean_html|safe}
 {if $tags}<p class="tags s"><label>{str tag=tags}:</label> {list_tags owner=$owner tags=$tags}</p>{/if}
 </div>
+<div class="block_instance_blog">
 <table id="postlist{if $blockid}_{$blockid}{/if}" class="postlist">
   <tbody>
   {$posts.tablerows|safe}
   </tbody>
 </table>
+</div>
 {if $posts.pagination}
 <div id="blogpost_page_container{if $blockid}_{$blockid}{/if}" class="hidden center">{$posts.pagination|safe}</div>
 {/if}
