@@ -110,6 +110,7 @@ foreach ($sharedviews as &$data) {
         }
     }
 
+
     sorttablebycolumn($commenters, 'count', 'desc');
     $data['mcommenters'] = $membercommenters;
     $data['selfgrade'] = intval($selfgrade);
@@ -123,6 +124,24 @@ foreach ($sharedviews as &$data) {
     $data['comments'] = $commenters;
     $data['baseurl'] = $needsubdomain ? $view->get_url(true) : ($wwwroot . $view->get_url(false));
 }
+
+$publishform = pieform(array(
+			'name'                => 'publishgrades',
+			'successcallback'     => 'publishgrades_submit',
+			'renderer'            => 'div',
+			'autofocus'           => false,
+			'elements'            => array(
+				'group' => array(
+					'type'  => 'hidden',
+					'value' => $group->id,
+				),
+				'submit' => array(
+					'type'  => 'submit',
+					'value' => 'Publish all Grades',
+				),
+			),
+		));
+
 
 if (in_array($sort, array('title', 'sharedby', 'mcomments', 'ecomments','submittedtime','postcount', 'selfgrade','peergrade','tutorgrade'))) {
     sorttablebycolumn($sharedviews, $sort, $direction);
@@ -213,8 +232,52 @@ $smarty->assign('sharedviews', $sharedviews);
 $smarty->assign('groupviews', $groupviews);
 $smarty->assign('pagination', $pagination['html']);
 $smarty->assign('INLINEJAVASCRIPT', $js);
+$smarty->assign('publishform', $publishform);
 $smarty->assign('gvcount', $groupviewscount);
 $smarty->assign('svcount', $sharedviewscount);
 $smarty->assign('sort', $sort);
 $smarty->assign('direction', $direction);
 $smarty->display('group/report.tpl');
+
+function publishgrades_submit(Pieform $form, $values){
+	require_once(get_config('docroot') . 'blocktype/lib.php');
+
+    try {
+    	$sharedviews = View::get_sharedviews_data(0, null, $values['group']);
+		$sharedviews = $sharedviews->data;
+		foreach ($sharedviews as &$data) {
+
+	
+			$sql = "SELECT bi.*
+					FROM {block_instance} bi
+					WHERE bi.view = ?
+					AND bi.blocktype = 'mdxevaluation'
+					";
+			if (!$evaldata = get_records_sql_array($sql, array($data['id']))) {
+				$evaldata = array();
+			}
+	
+			foreach ($evaldata as $eval){
+				$bi = new BlockInstance($eval->id, (array)$eval);
+				$configdata = $bi->get('configdata');
+				if(isset($configdata['evaltype'])){
+					if($configdata['evaltype'] == 3){
+						$configdata['published']= true;
+						$bi->set('configdata',$configdata);
+						$bi->set('dirty',true);
+						$bi->commit();
+					}
+				}		
+			}
+		}
+
+    	
+
+    }
+    catch (SQLException $e) {
+        $SESSION->add_error_msg("couldn't publish grades");
+    }
+    $goto = get_config('wwwroot').'group/report.php?group='.$values['group'];
+    redirect($goto);
+
+}
