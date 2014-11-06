@@ -228,6 +228,11 @@ if (!empty($loggedinid) && $loggedinid != $userid) {
                         'options' => $controlledlist,
                         'defaultvalue' => $default,
                     ),
+					'copy_views'        => array(
+						'type'         => 'checkbox',
+						'label'			=> 'Copy Views',
+						'defaultvalue'        => true,
+					),
                     'member' => array(
                         'type'  => 'hidden',
                         'value' => $userid,
@@ -365,7 +370,7 @@ function addmember_submit(Pieform $form, $values) {
     $adduser = get_record('usr', 'id', $userid);
 
     try {
-        group_add_user($values['group'], $userid, 'member');
+        group_add_user($values['group'], $userid, 'member', 'internal',$values['copy_views']);
         $lang = get_user_language($userid);
         require_once(get_config('libroot') . 'activity.php');
         activity_occurred('maharamessage', array(
