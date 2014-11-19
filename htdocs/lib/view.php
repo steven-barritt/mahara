@@ -3856,9 +3856,10 @@ class View {
      * @param array    $accesstypes Only return views visible due to the given access types
      * @param array    $tag         Only return views with this tag
      * @param bool		$copynewuser	only get views which can be copied to new users of a group
+     * @param bool		$getbloginfo	gets extra info about any workbooks attached to the view.
      */
     public static function view_search($query=null, $ownerquery=null, $ownedby=null, $copyableby=null, $limit=null, $offset=0,
-                                       $extra=true, $sort=null, $types=null, $collection=false, $accesstypes=null, $tag=null,$copynewuser=false) {
+                                       $extra=true, $sort=null, $types=null, $collection=false, $accesstypes=null, $tag=null,$copynewuser=false, $getbloginfo=false) {
         global $USER;
         $admin = $USER->get('admin');
         //$staff = $USER->get('staff');
@@ -4164,7 +4165,11 @@ class View {
 
         if ($viewdata) {
             if ($extra) {
-                View::get_extra_view_info($viewdata, false);
+            	if($getbloginfo){
+					View::get_extra_view_info($viewdata, true, true, $getbloginfo);
+				}else{
+						View::get_extra_view_info($viewdata, false);
+				}
             }
         }
         else {
@@ -4344,7 +4349,7 @@ class View {
      * Get views which have been explicitly shared to a group and are
      * not owned by the group excluding the view in collections
      */
-    public static function get_sharedviews_data($limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false) {
+    public static function get_sharedviews_data($limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null,$excludetemplates=false) {
         global $USER;
         $userid = $USER->get('id');
         require_once(get_config('libroot') . 'group.php');
@@ -4362,7 +4367,13 @@ class View {
 		}else{
             $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?) AND cv.view IS NULL';
 		}
-        $ph = array($groupid, $userid, $groupid);
+		if($submittedgroup){
+			$from .= ' AND v.submittedgroup = ? ';
+		}
+		if($excludetemplates){
+			$from .= ' AND v.template = 0';
+		}
+        $ph = array($groupid, $userid, $groupid,$submittedgroup);
 
         $count = count_records_sql('SELECT COUNT(DISTINCT(v.id)) ' . $from, $ph);
         $viewdata = get_records_sql_assoc('

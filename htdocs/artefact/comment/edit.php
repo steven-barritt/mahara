@@ -34,7 +34,7 @@ $editableafter = time() - 60 * $maxage;
 
 $goto = $comment->get_view_url($viewid, false);
 
-if ($comment->get('ctime') < $editableafter) {
+if ($comment->get('ctime') < $editableafter && $comment->get('published')) {
     $SESSION->add_error_msg(get_string('cantedittooold', 'artefact.comment', $maxage));
     redirect($goto);
 }
@@ -75,6 +75,15 @@ $elements['ispublic'] = array(
     'title' => get_string('makepublic', 'artefact.comment'),
     'defaultvalue' => !$comment->get('private'),
 );
+if(!$comment->get('published')){
+$elements['published'] = array(
+    'type'  => 'checkbox',
+    'title' => get_string('published', 'artefact.comment'),
+    'defaultvalue' => $comment->get('published'),
+);
+
+
+}
 if (get_config('licensemetadata')) {
     $elements['license'] = license_form_el_basic($comment);
     $elements['licensing_advanced'] = license_form_el_advanced($comment);
@@ -108,6 +117,12 @@ function edit_comment_submit(Pieform $form, $values) {
 
     $comment->set('description', $values['message']);
     $comment->set('rating', valid_rating($values['rating']));
+    $publishnotify = false;
+	$published = isset($values['published']) ? $values['published'] : true;
+    if(!$comment->get('published') && $published) {
+    	$publishnotify = true;
+    }
+    $comment->set('published', $published);
     require_once(get_config('libroot') . 'view.php');
     $view = new View($viewid);
     $owner = $view->get('owner');
@@ -123,6 +138,9 @@ function edit_comment_submit(Pieform $form, $values) {
         $comment->set('private', 1 - (int) $values['ispublic']);
         $comment->set('requestpublic', null);
     }
+    if($publishnotify){
+    	$comment->set('ctime',time());
+    }
     $comment->commit();
 
     require_once('activity.php');
@@ -131,7 +149,9 @@ function edit_comment_submit(Pieform $form, $values) {
         'viewid'    => $viewid,
     );
 
-    activity_occurred('feedback', $data, 'artefact', 'comment');
+	if($published){
+    	activity_occurred('feedback', $data, 'artefact', 'comment');
+    }
     if ($comment->get('requestpublic') == 'author') {
         if (!empty($owner)) {
             edit_comment_notify($view, $comment->get('author'), $owner);

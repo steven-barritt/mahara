@@ -13,7 +13,7 @@
             <img src="{profile_icon_url user=null maxheight=40 maxwidth=40}" valign="middle" alt="{str tag=profileimagetextanonymous}">
       {/if}
       </div>
-      <div class="commentrightwrap">
+      <div class="commentrightwrap {if $item->published}published{else}unpublished{/if} {if $item->pubmessage}private{/if}">
         <div class="fr">
         {if $item->makepublicform}<div class="makepublicbtn">{$item->makepublicform|safe}</div>{/if}
         {if $item->canedit}

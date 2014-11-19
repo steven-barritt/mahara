@@ -178,6 +178,7 @@ class ArtefactTypeComment extends ArtefactType {
     protected $requestpublic;
     protected $rating;
     protected $lastcontentupdate;
+    protected $published;
 
     public function __construct($id = 0, $data = null) {
         parent::__construct($id, $data);
@@ -231,6 +232,7 @@ class ArtefactTypeComment extends ArtefactType {
             'deletedby'     => $this->get('deletedby'),
             'requestpublic' => $this->get('requestpublic'),
             'rating'        => $this->get('rating'),
+            'published'		=> $this->get('published'),
         );
         if ($this->get('lastcontentupdate')) {
             $data->lastcontentupdate = db_format_timestamp($this->get('lastcontentupdate'));
@@ -304,6 +306,59 @@ class ArtefactTypeComment extends ArtefactType {
     public static function deleted_types() {
         return array('author', 'owner', 'admin');
     }
+	
+	public static function publish_comments($viewid){
+
+
+			$sql='SELECT
+                    ac.artefact
+                FROM {artefact_comment_comment} ac 
+                WHERE ac.onview = ? AND ac.published = 0
+                ';		
+                
+			if ($unpublishedcomments = get_records_sql_array($sql, array($viewid))) {
+				
+				foreach ($unpublishedcomments as $comment){
+					$sql = 'UPDATE {artefact_comment_comment} ac
+								SET ac.published = 1
+							WHERE ac.artefact = ?';
+					execute_sql($sql,
+						array(intval($comment->artefact))
+					);
+					$sql = 'UPDATE {artefact}
+						SET ctime = now()
+						WHERE id = ?';
+					execute_sql($sql,
+						array(intval($comment->artefact))
+					);
+					$activity = (object) array(
+						'commentid' => intval($comment->artefact),
+						'viewid'    => $viewid,
+					);
+
+					activity_occurred('feedback', $activity, 'artefact', 'comment');
+				}
+			}
+			
+/*		if(ArtefactTypeComment::count_comments(array($viewid),null, true)){
+			
+			
+			$view = new View($viewid);
+			$feedback = ArtefactTypeComment::get_comments(0, 0, null, $view);
+			foreach($feedback as $data){
+				$comment = new ArtefactTypeComment($data['id']);
+				$comment->set('published',true);
+				$comment->set('dirty',true);
+				$comment->commit();
+				$activity = (object) array(
+					'commentid' => $comment->get('id'),
+					'viewid'    => $view->get('id')
+				);
+
+				activity_occurred('feedback', $activity, 'artefact', 'comment');
+			}			
+		}*/
+	}
 
     /**
      * Generates data object required for displaying comments on the page.
@@ -320,7 +375,7 @@ class ArtefactTypeComment extends ArtefactType {
      * @param  bool   $export          Determines if comments are fetched for html export purposes
      * @return object $result          Comments data object
      */
-    public static function get_comments($limit=10, $offset=0, $showcomment, &$view, &$artefact=null, $export=false) {
+    public static function get_comments($limit=10, $offset=0, $showcomment, &$view, &$artefact=null, $export=false, $unpublished=false) {
         global $USER;
         $userid = $USER->get('id');
         $viewid = $view->get('id');
@@ -356,12 +411,26 @@ class ArtefactTypeComment extends ArtefactType {
             $where = 'c.onview = ' . (int)$viewid;
         }
         if (!$canedit) {
-            $where .= ' AND (c.private = 0 OR a.author = ' . (int) $userid . ')';
+			//if you are admin or staff then you should be able to see all other admin and staff comments
+        	if($USER->get('staff') || $USER->get('admin')){
+				$where .= ' AND (c.private = 0 OR a.author = ' . (int) $userid . ' OR u.staff OR u.admin)';
+        	}else{
+            	$where .= ' AND (c.private = 0 OR a.author = ' . (int) $userid . ')';
+            }
+            //$where .= ' AND c.published != 0 ';
         }
+        else{
+        	if($isowner){
+	            $where .= ' AND (c.published != 0 OR a.author = ' . (int) $userid . ') ';
+        	}
+        }
+
 
         $result->count = count_records_sql('
             SELECT COUNT(*)
-            FROM {artefact} a JOIN {artefact_comment_comment} c ON a.id = c.artefact
+            FROM {artefact} a INNER JOIN {artefact_comment_comment} c ON a.id = c.artefact
+            LEFT JOIN {usr} u ON a.author = u.id
+
             WHERE ' . $where);
 
         if ($result->count > 0) {
@@ -379,6 +448,7 @@ class ArtefactTypeComment extends ArtefactType {
                     $ids = get_column_sql('
                     SELECT a.id
                     FROM {artefact} a JOIN {artefact_comment_comment} c ON a.id = c.artefact
+		            LEFT JOIN {usr} u ON a.author = u.id
                     WHERE ' . $where . ' AND a.id <= ?
                     ORDER BY a.ctime', array($showcomment));
                     $last = end($ids);
@@ -390,17 +460,18 @@ class ArtefactTypeComment extends ArtefactType {
                 }
             }
 
+			
             $comments = get_records_sql_assoc('
                 SELECT
                     a.id, a.author, a.authorname, a.ctime, a.mtime, a.description, a.group,
-                    c.private, c.deletedby, c.requestpublic, c.rating, c.lastcontentupdate,
+                    c.private, c.deletedby, c.requestpublic, c.rating, c.lastcontentupdate, c.published,
                     u.username, u.firstname, u.lastname, u.preferredname, u.email, u.staff, u.admin,
                     u.deleted, u.profileicon, u.urlid
                 FROM {artefact} a
                     INNER JOIN {artefact_comment_comment} c ON a.id = c.artefact
                     LEFT JOIN {usr} u ON a.author = u.id
                 WHERE ' . $where . '
-                ORDER BY a.ctime', array(), $offset, $limit);
+                ORDER BY c.private, c.published desc, a.ctime', array(), $offset, $limit);
 
             $files = ArtefactType::attachments_from_id_list(array_keys($comments));
 
@@ -431,12 +502,13 @@ class ArtefactTypeComment extends ArtefactType {
         return $result;
     }
 
-    public static function count_comments($viewids=null, $artefactids=null) {
+    public static function count_comments($viewids=null, $artefactids=null, $unpublished=false) {
+		$published = $unpublished ? ' AND c.published = false' : '';
         if (!empty($viewids)) {
             return get_records_sql_assoc('
                 SELECT c.onview, COUNT(c.artefact) AS comments
                 FROM {artefact_comment_comment} c
-                WHERE c.onview IN (' . join(',', array_map('intval', $viewids)) . ') AND c.deletedby IS NULL
+                WHERE c.onview IN (' . join(',', array_map('intval', $viewids)) . ') AND c.deletedby IS NULL'.$published.'
                 GROUP BY c.onview',
                 array()
             );
@@ -512,7 +584,11 @@ class ArtefactTypeComment extends ArtefactType {
             if ($item->private) {
                 $item->pubmessage = get_string('thiscommentisprivate', 'artefact.comment');
             }
-
+            
+            if (!$item->published){
+            	$item->pubmessage = $item->pubmessage . get_string('thiscommentisunpublished', 'artefact.comment');
+			}
+			
             if (isset($data->showcomment) && $data->showcomment == $item->id) {
                 $item->highlight = 1;
             }
@@ -526,7 +602,8 @@ class ArtefactTypeComment extends ArtefactType {
 
             // Comment authors can edit recent comments if they're private or if no one has replied yet.
             if (!$item->deletedby && $item->isauthor && !$is_export_preview
-                && ($item->private || $item->id == $lastcomment->id) && $item->ts > $editableafter) {
+                && ($item->private || $item->id == $lastcomment->id) && ($item->ts > $editableafter || !$item->published) ) {
+//                && ($item->private || $item->id == $lastcomment->id) && $item->ts > $editableafter) {
                 $item->canedit = 1;
             }
 
@@ -684,6 +761,13 @@ class ArtefactTypeComment extends ArtefactType {
             'title' => get_string('makepublic', 'artefact.comment'),
             'defaultvalue' => !$defaultprivate,
         );
+        if($defaultprivate){
+			$form['elements']['published'] = array(
+				'type'  => 'checkbox',
+				'title' => get_string('published', 'artefact.comment'),
+				'defaultvalue' => false,
+			);
+        }
         if (get_config('licensemetadata')) {
             $form['elements']['license'] = license_form_el_basic(null);
             $form['elements']['licensing_advanced'] = license_form_el_advanced(null);
@@ -1084,7 +1168,14 @@ function add_feedback_form_submit(Pieform $form, $values) {
         $moderated = false;
     }
     $private = $data->private;
+    
+    if(isset($values['published'])){
+    	$data->published = $values['published'];
+    }else{
+    	$data->published = true;
+    }
 
+	$published = $data->published;
     if (get_config('licensemetadata')) {
         $data->license       = $values['license'];
         $data->licensor      = $values['licensor'];
@@ -1192,12 +1283,14 @@ function add_feedback_form_submit(Pieform $form, $values) {
         'commentid' => $comment->get('id'),
         'viewid'    => $view->get('id')
     );
-    activity_occurred('feedback', $data, 'artefact', 'comment');
+    if($published){
+		activity_occurred('feedback', $data, 'artefact', 'comment');
 
-    if (isset($moderatemsg)) {
-        activity_occurred('maharamessage', $moderatemsg);
-    }
-
+		if (isset($moderatemsg)) {
+			activity_occurred('maharamessage', $moderatemsg);
+		}
+	}
+	
     db_commit();
 
     $newlist = ArtefactTypeComment::get_comments(10, 0, 'last', $view, $artefact);

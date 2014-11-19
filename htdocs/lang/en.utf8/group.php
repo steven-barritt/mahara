@@ -391,3 +391,7 @@ $string['peergrade'] = "Peer Grade";
 $string['tutorgrade'] = "Tutor Grade";
 $string['submitteddate'] = "Date Submitted";
 $string['postcount'] = "No Posts";
+$string['couldnotpublish'] = "couldn't publish grades ";
+$string['published'] = "All Grades and Feedback Published";
+$string['publishbtn'] = "Publish All Grades and Feedback";
+

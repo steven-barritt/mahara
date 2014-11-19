@@ -36,7 +36,7 @@ $string['commentremovedbyowner'] = 'Comment removed by the owner';
 $string['commentremovedbyadmin'] = 'Comment removed by an administrator';
 $string['commentupdated'] = 'Comment updated';
 $string['editcomment'] = 'Edit comment';
-$string['editcommentdescription'] = 'You can update your comments if they are less than %d minutes old and have had no newer replies added. After this time you may still be able to delete your comments and add new ones.';
+$string['editcommentdescription'] = 'You can update your comments if they are less than %d minutes old and have had no newer replies added or the comment is unpublished. After this time you may still be able to delete your comments and add new ones.';
 $string['entriesimportedfromleapexport'] = 'Entries imported from a LEAP export that were not able to be imported elsewhere';
 $string['feedback'] = 'Feedback';
 $string['feedbackattachdirname'] = 'commentfiles';
@@ -59,6 +59,7 @@ $string['moderatecomments'] = 'Moderate comments';
 $string['moderatecommentsdescription'] = 'Comments will remain private until they are approved by you.';
 $string['newfeedbacknotificationsubject'] = 'New feedback on %s';
 $string['placefeedback'] = 'Place feedback';
+$string['published'] = 'Published to user';
 $string['progress_feedback'] = array(
     'Comment on another user\'s page',
     'Comment on %s other users\' pages',
@@ -66,6 +67,8 @@ $string['progress_feedback'] = array(
 $string['rating'] = 'Rating';
 $string['reallydeletethiscomment'] = 'Are you sure you want to delete this comment?';
 $string['thiscommentisprivate'] = 'This comment is private';
+$string['thiscommentispublished'] = ' - This comment IS Published to the user';
+$string['thiscommentisunpublished'] = ' - This comment is NOT Published to the user';
 $string['typefeedback'] = 'Feedback';
 $string['viewcomment'] = 'View comment';
 $string['youhaverequestedpublic'] = 'You have requested that this comment be made public.';

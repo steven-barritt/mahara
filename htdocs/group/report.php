@@ -30,7 +30,7 @@ $role = group_user_access($group->id);
 if (!group_role_can_access_report($group, $role)) {
     throw new AccessDeniedException();
 }
-$sharedviews = View::get_sharedviews_data(0, null, $group->id,false,true);
+$sharedviews = View::get_sharedviews_data(0, null, $group->id,false,true,null,true);
 $sharedviewscount = $sharedviews->count;
 $sharedviews = $sharedviews->data;
 foreach ($sharedviews as &$data) {
@@ -45,6 +45,7 @@ foreach ($sharedviews as &$data) {
 	$selfgrade = 20;
 	$peergrade = 20;
 	$tutorgrade = 20;
+	$published = true;
     require_once(get_config('docroot') . 'blocktype/lib.php');
 	
 	$sql = "SELECT bi.*
@@ -53,7 +54,7 @@ foreach ($sharedviews as &$data) {
             AND bi.blocktype = 'mdxevaluation'
             ";
     if (!$evaldata = get_records_sql_array($sql, array($data['id']))) {
-        $$evaldata = array();
+        $evaldata = array();
     }
 	
 	foreach ($evaldata as $eval){
@@ -137,7 +138,7 @@ $publishform = pieform(array(
 				),
 				'submit' => array(
 					'type'  => 'submit',
-					'value' => 'Publish all Grades',
+					'value' => get_string('publishbtn', 'group'),
 				),
 			),
 		));
@@ -241,9 +242,10 @@ $smarty->display('group/report.tpl');
 
 function publishgrades_submit(Pieform $form, $values){
 	require_once(get_config('docroot') . 'blocktype/lib.php');
-
+	global $SESSION;
     try {
-    	$sharedviews = View::get_sharedviews_data(0, null, $values['group']);
+    //$limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null
+    	$sharedviews = View::get_sharedviews_data(0, null, $values['group'],false,false,$values['group']);
 		$sharedviews = $sharedviews->data;
 		foreach ($sharedviews as &$data) {
 
@@ -256,7 +258,7 @@ function publishgrades_submit(Pieform $form, $values){
 			if (!$evaldata = get_records_sql_array($sql, array($data['id']))) {
 				$evaldata = array();
 			}
-	
+			
 			foreach ($evaldata as $eval){
 				$bi = new BlockInstance($eval->id, (array)$eval);
 				$configdata = $bi->get('configdata');
@@ -269,14 +271,28 @@ function publishgrades_submit(Pieform $form, $values){
 					}
 				}		
 			}
+			
+			//now get any unpublished comments and publish them to the user.
+			safe_require('artefact', 'comment');
+			ArtefactTypeComment::publish_comments($data['id']);
+/*			if(ArtefactTypeComment::count_comments(array($data['id']),null, true)){
+				$feedback = ArtefactTypeComment::get_comments(0, 0, null, $data);
+				foreach($feedback as $comment){
+					$comment->set('published',true);
+					$comment->set('dirty',true);
+					$comment->commit();
+					activity_occurred('feedback', $comment, 'artefact', 'comment');
+				}			
+			}*/
 		}
 
     	
 
     }
     catch (SQLException $e) {
-        $SESSION->add_error_msg("couldn't publish grades");
+        $SESSION->add_error_msg(get_string('couldnotpublish', 'group').$e->getMessage());
     }
+    $SESSION->add_ok_msg(get_string('published', 'group'));
     $goto = get_config('wwwroot').'group/report.php?group='.$values['group'];
     redirect($goto);
 

@@ -249,7 +249,7 @@ ul.artefactchooser-subtabs li.current a:active {
     -webkit-border-radius: 0 5px 5px 5px;
     -moz-border-radius: 0 5px 5px 5px;
     border-radius: 0 5px 5px 5px;
-    background-color: #F9F9F9;
+    background-color: #eFe;
 }
 #feedbacktable .private .commentrightwrap {
     background: #FFF9F9 url(../images/private_bkgd.png) repeat 0 0;
