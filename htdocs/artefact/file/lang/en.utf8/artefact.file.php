@@ -172,6 +172,7 @@ $string['uploadoffilecomplete'] = 'Upload of %s complete';
 $string['uploadoffilefailed'] =  'Upload of %s failed';
 $string['uploadoffiletofoldercomplete'] = 'Upload of %s to %s complete';
 $string['uploadoffiletofolderfailed'] = 'Upload of %s to %s failed';
+$string['couldnotresizeimage'] = 'Could not resize image it is too large - Manually resize and try again. Images should not be larger than 1500px on any one dimension and should be saved as .jpg files.';
 $string['usecustomagreement'] = 'Use custom agreement';
 $string['youmustagreetothecopyrightnotice'] = 'You must agree to the copyright notice.';
 $string['fileuploadedtofolderas'] = '%s uploaded to %s as "%s"';
