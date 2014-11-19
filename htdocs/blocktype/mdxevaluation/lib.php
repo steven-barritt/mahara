@@ -393,6 +393,9 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
 								   ,11 => '11',12 => '12',13 => '13',14 => '14',15 => '15',16 => '16',17 => '17',20 =>'20'
                                    ),
             'defaultvalue' => (isset($configdata['selfmark'])) ? intval($configdata['selfmark']) : 20,
+            'separator' => '<br/>',
+//            'separator' => '&nbsp;&nbsp|&nbsp;&nbsp',
+            'rowsize' => 4,
 			'rules' => array('required'    => true),
                 'help' => true,
 			)
@@ -413,13 +416,13 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
 	
 	
     public function mdxevaluation_js() {
+
         $js = <<<EOF
 function mdxevaluation_success(form, data) {
 		window.location.replace(data.goto);
         
     }
 
-    
 EOF;
         return "<script>$js</script>";
     }
