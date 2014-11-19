@@ -918,6 +918,19 @@ function pieform_element_filebrowser_upload(Pieform $form, $element, $data) {
             }
         }
     }
+    if($resizeattempted && !$resized){
+    	//something went wrong with the resize - we should delete the image and warn the user
+    	
+//    	$e = new Exception('Could not resize image it is too large');
+    	$e = new Exception(get_string('couldnotresizeimage', 'artefact.file'));
+        prepare_upload_failed_message($result, $e, $parentfoldername, $originalname);
+        if (defined('GROUP')) {
+            $group = group_current_group();
+            $result['quota'] = $group->quota;
+            $result['quotaused'] = $group->quotaused;
+        }
+        return $result;
+    }
 
     try {
         $newid = ArtefactTypeFile::save_uploaded_file('userfile', $data, $userfileindex, $resized);
