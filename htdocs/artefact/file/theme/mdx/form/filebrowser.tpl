@@ -10,30 +10,6 @@
 <input type="hidden" name="{$prefix}_changefolder" id="{$prefix}_changefolder" value="" />
 <input type="hidden" name="{$prefix}_foldername" id="{$prefix}_foldername" value="{$foldername}" />
 
-{if $config.select}
-<div id="{$prefix}_open_upload_browse_container"{if $browse} class="hidden"{/if}>
-<input type="submit" class="buttondk" id="{$prefix}_open_upload_browse" name="browse" value="{if $config.selectone}{str tag=selectafile section=artefact.file}{else}{str tag=addafile section=artefact.file}{/if}" />{if $config.browsehelp}{contextualhelp plugintype=$config.plugintype pluginname=$config.pluginname section=$config.browsehelp}{/if}
-</div>
-{/if}
-
-<div id="{$prefix}_upload_browse" class="upload_browse{if $config.select} select{if !$browse} hidden{/if}{/if}">
-
-{if $config.select && !$config.alwaysopen}
-<input type="submit" class="buttondk" name="{$prefix}_cancelbrowse" id="{$prefix}_close_upload_browse" value="{str tag=Close}" />
-{/if}
-
-{if $tabs}
-<input type="hidden" name="{$prefix}_owner" id="{$prefix}_owner" value="{$tabs.owner}" />
-<input type="hidden" name="{$prefix}_ownerid" id="{$prefix}_ownerid" value="{$tabs.ownerid}" />
-<input type="hidden" name="{$prefix}_changeowner" id="{$prefix}_changeowner" value="" />
-<div id="{$prefix}_ownertabs">
-{include file="artefact:file:form/ownertabs.tpl" tabs=$tabs prefix=$prefix querybase=$querybase}
-</div>
-<div id="artefactchooser-body">
-  <div id="{$prefix}_ownersubtabs" {if !$tabs.subtabs}class="hidden"{/if}>
-  {if $tabs.subtabs}{include file="artefact:file:form/ownersubtabs.tpl" tabs=$tabs prefix=$prefix querybase=$querybase}{/if}
-  </div>
-{/if}
 
 {if $config.upload}
 <div id="{$prefix}_upload_container" class="fileupload{if ($tabs && !$tabs.upload) || $uploaddisabled} hidden{/if}">
@@ -83,6 +59,32 @@
 {/if}
 {if $config.upload}
 <div id="{$prefix}_upload_disabled" class="uploaddisabled{if !$uploaddisabled} hidden{/if}">{str tag="cannoteditfolder" section=artefact.file}</div>
+{/if}
+
+
+{if $config.select}
+<div id="{$prefix}_open_upload_browse_container"{if $browse} class="hidden"{/if}>
+<input type="submit" class="buttondk" id="{$prefix}_open_upload_browse" name="browse" value="{if $config.selectone}{str tag=selectafile section=artefact.file}{else}{str tag=addafile section=artefact.file}{/if}" />{if $config.browsehelp}{contextualhelp plugintype=$config.plugintype pluginname=$config.pluginname section=$config.browsehelp}{/if}
+</div>
+{/if}
+
+<div id="{$prefix}_upload_browse" class="upload_browse{if $config.select} select{if !$browse} hidden{/if}{/if}">
+
+{if $config.select && !$config.alwaysopen}
+<input type="submit" class="buttondk" name="{$prefix}_cancelbrowse" id="{$prefix}_close_upload_browse" value="{str tag=Close}" />
+{/if}
+
+{if $tabs}
+<input type="hidden" name="{$prefix}_owner" id="{$prefix}_owner" value="{$tabs.owner}" />
+<input type="hidden" name="{$prefix}_ownerid" id="{$prefix}_ownerid" value="{$tabs.ownerid}" />
+<input type="hidden" name="{$prefix}_changeowner" id="{$prefix}_changeowner" value="" />
+<div id="{$prefix}_ownertabs">
+{include file="artefact:file:form/ownertabs.tpl" tabs=$tabs prefix=$prefix querybase=$querybase}
+</div>
+<div id="artefactchooser-body">
+  <div id="{$prefix}_ownersubtabs" {if !$tabs.subtabs}class="hidden"{/if}>
+  {if $tabs.subtabs}{include file="artefact:file:form/ownersubtabs.tpl" tabs=$tabs prefix=$prefix querybase=$querybase}{/if}
+  </div>
 {/if}
 
 

@@ -14,7 +14,7 @@ defined('INTERNAL') || die();
 $string['pluginname'] = 'Files';
 
 $string['sitefilesloaded'] = 'Site files loaded';
-$string['addafile'] = 'Add a file';
+$string['addafile'] = 'Browse Uploaded Files';
 $string['archive'] = 'Archive';
 $string['bytes'] = 'bytes';
 $string['cannotviewfolder'] = 'You do not have permission to view the content of this folder.';

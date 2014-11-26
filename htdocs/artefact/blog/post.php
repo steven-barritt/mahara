@@ -199,8 +199,8 @@ if($posttype == 0){
 		'title'        => get_string('attachmentsimg', 'artefact.blog'),
 		'folder'       => $folder,
 		'highlight'    => $highlight,
-		'browse'       => 1,
-		'filters'		=> array('filetype' => array('image/jpeg','image/png','image/gif','image/tiff')),
+		'browse'       => false,
+		'filters'		=> array('filetype' => array('image/jpeg','image/png','image/gif')),
 		'page'         => get_config('wwwroot') . 'artefact/blog/post.php?' . ($blogpost ? ('id=' . $blogpost) : ('blog=' . $blog)) . '&browse=1',
 		'browsehelp'   => 'browsemyfiles',
 		'config'       => array(
@@ -221,12 +221,13 @@ if($posttype == 0){
 		'selectcallback'     => 'add_attachment',
 		'unselectcallback'   => 'delete_attachment',
 	);
-	$elements['tags']  = array(
-		'defaultvalue' => $tags,
-		'type'         => 'tags',
-		'title'        => get_string('tags'),
-/*		'description'  => get_string('tagsdesc'),*/
-		'help' => false,
+	$elements['title'] = array(
+		'type' => 'text',
+		'title' => get_string('posttitle', 'artefact.blog'),
+		'rules' => array(
+			'required' => false
+		),
+		'defaultvalue' => $title,
 	);
 	$elements['description'] = array(
 		'type' => 'wysiwyg',
@@ -239,6 +240,13 @@ if($posttype == 0){
 			'required' => false
 		),
 		'defaultvalue' => $description,
+	);
+	$elements['tags']  = array(
+		'defaultvalue' => $tags,
+		'type'         => 'tags',
+		'title'        => get_string('tags'),
+/*		'description'  => get_string('tagsdesc'),*/
+		'help' => false,
 	);
 
 }elseif($posttype ==2){
@@ -467,16 +475,39 @@ function imageSrcFromId($imageid) {
 
 
 function buildimgshtml($imgs){
-//	$imgs = attachedImageList($files);
-	$imghtml = '<div id="post_imgs">';
-	foreach($imgs as $img){
-		$imgsrc = imageSrcFromId($img);
-		$imghtml = $imghtml.'<p><a href="'.$imgsrc.'"> <img src="'.$imgsrc.'" /></a></p>';
+	if(count($imgs)){
+	//	$imgs = attachedImageList($files);
+		$imghtml = '<div id="post_imgs">';
+		foreach($imgs as $img){
+			$imgsrc = imageSrcFromId($img);
+			$imghtml = $imghtml.'<p><a href="'.$imgsrc.'"> <img src="'.$imgsrc.'" /></a></p>';
+		}
+		$imghtml = $imghtml.'</div>';
+		return $imghtml;
+	}else{
+		return '';
 	}
-	$html = $imghtml.'</div>';
-	return $imghtml;
 }
 
+
+function extractimages($files, $desc){
+
+	
+	$dom = new DOMDocument();
+
+	$imgs = array();
+	$dom->loadHTML($desc);
+
+	foreach($dom->getElementsByTagName('img') as $node)
+	{
+		$src = $node->attributes->getNamedItem("src")->nodeValue;
+		$imgs[] = intval(substr($src, strpos($src,'file=')+5));
+		
+	}
+	$returnfiles = array_diff($files, $imgs);
+	
+	return $returnfiles;		
+}
 
 /**
  * This function get called to cancel the form submission. It returns to the
@@ -495,7 +526,11 @@ function editpost_submit(Pieform $form, $values) {
     $postobj->set('title', $values['title']);
     $postobj->set('description', $values['description']);
 	if($values['blogtype'] == 0 || $values['blogtype'] == 2){
-	    $postobj->set('description', $values['description']);
+		$files = is_array($values['filebrowser']) ? $values['filebrowser'] : array();
+		$images = extractimages($files,$values['description'] );
+		$desc = buildimgshtml($images);
+		$desc = $values['description'] . $desc;
+	    $postobj->set('description', $desc);
 	}
 	elseif($values['blogtype'] == 1){
 		$files = is_array($values['filebrowser']) ? $values['filebrowser'] : array();

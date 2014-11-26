@@ -275,7 +275,7 @@ function pieform_element_filebrowser_build_filelist($form, $element, $folder, $h
     $editmeta = (int) ($userid && !$editable && !empty($element['config']['tag']));
     $querybase = $element['page'] . (strpos($element['page'], '?') === false ? '?' : '&');
     $prefix = $form->get_name() . '_' . $element['name'];
-	$nobrowse = (int) $element['config']['nobrowse'];
+	$nobrowse = isset($element['config']['nobrowse']) ? (int) $element['config']['nobrowse'] : false;
 
     $filters = isset($element['filters']) ? $element['filters'] : null;
     $filedata = ArtefactTypeFileBase::get_my_files_data($folder, $userid, $group, $institution, $filters);
