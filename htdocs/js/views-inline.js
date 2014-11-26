@@ -30,6 +30,44 @@
         });
     }
 
+	function updategrade(radio){
+		var newval = radio.val();
+		var form = radio.parents('.pieform');
+		var grade = parseInt(form.find("input[type=radio][name*='research']:checked").val());
+		grade +=  parseInt(form.find("input[type=radio][name*='concept']:checked").val());
+		grade +=  parseInt(form.find("input[type=radio][name*='technical']:checked").val());
+		grade +=  parseInt(form.find("input[type=radio][name*='presentation']:checked").val());
+		grade +=  parseInt(form.find("input[type=radio][name*='studentship']:checked").val());
+		grade +=  parseInt(form.find("input[type=radio][name*='workbook']:checked").val());
+		grade = Math.round(((grade/30)*20)-2);
+		if(grade > 17){
+			grade = 17;
+		}
+		form.find("input[type=radio][name*='selfmark'][value='"+grade+"']").prop('checked',true);
+		//alert('bob');
+	}
+
+	function addOnChange(){
+		$("input[type=radio][name*='research']").click(function(){
+			updategrade($(this));
+		});
+		$("input[type=radio][name*='concept']").click(function(){
+			updategrade($(this));
+		});
+		$("input[type=radio][name*='technical']").click(function(){
+			updategrade($(this));
+		});
+		$("input[type=radio][name*='presentation']").click(function(){
+			updategrade($(this));
+		});
+		$("input[type=radio][name*='studentship']").click(function(){
+			updategrade($(this));
+		});
+		$("input[type=radio][name*='workbook']").click(function(){
+			updategrade($(this));
+		});
+	}
+	
     /**
      * Rewrites one configure button to be AJAX
      */
@@ -53,7 +91,8 @@
 
 
      $(document).ready(function() {
-    	rewriteConfigureButtons();	
+    	rewriteConfigureButtons();
+    	addOnChange();
     });
 
 }( window.ViewManager = window.ViewManager || {}, jQuery ));
