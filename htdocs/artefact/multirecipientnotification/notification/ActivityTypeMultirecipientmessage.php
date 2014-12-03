@@ -95,10 +95,11 @@ class ActivityTypeMultirecipientmessage extends ActivityTypeUsermessage {
             $function = 'get_' . $p;
             $userdata->$p = $this->$function($user);
         }
-
+        $userdata->read = '0';
         if ('sender' === $userdata->role) {
             $userdata->read = '0';
         }
+
 
         $userdata->internalid = insert_record('artefact_multirecipient_userrelation',
                 $userdata, 'id', true);
@@ -133,7 +134,7 @@ class ActivityTypeMultirecipientmessage extends ActivityTypeUsermessage {
                 static $adminnotified = array();
                 // We don't mind other notification methods failing, as it'll
                 // go into the activity log as 'unread'
-                $changes->read = 0;
+                $changes->read = '0';
                 update_record('artefact_multirecipient_userrelation', $changes);
                 if (!$badnotification && !($e instanceof EmailDisabledException || $e instanceof InvalidEmailException)) {
                     // Admins should probably know about the error, but to avoid sending too many similar notifications,
