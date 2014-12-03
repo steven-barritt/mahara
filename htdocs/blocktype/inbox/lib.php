@@ -74,13 +74,15 @@ class PluginBlocktypeInbox extends SystemBlocktype {
                     if (null === $record) {
                         continue;
                     }
-                    $record->url = 'artefact/multirecipientnotification/sendmessage.php?replyto=' . $msgidrecord->id . '&returnto=outbox';
-                    if (count($record->userids) > 1) {
-                        $record->urltext = get_string('replyurltext', 'artefact.multirecipientnotification');
-                    }
-                    else {
-                        $record->urltext = get_string('returnurltext', 'artefact.multirecipientnotification');
-                    }
+                    $record->url = 'artefact/multirecipientnotification/sendmessage.php?id=' . $record->fromid . '&replyto=' . $record->id . '&returnto=inbox';
+                    $record->urltext = get_string('returnurltext', 'artefact.multirecipientnotification');
+					if (count($record->userids) > 1) {
+						$record->return = 'artefact/multirecipientnotification/sendmessage.php?replyto=' . $msgidrecord->id . '&returnto=inbox';
+						$record->returnoutput = get_string('replyurltext', 'artefact.multirecipientnotification');
+					}
+					else {
+						$record->return = null;
+					}
                     $record->msgtable = $msgidrecord->msgtable;
                     $records[] = $record;
                 }

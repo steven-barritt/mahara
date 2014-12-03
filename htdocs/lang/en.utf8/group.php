@@ -362,6 +362,7 @@ $string['Joined'] = 'Joined';
 
 $string['invitemembersdescription'] = 'You can invite users to join this group through their profile pages or <a href="%s">send multiple invitations at once</a>.';
 $string['membersdescription:controlled'] = 'This is a controlled membership group. You can add users directly through their profile pages or <a href="%s">add many users at once</a>.';
+$string['sendgroupmessage'] = 'Send all members a message';
 
 // View submission
 $string['submit'] = 'Submit';

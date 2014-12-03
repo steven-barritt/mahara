@@ -84,6 +84,8 @@ list($html, $pagination, $count, $offset, $membershiptype) = group_get_membersea
 
 // Type-specific instructions
 $instructions = '';
+$messageurl = '';
+$messagebtn = '';
 if ('admin' == $role) {
     $url = get_config('wwwroot') . 'group/inviteusers.php?id=' . GROUP;
     $instructions = get_string('invitemembersdescription', 'group', $url);
@@ -91,8 +93,13 @@ if ('admin' == $role) {
         $url = get_config('wwwroot') . 'group/addmembers.php?id=' . GROUP;
         $instructions .= ' ' . get_string('membersdescription:controlled', 'group', $url);
     }
+    
 }
 
+if ('admin' == $role || 'tutor' == $role) {
+    $messageurl = get_config('wwwroot') . 'artefact/multirecipientnotification/sendmessage.php?groupid=' . GROUP.'&returnto=outbox';
+    $messagebtn = get_string('sendgroupmessage','group');
+}
 $searchform = pieform(array(
     'name' => 'search',
     'checkdirtychange' => false,
@@ -176,7 +183,10 @@ if ($role == 'admin') {
 $smarty->assign('INLINEJAVASCRIPT', $js);
 $smarty->assign('heading', $group->name);
 $smarty->assign('form', $searchform);
+$smarty->assign('groupid', $group->id);
 $smarty->assign('results', $html);
+$smarty->assign('messageurl', $messageurl);
+$smarty->assign('messagebtn', $messagebtn);
 $smarty->assign('pagination', $pagination['html']);
 $smarty->assign('instructions', $instructions);
 $smarty->assign('membershiptype', $membershiptype);

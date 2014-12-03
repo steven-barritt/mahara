@@ -16,9 +16,11 @@ require_once(get_config('docroot') . '/lib/pieforms/pieform.php');
 require_once(get_config('docroot') . '/lib/searchlib.php');
 safe_require('search', 'internal');
 safe_require('artefact', 'multirecipientnotification');
+require_once(get_config('libroot') . 'group.php');
 
 $id = param_integer('id', null);
 $replytoid = param_integer('replyto', null);
+$groupid = param_integer('groupid', null);
 $messages = null;
 $users = array();
 $user = null;
@@ -140,6 +142,13 @@ if (!is_null($replytoid)) {
     }
 }
 define('TITLE', get_string('sendmessageto', 'artefact.multirecipientnotification'));
+
+
+//allow someone to pass a groupid into the messaging thing this will then add all the users in that group to the message
+if(!is_null($groupid)){
+	$users = group_get_member_ids($groupid);
+}
+
 
 $returnto = param_alpha('returnto', 'myfriends');
 $offset = param_integer('offset', 0);

@@ -17,7 +17,17 @@
       {if !$i->read}<span class="accessible-hidden">{str tag=unread section=activity}: </span>{/if}{$i->subject|truncate:50}
       </a>
       <div class="inbox-message hidden messagebody-{$i->type}" id="inbox-message-{$i->msgtable}-{$i->id}">{$i->message|safe}
-      {if $i->url}<br><a href="{$WWWROOT}{$i->url}">{if $i->urltext}{$i->urltext} &raquo;{else}{str tag="more..."}{/if}</a>{/if}
+        {if $i->url}
+        <br />
+        <a href="{$WWWROOT}{$i->url}">
+            {if $i->urltext}
+                {$i->urltext} {str tag='linkindicator' section="artefact.multirecipientnotification"}
+            {/if}
+            </a>
+        {/if}
+        {if $i->return}
+          <br /><a href="{$WWWROOT}{$i->return}">{$i->returnoutput} {str tag='linkindicator' section="artefact.multirecipientnotification"}</a>
+        {/if}
       </div>
   {elseif $i->url}
       <a href="{$WWWROOT}{$i->url}">{$i->subject}</a>

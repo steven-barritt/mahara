@@ -1,6 +1,11 @@
 {include file="header.tpl"}
 
     <p>{$instructions|clean_html|safe}</p>
+    {if $messageurl != ""}
+    <p>
+    <a href="{$messageurl}"><button type="button">{$messagebtn}</button></a>
+    </p>
+    {/if}
     <div class="memberswrap"><div class="memberssearch">
     {if $membershiptypes}
     	<div class="membershiptypes">
