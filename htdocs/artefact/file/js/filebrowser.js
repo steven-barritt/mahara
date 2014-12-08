@@ -627,6 +627,10 @@ function FileBrowser(idprefix, folderid, config, globalconfig) {
                 e.stop();
                 removeElementClass(self.id + '_upload_browse', 'hidden');
                 addElementClass(self.id + '_open_upload_browse_container', 'hidden');
+                $(self.id + '_changefolder').value = self.folderid;
+                self.submitform();
+                $(self.id + '_changefolder').value = '';
+
                 return false;
             });
         }

@@ -199,7 +199,7 @@ if($posttype == 0){
 		'title'        => get_string('attachmentsimg', 'artefact.blog'),
 		'folder'       => $folder,
 		'highlight'    => $highlight,
-		'browse'       => false,
+		'browse'       => $browse,
 		'filters'		=> array('filetype' => array('image/jpeg','image/png','image/gif')),
 		'page'         => get_config('wwwroot') . 'artefact/blog/post.php?' . ($blogpost ? ('id=' . $blogpost) : ('blog=' . $blog)) . '&browse=1',
 		'browsehelp'   => 'browsemyfiles',
@@ -211,7 +211,7 @@ if($posttype == 0){
 			'createfolder'    => true,
 			'edit'            => false,
 			'select'          => true,
-			'alwaysopen'		=> true,
+			'alwaysopen'		=> false,
 		),
 		'rules' => array(
 			'required' => true,
@@ -520,7 +520,6 @@ function editpost_cancel_submit() {
 
 function editpost_submit(Pieform $form, $values) {
     global $USER, $SESSION, $blogpost, $blog;
-
     db_begin();
     $postobj = new ArtefactTypeBlogPost($blogpost, null);
     $postobj->set('title', $values['title']);

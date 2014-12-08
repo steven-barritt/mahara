@@ -105,7 +105,9 @@
 </div>
 
 <div id="{$prefix}_filelist_container">
+{if $browse}
 {include file="artefact:file:form/filelist.tpl" prefix=$prefix filelist=$filelist folderdownload=$folderdownload folderparams=$folderparams editable=$config.edit selectable=$config.select highlight=$highlight edit=$edit querybase=$querybase groupinfo=$groupinfo owner=$tabs.owner ownerid=$tabs.ownerid selectfolders=$config.selectfolders showtags=$config.showtags editmeta=$config.editmeta nobrowse=$config.nobrowse}
+{/if}
 </div>
 {* Edit form used when js is available *}
 {if $edit <= 0}

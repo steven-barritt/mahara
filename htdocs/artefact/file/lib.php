@@ -791,6 +791,7 @@ abstract class ArtefactTypeFileBase extends ArtefactType {
                     'highlight'    => $highlight,
                     'edit'         => $edit,
                     'page'         => $page,
+					'browse'       => true,
                     'config'       => array(
                         'upload'          => $editfilesfolders,
                         'uploadagreement' => get_config_plugin('artefact', 'file', 'uploadagreement'),
@@ -799,6 +800,7 @@ abstract class ArtefactTypeFileBase extends ArtefactType {
                         'createfolder'    => $editfilesfolders,
                         'edit'            => $editfilesfolders,
                         'select'          => false,
+						'alwaysopen'		=> true,
                     ),
                 ),
             ),
