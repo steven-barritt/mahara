@@ -66,7 +66,7 @@ class PluginBlocktypeGroupMembers extends SystemBlocktype {
         }
 
         require_once('searchlib.php');
-        $groupmembers = get_group_user_search_results($groupid, '', 0, $numtoshow, '', $order,null,'nameatoz');
+        $groupmembers = get_group_user_search_results($groupid, '', 0, $numtoshow, '', $order,null,'adminfirst');
 
         if ($groupmembers['count']) {
             $smarty = smarty_core();
