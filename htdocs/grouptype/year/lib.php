@@ -28,49 +28,17 @@
 defined('INTERNAL') || die();
 require_once('view.php');
 require_once(get_config('libroot') . 'group.php');
-class PluginGrouptypeProject extends PluginGrouptype {
+class PluginGrouptypeYear extends PluginGrouptype {
 
     public static function postinst($prevversion) {
         if ($prevversion == 0) {
-            parent::installgrouptype('GroupTypeProject');
+            parent::installgrouptype('GroupTypeYear');
         }
     }
-    public static function can_be_disabled() {
-        return false;
-    }
-
-
-	public static function get_event_subscriptions() {
-        $sub = new stdClass();
-        $sub->plugin = 'project';
-        $sub->event = 'userjoinsgroup';
-        $sub->callfunction = 'copy_template_page';
-        return array($sub);
-    }
- 
-    public static function copy_template_page($event, $eventdata) {
-		//SB this is where we have to fnd the pages shared with group and with copynewuser
-		//then we need to call the user function copy template page with the page
-		if(group_get_type($eventdata['group']) == 'project' && $eventdata['copy_views']){
-			$sharedviews = View::get_sharedviews_data(0,0,$eventdata['group'],true);
-			$sharedviews = $sharedviews->data;
-			$ids = array();
-			foreach ($sharedviews as &$data) {
-				$ids[] = $data['id'];
-			}
-			
-			$userobj = new User();
-			$userobj->find_by_id($eventdata['member']);
-			//var_dump($userobj);
-			$userobj->copy_views_from_group($ids,$eventdata['group']);
-		}
-		
-    }
-	
 
 }
 
-class GroupTypeProject extends GroupType {
+class GroupTypeYear extends GroupType {
 
     public static function allowed_join_types($all=false) {
         global $USER;

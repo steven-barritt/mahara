@@ -27,7 +27,7 @@
 
 defined('INTERNAL') || die();
 
-$string['name'] = 'Year';
+$string['name'] = 'Module';
 $string['admin'] = 'Admin';
 $string['tutor'] = 'Tutor';
 $string['member'] = 'Member';

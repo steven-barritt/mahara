@@ -28,17 +28,17 @@
 defined('INTERNAL') || die();
 require_once('view.php');
 require_once(get_config('libroot') . 'group.php');
-class PluginGrouptypeYear extends PluginGrouptype {
+class PluginGrouptypeAssessment extends PluginGrouptype {
 
     public static function postinst($prevversion) {
         if ($prevversion == 0) {
-            parent::installgrouptype('GroupTypeYear');
+            parent::installgrouptype('GroupTypeAssessment');
         }
     }
 
 }
 
-class GroupTypeYear extends GroupType {
+class GroupTypeAssessment extends GroupType {
 
     public static function allowed_join_types($all=false) {
         global $USER;
