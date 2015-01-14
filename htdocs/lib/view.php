@@ -4353,7 +4353,7 @@ class View {
         global $USER;
         $userid = $USER->get('id');
         require_once(get_config('libroot') . 'group.php');
-        if (!group_user_access($groupid)) {
+        if (!group_user_access($groupid) && $user=NULL) {
             throw new AccessDeniedException(get_string('accessdenied', 'error'));
         }
         $from = '

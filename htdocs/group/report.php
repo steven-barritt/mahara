@@ -156,10 +156,14 @@ function get_assessments($user,$subgroups1,&$assessments){
 function getallmembers($subgroups){
 	$members = array();
 	foreach($subgroups as $subgroup){
-		$members = array_merge($members,group_get_member_ids2($subgroup->id, array('member')));
+		$newmembers = group_get_member_ids2($subgroup->id, array('member'));
+		if($newmembers){
+			$members = array_merge($members,$newmembers);
+		}
 		if(count($subgroup->subgroups) > 0){
 			$members = array_merge($members,getallmembers($subgroup->subgroups));
 		}
+		
 	}
 	return $members;
 }
@@ -169,6 +173,7 @@ function getallmembers($subgroups){
 //this should have all the info we need
 //then for each view get the tutor mark - if published
 //add this to module average
+
 if(in_array($group->grouptype, array('year','module','assessment')) ){
 
 	$subgroups = array();
