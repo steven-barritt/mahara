@@ -12,6 +12,7 @@ define('INTERNAL', 1);
 require(dirname(dirname(__FILE__)) . '/init.php');
 require_once('view.php');
 require_once('group.php');
+require_once('user.php');
 safe_require('artefact', 'comment');
 define('TITLE', get_string('report', 'group'));
 define('MENUITEM', 'groups/report');
@@ -23,13 +24,265 @@ $needsubdomain = get_config('cleanurlusersubdomains');
 $setlimit = true;
 $limit = param_integer('limit', 100);
 $offset = param_integer('offset', 0);
-$sort = param_variable('sort', 'sharedby');
 $direction = param_variable('direction', 'asc');
 $group = group_current_group();
+if(in_array($group->grouptype,array('year','module','assessment'))){
+	$sort = param_variable('sort', 'firstname');
+}else{
+	$sort = param_variable('sort', 'sharedby');
+}
 $role = group_user_access($group->id);
 if (!group_role_can_access_report($group, $role)) {
     throw new AccessDeniedException();
 }
+
+
+//SB - this is where we need to diverge between a project group and a year group to show a different report
+//what we should be doing is for each user we need to look at all the shared pages- this is tricky as we only want to see the ones from this year
+//how do we determine if the page is for this year or not?
+//how do we sort the grades from each project into years/modules
+//need some sort of hierarchy in the groups? then get sharedviews from there?
+//
+//get users
+//$group, $roles=null, $includedeleted=false
+
+function countassessmentcols($subgroups1,&$colcount){
+	foreach($subgroups1 as $subgroup){
+		if($subgroup->grouptype == 'assessment'){
+			$colcount++;		
+		}
+		if(count($subgroup->subgroups) > 0){
+			countassessmentcols($subgroup->subgroups,$colcount);
+		}
+	}
+}
+
+
+function buildrows($subgroups1,&$rows, $rowno){
+//	$hassubgroups = false;
+//	$cols = array();
+	foreach($subgroups1 as $subgroup){
+		if(in_array($subgroup->grouptype,array('year','module','assessment'))){ 
+			$cols_count = 0;
+			countassessmentcols($subgroup->subgroups,$cols_count);
+	//		var_dump($cols_count);
+	//		$cols[] = array('name'=>$subgroup->name,'colspan'=>$cols_count);
+			$rows[$rowno][] = array('name'=>$subgroup->name,'colspan'=>$cols_count);
+			if(count($subgroup->subgroups)>0){
+				buildrows($subgroup->subgroups,$rows,$rowno+1);
+			}
+		}
+	}
+}
+
+
+//var_dump($userdata);
+//for each user
+
+//get subgroups
+// for each supgroup
+// if grouptype = Mudule then start an average
+
+//for each subgroup
+
+//if group is assessment type then
+
+function averagegrades($grades){
+	$avgrade = 0;
+	if($grades){
+		$avgrade = round(array_sum($grades)/count($grades));
+	}
+	return Intval($avgrade);
+}
+
+
+function get_assessments($user,$subgroups1,&$assessments){
+	foreach($subgroups1 as $subgroup){
+		if($subgroup->grouptype == 'assessment'){
+			$grades = array();
+			if(count($subgroup->subgroups) > 0){
+				//find the actual Views shared by the user
+				foreach($subgroup->subgroups as $subsubgroup){
+					//$limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null,$excludetemplates=false,$user=null
+					$sharedviews = View::get_sharedviews_data(null,0,$subsubgroup->id,false,false,null,false,$user);
+//					var_dump($user);
+					$sharedviews = $sharedviews->data;
+//					var_dump($sharedviews);
+					//find the assessment
+					foreach ($sharedviews as &$data) {
+//						bob::bob();
+						require_once(get_config('docroot') . 'blocktype/lib.php');
+	
+						$sql = "SELECT bi.*
+								FROM {block_instance} bi
+								WHERE bi.view = ?
+								AND bi.blocktype = 'mdxevaluation'
+								";
+						if (!$evaldata = get_records_sql_array($sql, array($data['id']))) {
+							$evaldata = array();
+						}
+	
+						foreach ($evaldata as $eval){
+							$bi = new BlockInstance($eval->id, (array)$eval);
+							$configdata = $bi->get('configdata');
+							if(isset($configdata['evaltype'])){
+								if($configdata['evaltype'] == 3){
+									$published = isset($configdata['published']) ? $configdata['published'] : false;
+									if($published){
+										//TODO: Add individual grade elements - research etc.
+										$grades[] = Intval($configdata['selfmark']);
+									}
+								}
+							}		
+						}
+					}
+	
+					
+				}
+			}
+			//if there is more than one then average the result and round up
+			$grade = averagegrades($grades);
+			$assessments[] = array($subgroup->name, $grade);
+			//add it to the list of assessments
+		}
+		if(count($subgroup->subgroups) > 0){
+			get_assessments($user,$subgroup->subgroups,$assessments);
+		}
+	}
+	
+}
+
+//Get all members and subgroup members
+function getallmembers($subgroups){
+	$members = array();
+	foreach($subgroups as $subgroup){
+		$members = array_merge($members,group_get_member_ids2($subgroup->id, array('member')));
+		if(count($subgroup->subgroups) > 0){
+			$members = array_merge($members,getallmembers($subgroup->subgroups));
+		}
+	}
+	return $members;
+}
+
+//for each supgroup
+//get the shared_views_by_user_data
+//this should have all the info we need
+//then for each view get the tutor mark - if published
+//add this to module average
+if(in_array($group->grouptype, array('year','module','assessment')) ){
+
+	$subgroups = array();
+	$subgroups = get_group_subgroups_array($group->id);
+	if(!$subgroups){
+		$subgroups = array();
+	}
+//	$groupmembers = group_get_member_ids($group->id, array('member'));
+	$groupmembers = group_get_member_ids2($group->id, array('member'));
+//	var_dump($groupmembers);
+	$groupmembers = array_merge($groupmembers,getallmembers($subgroups));
+	$groupmembers = array_unique($groupmembers);
+//	var_dump(array_unique($groupmembers));
+//var_dump($subgroups);
+	$rows = array();
+	$colcount = 0;
+//	$rows[0][] = 'bob';
+//	var_dump($rows);
+
+
+	//var_dump($subgroups);
+	countassessmentcols($subgroups, $colcount);
+	buildrows($subgroups, $rows,1);
+//	var_dump($rows);
+
+	$columns = array();
+	$sortable = array();
+	$userdata = array();
+	/*	$assessments = array();
+		$name = display_default_name(22);
+	get_assessments(22,$subgroups,$assessments);
+		$userdata[] = array('id'=>22,'name'=>$name,'assessments'=>$assessments);*/
+	foreach($groupmembers as $member){
+		$user = get_user_for_display($member);
+		$assessments = array();
+	//	var_dump($member);
+		get_assessments($member,$subgroups,$assessments);
+		$thisuser = array('id'=>$member,'firstname'=>$user->firstname,'lastname'=>$user->lastname,'profileicon'=>$user->profileicon,'studentnumber'=>$user->studentid);
+		$i = 1;
+		if(!$columns){
+			foreach($assessments as $assessment){
+				$columns[$i] = $assessment[0];
+				$sortable[] = $i;
+				$i++;
+			}
+		}
+		$i = 1;
+		foreach($assessments as $assessment){
+			$thisuser[$i] = $assessment[1];
+			$i++;
+		}
+//		$userdata[] = array('id'=>$member,'firstname'=>$user->firstname,'lastname'=>$user->lastname,'profileicon'=>$user->profileicon,'assessments'=>$assessments);
+		$userdata[] = $thisuser;
+	
+	}
+//	var_dump($userdata);
+	//bob::bob();
+
+
+	$nocols = count($userdata[0]['assessments']);
+	//var_dump($nocols);
+/*	$i = 1;
+	$columns = array();
+	foreach($userdata[0]['assessments'] as $assessment){
+		$columns[] = array('column'.$i=>$assessment[0]);
+		$i++;
+	}*/
+//	var_dump($columns);
+	$sortable[] = 'firstname';
+	$sortable[] = 'lastname';
+	if (in_array($sort, $sortable)) {
+    	sorttablebycolumn($userdata, $sort, $direction);
+	}
+
+	
+
+	$pagination = build_pagination(array(
+		'url'    => get_config('wwwroot') . 'group/report.php?group=' . $group->id,
+		'count'  => count($userdata),
+		'limit'  => $limit,
+		'setlimit' => $setlimit,
+		'offset' => $offset,
+		'jumplinks' => 6,
+		'numbersincludeprevnext' => 2,
+	));
+
+$js = <<< EOF
+addLoadEvent(function () {
+	p = {$pagination['javascript']}
+});
+EOF;
+
+	$smarty = smarty(array('paginator'));
+	$smarty->assign('baseurl', get_config('wwwroot') . 'group/report.php?group=' . $group->id);
+	$smarty->assign('heading', $group->name);
+	$smarty->assign('userdata', $userdata);
+	$smarty->assign('columns', $columns);
+	$smarty->assign('rows', $rows);
+	$smarty->assign('colcount', $colcount);
+	$smarty->assign('totalcolcount', $colcount+4);
+
+	$smarty->assign('pagination', $pagination['html']);
+	$smarty->assign('INLINEJAVASCRIPT', $js);
+
+	$smarty->assign('usercount', count($userdata));
+	$smarty->assign('sort', $sort);
+	$smarty->assign('direction', $direction);
+	$smarty->display('group/yearreport.tpl');
+}else{
+
+
+
+
+
 $sharedviews = View::get_sharedviews_data(0, null, $group->id,false,true,null,true);
 $sharedviewscount = $sharedviews->count;
 $sharedviews = $sharedviews->data;
@@ -239,6 +492,8 @@ $smarty->assign('svcount', $sharedviewscount);
 $smarty->assign('sort', $sort);
 $smarty->assign('direction', $direction);
 $smarty->display('group/report.tpl');
+
+}
 
 function publishgrades_submit(Pieform $form, $values){
 	require_once(get_config('docroot') . 'blocktype/lib.php');

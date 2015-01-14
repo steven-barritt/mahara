@@ -1567,6 +1567,46 @@ function get_group_list($type = null, $category = null){
     return $groups;
 }
 
+function get_group_subgroups_array($group, $type = null, $category = null){
+
+	$groups = array();
+	$where = 'WHERE g.parent = ?';
+	if($type != null){
+		$where = ' AND g.grouptype = ?';
+		if($category){
+			$where .= ' AND gc.title = ?';
+		}
+		$groups = get_records_sql_array("
+				SELECT g.id, g.name,g.grouptype, gc.title 
+				FROM {group} g 
+				INNER JOIN {group_category} gc on g.category = gc.id ".$where." AND g.deleted = 0 ORDER BY g.name",
+				array($group,$type, $category)
+			);
+	}else{
+		$groups = get_records_sql_array("
+				SELECT g.id, g.name, g.grouptype 
+				FROM {group} g WHERE g.deleted = 0 AND g.parent = ? ORDER BY g.name
+				",array($group));
+    }
+    if($groups){
+		foreach($groups as &$group){
+	//		$group->subgrouptotalcount = 0;
+			$group->subgroups = get_group_subgroups_array($group->id,$type,$category);
+	/*    	if($group->subgroups){
+				foreach($group->subgroups as $subgroup){
+					$group->subgrouptotalcount += $subgroup->subgroupcount;
+				}
+				$group->subgroupcount = count($group->subgroups);
+			}else{
+				$group->subgroupcount = 0;
+			}*/
+		}
+	}else{
+		$groups = array();
+	}
+    return $groups;
+}
+
 /*
  * Used by admin/groups/groups.php and admin/groups/groups.json.php for listing groups.
  */
@@ -2186,6 +2226,20 @@ function group_get_member_ids($group, $roles=null, $includedeleted=false) {
         array($group)
     );
 }
+
+
+function group_get_member_ids2($group, $roles=null, $includedeleted=false) {
+    $rolesql = is_null($roles) ? '' : (' AND gm.role IN (' . join(',', array_map('db_quote', $roles)) . ')');
+    $values = get_column_sql('
+        SELECT gm.member
+        FROM {group_member} gm INNER JOIN {group} g ON gm.group = g.id
+        WHERE g.id = ? ' . ($includedeleted ? '' : ' AND g.deleted = 0') . $rolesql,
+        array($group)
+    );
+    return array_combine($values,$values);
+}
+
+
 
 
 //SB just tells me if a user is in the group

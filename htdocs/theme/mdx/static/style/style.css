@@ -1433,6 +1433,38 @@ tr[id*="selfmark_container"] div.radio{
 	color:#393
 }
 
+.verticalText
+{
+	text-align: center;
+	vertical-align: middle;
+	width: 20px;
+	margin: 0px;
+	padding: 0px;
+	padding-left: 3px;
+	padding-right: 3px;
+	padding-top: 10px;
+	white-space: nowrap;
+	-webkit-transform: rotate(-90deg); 
+	-moz-transform: rotate(-90deg);                 
+}
+
+.reportLastRow
+{
+	text-align: center;
+	vertical-align: bottom;
+	height: 200px;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.reportUser
+{
+	vertical-align: bottom;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 
 /******************** Responsive design ********************/
 /* for 1000px or less */

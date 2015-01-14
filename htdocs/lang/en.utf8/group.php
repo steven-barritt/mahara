@@ -396,3 +396,6 @@ $string['couldnotpublish'] = "couldn't publish grades ";
 $string['published'] = "All Grades and Feedback Published";
 $string['publishbtn'] = "Publish All Grades and Feedback";
 
+$string['groupparent'] = "Parent Group";
+$string['noparentselected'] = "No Parent";
+

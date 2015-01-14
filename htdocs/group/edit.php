@@ -354,13 +354,27 @@ $elements['general'] = array(
     'value'        => '',
 );
 
+$groups = get_group_list();
+$groupsoption = array();
+foreach($groups as $group){
+	$groupsoption[$group->id] = $group->name;
+}
+
+$elements['parent'] = array(
+			'type'         => 'select',
+			'title'        => get_string('groupparent', 'group'),
+			'options'      => array(null=>get_string('noparentselected', 'group')) + $groupsoption,
+			'defaultvalue' => $group_data->parent);
+
+
+
 if (get_config('allowgroupcategories')
     && $groupcategories = get_records_menu('group_category','','','displayorder', 'id,title')
 ) {
     $elements['category'] = array(
                 'type'         => 'select',
                 'title'        => get_string('groupcategory', 'group'),
-                'options'      => array('0'=>get_string('nocategoryselected', 'group')) + $groupcategories,
+                'options'      => array(null=>get_string('nocategoryselected', 'group')) + $groupcategories,
                 'defaultvalue' => $group_data->category);
 
     // If it's a new group & the category was passed as a parameter, hide it in the form.
@@ -494,6 +508,7 @@ function editgroup_submit(Pieform $form, $values) {
         'editwindowend'  => db_format_timestamp($values['editwindowend']),
         'sendnow'        => intval($values['sendnow']),
         'feedbacknotify'     => intval($values['feedbacknotify']),
+        'parent'     => intval($values['parent']),
     );
 
     if (
