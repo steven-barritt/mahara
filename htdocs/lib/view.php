@@ -4407,6 +4407,50 @@ class View {
             'offset' => $offset,
         );
     }
+    public static function get_sharedviews_data2($limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null,$excludetemplates=false,$user=null) {
+        global $USER;
+        $userid = $USER->get('id');
+        require_once(get_config('libroot') . 'group.php');
+        $from = '
+            FROM {view} v
+            INNER JOIN {view_access} a ON (a.view = v.id)
+            INNER JOIN {group_member} m ON (a.group = m.group AND (a.role = m.role OR a.role IS NULL))
+            INNER JOIN {usr} u ON (v.owner = u.id)
+            LEFT OUTER JOIN {collection_view} cv ON (v.id = cv.view)';
+	    $from .= 'WHERE a.group = ? AND (v.group IS NULL OR v.group != ?) AND cv.view IS NULL AND v.owner = ?';
+		if($excludetemplates){
+			$from .= ' AND v.template = 0';
+		}
+        $ph = array($groupid, $groupid,$user);
+
+        $count = count_records_sql('SELECT COUNT(DISTINCT(v.id)) ' . $from, $ph);
+//        var_dump($groupid);
+//        var_dump($user);
+//        var_dump($ph);
+        $sql = '
+            SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid,'. db_format_tsfield('v.submittedtime', 'submittedtime') . $from . '
+            ORDER BY u.firstname, v.title, v.id';
+//        var_dump($sql);
+        $viewdata = get_records_sql_assoc('
+            SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid,'. db_format_tsfield('v.submittedtime', 'submittedtime') . $from . '
+            ORDER BY u.firstname, v.title, v.id',
+            $ph, $offset, $limit
+        );
+
+        if ($viewdata) {
+            View::get_extra_view_info($viewdata, false, true, $getbloginfo);
+        }
+        else {
+            $viewdata = array();
+        }
+
+        return (object) array(
+            'data'   => array_values($viewdata),
+            'count'  => $count,
+            'limit'  => $limit,
+            'offset' => $offset,
+        );
+    }
 
     /**
      * Get collections which have been explicitly shared to a group and are

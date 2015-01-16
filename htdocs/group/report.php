@@ -104,7 +104,7 @@ function get_assessments($user,$subgroups1,&$assessments){
 				//find the actual Views shared by the user
 				foreach($subgroup->subgroups as $subsubgroup){
 					//$limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null,$excludetemplates=false,$user=null
-					$sharedviews = View::get_sharedviews_data(null,0,$subsubgroup->id,false,false,null,false,$user);
+					$sharedviews = View::get_sharedviews_data2(null,0,$subsubgroup->id,false,false,null,false,$user);
 //					var_dump($user);
 					$sharedviews = $sharedviews->data;
 //					var_dump($sharedviews);
