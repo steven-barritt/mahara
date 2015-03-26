@@ -4157,8 +4157,7 @@ class View {
             SELECT
                 v.id, v.title, v.description, v.owner, v.ownerformat, v.group, v.institution,
                 v.template, v.mtime, v.ctime,
-                c.id AS collid, c.name, v.type, v.urlid
-            ' . $from . $where . '
+                c.id AS collid, c.name, v.type, v.urlid, '. db_format_tsfield('v.submittedtime', 'submittedtime'). $from . $where . '
             ORDER BY ' . $orderby . ', v.id ASC',
             $ph, $offset, $limit
         );
@@ -4349,7 +4348,7 @@ class View {
      * Get views which have been explicitly shared to a group and are
      * not owned by the group excluding the view in collections
      */
-    public static function get_sharedviews_data($limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null,$excludetemplates=false,$user=null) {
+    public static function get_sharedviews_data($limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null,$excludetemplates=false) {
         global $USER;
         $userid = $USER->get('id');
         require_once(get_config('libroot') . 'group.php');
@@ -4365,11 +4364,7 @@ class View {
 		if($copynewuser){
             $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?) AND v.copynewuser';
 		}else{
-			if($user){
-	            $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?) AND cv.view IS NULL AND v.owner = ?';
-			}else{
-	            $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?) AND cv.view IS NULL';
-            }
+	        $from .= 'WHERE a.group = ? AND m.member = ? AND (v.group IS NULL OR v.group != ?) AND cv.view IS NULL';
 		}
 		if($submittedgroup){
 			$from .= ' AND v.submittedgroup = ? ';
@@ -4377,7 +4372,7 @@ class View {
 		if($excludetemplates){
 			$from .= ' AND v.template = 0';
 		}
-        $ph = array($groupid, $userid, $groupid,$user,$submittedgroup);
+        $ph = array($groupid, $userid, $groupid,$submittedgroup);
 
         $count = count_records_sql('SELECT COUNT(DISTINCT(v.id)) ' . $from, $ph);
 //        var_dump($groupid);
@@ -4427,9 +4422,10 @@ class View {
 //        var_dump($groupid);
 //        var_dump($user);
 //        var_dump($ph);
-        $sql = '
+ /*       $sql = '
             SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid,'. db_format_tsfield('v.submittedtime', 'submittedtime') . $from . '
             ORDER BY u.firstname, v.title, v.id';
+            */
 //        var_dump($sql);
         $viewdata = get_records_sql_assoc('
             SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid,'. db_format_tsfield('v.submittedtime', 'submittedtime') . $from . '
