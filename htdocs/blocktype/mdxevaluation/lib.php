@@ -146,6 +146,7 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
         $smarty->assign('workbook', $configdata['workbook']);
         $smarty->assign('selfmark', $configdata['selfmark']);
         $smarty->assign('published', isset($configdata['published']) ? $configdata['published'] : true);
+        $smarty->assign('gradeonly', isset($configdata['gradeonly']) ? $configdata['gradeonly'] : false);
         $smarty->assign('form', $formstr);
         $smarty->assign('id', $instance->get('id'));
 		return $smarty->fetch('blocktype:mdxevaluation:mdxevaluation.tpl');
@@ -176,6 +177,10 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
 			'inlineediting' => array(
                     'type'         => 'hidden',
                     'value' 		=> $configdata['inlineediting'],
+                	),				
+			'gradeonly' => array(
+                    'type'         => 'hidden',
+                    'value' 		=> (isset($configdata['gradeonly'])) ? $configdata['gradeonly'] : false,
                 	),				
 			'retractable' => array(
                     'type'         => 'hidden',
@@ -278,6 +283,13 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
                     'description'  => get_string('inlineeditingdescription', 'blocktype.mdxevaluation'),
                     'defaultvalue' => (isset($configdata['inlineediting'])) ? $configdata['inlineediting'] : false
                 )
+			),array(
+			'gradeonly' => array(
+					'type'         => 'checkbox',
+					'title'        => get_string('gradeonly', 'blocktype.mdxevaluation'),
+					'description'  => get_string('gradeonlydescription', 'blocktype.mdxevaluation'),
+					'defaultvalue' => (isset($configdata['gradeonly'])) ? $configdata['gradeonly'] : false
+				)
 			),$returnarr
 		);
 		return $returnarr;
@@ -287,119 +299,125 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
         $configdata = $instance->get('configdata');
 
 		//TODO : get the data from the DB rather than the config data
-		$returnarr = array(
-            'research' => array(
-			'type' => 'radio',
-            'title' => get_string('research', 'blocktype.mdxevaluation'),
-			'options' => array(
-                                   1 => get_string('exc', 'blocktype.mdxevaluation'),
-                                   2 => get_string('vgood', 'blocktype.mdxevaluation'),
-                                   3 => get_string('good', 'blocktype.mdxevaluation'),
-                                   4 => get_string('pass', 'blocktype.mdxevaluation'),
-                                   5 => get_string('fail', 'blocktype.mdxevaluation'),
-                                   ),
-            //'description' => get_string('researchdescription', 'blocktype.mdxevaluation'),
-            'defaultvalue' => (isset($configdata['research'])) ? intval($configdata['research']) : 5,
-			'separator' => ' | ',
-                'help' => true,
-                'rules' => array('required'    => true),
-        	),
-			'concept' => array(
-			'type' => 'radio',
-            'title' => get_string('concept', 'blocktype.mdxevaluation'),
-			'options' => array(
-                                   1 => get_string('exc', 'blocktype.mdxevaluation'),
-                                   2 => get_string('vgood', 'blocktype.mdxevaluation'),
-                                   3 => get_string('good', 'blocktype.mdxevaluation'),
-                                   4 => get_string('pass', 'blocktype.mdxevaluation'),
-                                   5 => get_string('fail', 'blocktype.mdxevaluation'),
-                                   ),
-            //'description' => get_string('conceptdescription', 'blocktype.mdxevaluation'),
-            'defaultvalue' => (isset($configdata['concept'])) ? intval($configdata['concept']) : 5,
-			'separator' => ' | ',
-                'help' => true,
-                'rules' => array('required'    => true),
-       	),
-			'technical' => array(
-			'type' => 'radio',
-            'title' => get_string('technical', 'blocktype.mdxevaluation'),
-			'options' => array(
-                                   1 => get_string('exc', 'blocktype.mdxevaluation'),
-                                   2 => get_string('vgood', 'blocktype.mdxevaluation'),
-                                   3 => get_string('good', 'blocktype.mdxevaluation'),
-                                   4 => get_string('pass', 'blocktype.mdxevaluation'),
-                                   5 => get_string('fail', 'blocktype.mdxevaluation'),
-                                   ),
-            //'description' => get_string('technicaldescription', 'blocktype.mdxevaluation'),
-            'defaultvalue' => (isset($configdata['technical'])) ? intval($configdata['technical']) : 5,
-			'separator' => ' | ',
-                'help' => true,
-                'rules' => array('required'    => true),
-       	),
-			'presentation' => array(
-			'type' => 'radio',
-            'title' => get_string('presentation', 'blocktype.mdxevaluation'),
-			'options' => array(
-                                   1 => get_string('exc', 'blocktype.mdxevaluation'),
-                                   2 => get_string('vgood', 'blocktype.mdxevaluation'),
-                                   3 => get_string('good', 'blocktype.mdxevaluation'),
-                                   4 => get_string('pass', 'blocktype.mdxevaluation'),
-                                   5 => get_string('fail', 'blocktype.mdxevaluation'),
-                                   ),
-            //'description' => get_string('presentationdescription', 'blocktype.mdxevaluation'),
-            'defaultvalue' => (isset($configdata['presentation'])) ? intval($configdata['presentation']) : 5,
-			'separator' => ' | ',
-                'help' => true,
-                'rules' => array('required'    => true),
-       	),
-			'studentship' => array(
-			'type' => 'radio',
-            'title' => get_string('studentship', 'blocktype.mdxevaluation'),
-			'options' => array(
-                                   1 => get_string('exc', 'blocktype.mdxevaluation'),
-                                   2 => get_string('vgood', 'blocktype.mdxevaluation'),
-                                   3 => get_string('good', 'blocktype.mdxevaluation'),
-                                   4 => get_string('pass', 'blocktype.mdxevaluation'),
-                                   5 => get_string('fail', 'blocktype.mdxevaluation'),
-                                   ),
-            //'description' => get_string('studentshipdescription', 'blocktype.mdxevaluation'),
-            'defaultvalue' => (isset($configdata['studentship'])) ? intval($configdata['studentship']) : 5,
-			'separator' => ' | ',
-                'help' => true,
-                'rules' => array('required'    => true),
-       	),
-			'workbook' => array(
-			'type' => 'radio',
-            'title' => get_string('workbook', 'blocktype.mdxevaluation'),
-			'options' => array(
-                                   1 => get_string('exc', 'blocktype.mdxevaluation'),
-                                   2 => get_string('vgood', 'blocktype.mdxevaluation'),
-                                   3 => get_string('good', 'blocktype.mdxevaluation'),
-                                   4 => get_string('pass', 'blocktype.mdxevaluation'),
-                                   5 => get_string('fail', 'blocktype.mdxevaluation'),
-                                   ),
-            //'description' => get_string('workbookdescription', 'blocktype.mdxevaluation'),
-            'defaultvalue' => (isset($configdata['workbook'])) ? intval($configdata['workbook']) : 5,
-			'separator' => ' | ',
-                'help' => true,
-                'rules' => array('required'    => true),
-        	),
-			'selfmark' => array(
-            'type' => 'radio',
-            'title' => get_string('grade', 'blocktype.mdxevaluation'),
-            //'description' => get_string('selfmarkdescription', 'blocktype.mdxevaluation'),
-			'options' => array(
-                                   1 => '1',2 => '2',3 => '3',4 => '4',5 => '5',6 => '6',7 => '7',8 => '8',9 => '9',10 => '10'
-								   ,11 => '11',12 => '12',13 => '13',14 => '14',15 => '15',16 => '16',17 => '17',20 =>'20'
-                                   ),
-            'defaultvalue' => (isset($configdata['selfmark'])) ? intval($configdata['selfmark']) : 20,
-            'separator' => '<br/>',
-//            'separator' => '&nbsp;&nbsp|&nbsp;&nbsp',
-            'rowsize' => 4,
-			'rules' => array('required'    => true),
-                'help' => true,
-			)
-		);
+		$returnarr = array();
+		if(isset($configdata['gradeonly']) ? !intval($configdata['gradeonly']) : true){
+			$returnarr = array(
+				'research' => array(
+				'type' => 'radio',
+				'title' => get_string('research', 'blocktype.mdxevaluation'),
+				'options' => array(
+									   1 => get_string('exc', 'blocktype.mdxevaluation'),
+									   2 => get_string('vgood', 'blocktype.mdxevaluation'),
+									   3 => get_string('good', 'blocktype.mdxevaluation'),
+									   4 => get_string('pass', 'blocktype.mdxevaluation'),
+									   5 => get_string('fail', 'blocktype.mdxevaluation'),
+									   ),
+				//'description' => get_string('researchdescription', 'blocktype.mdxevaluation'),
+				'defaultvalue' => (isset($configdata['research'])) ? intval($configdata['research']) : 5,
+				'separator' => ' | ',
+					'help' => true,
+					'rules' => array('required'    => true),
+				),
+				'concept' => array(
+				'type' => 'radio',
+				'title' => get_string('concept', 'blocktype.mdxevaluation'),
+				'options' => array(
+									   1 => get_string('exc', 'blocktype.mdxevaluation'),
+									   2 => get_string('vgood', 'blocktype.mdxevaluation'),
+									   3 => get_string('good', 'blocktype.mdxevaluation'),
+									   4 => get_string('pass', 'blocktype.mdxevaluation'),
+									   5 => get_string('fail', 'blocktype.mdxevaluation'),
+									   ),
+				//'description' => get_string('conceptdescription', 'blocktype.mdxevaluation'),
+				'defaultvalue' => (isset($configdata['concept'])) ? intval($configdata['concept']) : 5,
+				'separator' => ' | ',
+					'help' => true,
+					'rules' => array('required'    => true),
+			),
+				'technical' => array(
+				'type' => 'radio',
+				'title' => get_string('technical', 'blocktype.mdxevaluation'),
+				'options' => array(
+									   1 => get_string('exc', 'blocktype.mdxevaluation'),
+									   2 => get_string('vgood', 'blocktype.mdxevaluation'),
+									   3 => get_string('good', 'blocktype.mdxevaluation'),
+									   4 => get_string('pass', 'blocktype.mdxevaluation'),
+									   5 => get_string('fail', 'blocktype.mdxevaluation'),
+									   ),
+				//'description' => get_string('technicaldescription', 'blocktype.mdxevaluation'),
+				'defaultvalue' => (isset($configdata['technical'])) ? intval($configdata['technical']) : 5,
+				'separator' => ' | ',
+					'help' => true,
+					'rules' => array('required'    => true),
+			),
+				'presentation' => array(
+				'type' => 'radio',
+				'title' => get_string('presentation', 'blocktype.mdxevaluation'),
+				'options' => array(
+									   1 => get_string('exc', 'blocktype.mdxevaluation'),
+									   2 => get_string('vgood', 'blocktype.mdxevaluation'),
+									   3 => get_string('good', 'blocktype.mdxevaluation'),
+									   4 => get_string('pass', 'blocktype.mdxevaluation'),
+									   5 => get_string('fail', 'blocktype.mdxevaluation'),
+									   ),
+				//'description' => get_string('presentationdescription', 'blocktype.mdxevaluation'),
+				'defaultvalue' => (isset($configdata['presentation'])) ? intval($configdata['presentation']) : 5,
+				'separator' => ' | ',
+					'help' => true,
+					'rules' => array('required'    => true),
+			),
+				'studentship' => array(
+				'type' => 'radio',
+				'title' => get_string('studentship', 'blocktype.mdxevaluation'),
+				'options' => array(
+									   1 => get_string('exc', 'blocktype.mdxevaluation'),
+									   2 => get_string('vgood', 'blocktype.mdxevaluation'),
+									   3 => get_string('good', 'blocktype.mdxevaluation'),
+									   4 => get_string('pass', 'blocktype.mdxevaluation'),
+									   5 => get_string('fail', 'blocktype.mdxevaluation'),
+									   ),
+				//'description' => get_string('studentshipdescription', 'blocktype.mdxevaluation'),
+				'defaultvalue' => (isset($configdata['studentship'])) ? intval($configdata['studentship']) : 5,
+				'separator' => ' | ',
+					'help' => true,
+					'rules' => array('required'    => true),
+			),
+				'workbook' => array(
+				'type' => 'radio',
+				'title' => get_string('workbook', 'blocktype.mdxevaluation'),
+				'options' => array(
+									   1 => get_string('exc', 'blocktype.mdxevaluation'),
+									   2 => get_string('vgood', 'blocktype.mdxevaluation'),
+									   3 => get_string('good', 'blocktype.mdxevaluation'),
+									   4 => get_string('pass', 'blocktype.mdxevaluation'),
+									   5 => get_string('fail', 'blocktype.mdxevaluation'),
+									   ),
+				//'description' => get_string('workbookdescription', 'blocktype.mdxevaluation'),
+				'defaultvalue' => (isset($configdata['workbook'])) ? intval($configdata['workbook']) : 5,
+				'separator' => ' | ',
+					'help' => true,
+					'rules' => array('required'    => true),
+				),
+			);
+		}
+		$returnarr = array_merge($returnarr,array('selfmark' => array(
+				'type' => 'radio',
+				'title' => get_string('grade', 'blocktype.mdxevaluation'),
+				//'description' => get_string('selfmarkdescription', 'blocktype.mdxevaluation'),
+				'options' => array(
+									   1 => '1',2 => '2',3 => '3',4 => '4',5 => '5',6 => '6',7 => '7',8 => '8',9 => '9',10 => '10'
+									   ,11 => '11',12 => '12',13 => '13',14 => '14',15 => '15',16 => '16',17 => '17',20 =>'20'
+									   ),
+				'defaultvalue' => (isset($configdata['selfmark'])) ? intval($configdata['selfmark']) : 20,
+				'separator' => '<br/>',
+	//            'separator' => '&nbsp;&nbsp|&nbsp;&nbsp',
+				'rowsize' => 4,
+				'rules' => array('required'    => true),
+					'help' => true,
+				)
+				));
+				
+
 		if(isset($configdata['evaltype']) && $configdata['evaltype'] == 3){
 			$returnarr = array_merge($returnarr,array(
 			'published' => array(

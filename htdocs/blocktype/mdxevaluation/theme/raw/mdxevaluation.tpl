@@ -8,12 +8,15 @@
 	{/if}
 	
     <table class="mdxevaluation {if $published}published{else}unpublished{/if}">
+    	{if !$gradeonly}
         <thead>
             <tr>
             <th></th><th>{str tag='exc' section='blocktype.mdxevaluation'}</th><th>{str tag='vgood' section='blocktype.mdxevaluation'}</th><th>{str tag='good' section='blocktype.mdxevaluation'}</th><th>{str tag='pass' section='blocktype.mdxevaluation'}</th><th>{str tag='fail' section='blocktype.mdxevaluation'}</th>
             </tr>
             </thead>
+            {/if}
         <tbody>
+    	{if !$gradeonly}
             <tr>
             <td class="first_col">{str tag='research' section='blocktype.mdxevaluation'}</td>
             <td>{if $research eq 1}&#10004;{/if}</td>
@@ -63,6 +66,7 @@
             <td>{if $workbook eq 5}&#10004;{/if}</td>
             
             </tr>
+{/if}
             <tr><td>&nbsp;</td></tr>
             <tr>
             <td class="first_col selfgrade">{str tag='grade' section='blocktype.mdxevaluation'}</td>
