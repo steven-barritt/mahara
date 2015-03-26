@@ -162,6 +162,7 @@ $string['addaccessgroup'] = 'Add access for group "%s"';
 
 $string['submitconfirm'] = 'If you submit \'%s\' to %s for assessment, you will not be able to edit its contents until your tutor has finished marking it. Are you sure you want to submit now?';
 $string['viewsubmitted'] = 'Page submitted';
+$string['viewsubmittedon'] = 'Page submitted on: %s';
 $string['collectionsubmitted'] = 'Collection submitted';
 $string['viewsalreadysubmitted'] = 'Some pages in this collection have already been submitted:<br>%s<br>You cannot submit the collection until they have been released.';
 $string['submitviewtogroup'] = 'Submit \'%s\' to \'%s\' for assessment';

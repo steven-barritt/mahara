@@ -1465,7 +1465,20 @@ tr[id*="selfmark_container"] div.radio{
 	padding-right: 5px;
 }
 
+.r0.viewsubmitted{
+	background-color:#ded;
+}
+.r1.viewsubmitted{
+	background-color:#cec;
+}
 
+.alignright{
+	text-align:right;
+}
+
+td.gradecolumn{
+	text-align:center;
+}
 /******************** Responsive design ********************/
 /* for 1000px or less */
 @media screen and (max-width: 1000px) {
