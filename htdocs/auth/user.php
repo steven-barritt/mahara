@@ -10,7 +10,7 @@
  */
 
 defined('INTERNAL') || die();
-define('MAXLOGINTRIES', 5);
+define('MAXLOGINTRIES', 10);
 $put = array();
 
 
