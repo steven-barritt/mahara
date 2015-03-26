@@ -49,12 +49,12 @@ class PluginBlocktypeBlog extends PluginBlocktype {
             $configdata['hidetitle'] = true;
             $configdata['countcomments'] = true;
             $configdata['viewid'] = $instance->get('view');
-            if ($instance->get_view()->is_submitted()) {
+/*            if ($instance->get_view()->is_submitted()) {
                 // Don't display posts added after the submitted date.
                 if ($submittedtime = $instance->get_view()->get('submittedtime')) {
                     $configdata['before'] = $submittedtime;
                 }
-            }
+            }*/
 
             $limit = isset($configdata['count']) ? intval($configdata['count']) : 5;
             $posts = ArtefactTypeBlogpost::get_posts($blog->get('id'), $limit, 0, $configdata);
