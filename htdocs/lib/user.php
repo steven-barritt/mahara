@@ -2605,7 +2605,7 @@ function profile_icon_url($user, $maxwidth=40, $maxheight=40) {
     }
 
     // Available sizes of the 'no_userphoto' image:
-    $allowedsizes = array(16, 20, 25, 40, 50, 60, 100);
+    $allowedsizes = array(16, 20, 25, 40, 50, 60, 100,150);
     if ($maxwidth != $maxheight || !in_array($maxwidth, $allowedsizes)) {
         log_warn('profile_icon_url: maxwidth, maxheight should be equal and in (' . join(', ', $allowedsizes) . ')');
     }
@@ -2632,7 +2632,7 @@ function anonymous_icon_url($maxwidth=40, $maxheight=40, $email=null) {
 
     // Assume we have the right size available in docroot, so we don't
     // have to call thumb.php
-    $notfoundwidth = $maxwidth == 100 ? '' : $maxwidth;
+    $notfoundwidth = $maxwidth == 150 ? '' : $maxwidth;
     $notfound = $THEME->get_url('images/no_userphoto' . $notfoundwidth . '.png');
 
     if (!empty($email) && get_config('remoteavatars')) {
