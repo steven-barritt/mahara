@@ -1,4 +1,4 @@
-<div class="inline-form hidden" id="mdxevaluation_{$id}">
+<div class="inline-form hidden">
 	{$form|safe}
 </div>
 <div class="blockinstance-content-view">    
