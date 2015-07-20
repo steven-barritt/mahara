@@ -51,10 +51,16 @@ define('TITLE', $group->name . ' - ' . get_string('nameplural', 'interaction.sch
 
 //if there is only one schedule which there should be for now then go straight to it.
 
-$groupmembers = group_get_member_ids($groupid, array('member'));
+$groupmembers = group_get_member_ids_inc_subgroups($groupid, array('member'));
 //TODO: in here we need to do the same as with the report get all subgroup members if necessary
 //TODO: we will also need to implement that in the functions that retrieve the schedules and events
-$attendanceevents = schedule_get_attendance_events($scheduleid);
+
+$attendanceevents = array();
+if(in_array($group->grouptype, array('project','assessment'))) {
+	$attendanceevents = schedule_get_group_attendance_events($groupid);
+}else{
+	$attendanceevents = schedule_get_group_attendance_dates($groupid);
+}
 
 //TODO: work out the longest title for an event and then make the column that high.
 $longesttitle = 0;
@@ -82,7 +88,8 @@ foreach($groupmembers as $member){
 	$user = get_user_for_display($member);
 	$attendances = array();
 //	var_dump($member);
-	$attendances = schedule_get_schedule_attendance($scheduleid,$member);
+	list($attendances,$percentages) = schedule_get_user_group_attendance($member,$groupid);
+//	$attendances = schedule_get_group_attendance($groupid,$member);
 	$thisuser = array('id'=>$member,'firstname'=>$user->firstname,'lastname'=>$user->lastname,'profileicon'=>$user->profileicon,'studentnumber'=>$user->studentid);
 /*	$i = 1;
 	if(!$columns){
@@ -92,6 +99,8 @@ foreach($groupmembers as $member){
 			$i++;
 		}
 	}*/
+	$thisuser['attendances'] = $attendances;
+	$thisuser['percentages'] = $percentages;
 	$i = 1;
 	foreach($attendances as $attendance){
 		$thisuser[$i] = $attendance;
@@ -136,4 +145,9 @@ if($schedules){
 $smarty->assign('schedule',$schedules[0]);
 }
 $smarty->assign('attendnaceevents', $attendanceevents);
-$smarty->display('interaction:schedule:viewattendance.tpl');
+if(in_array($group->grouptype, array('project','assessment'))) {
+	$smarty->display('interaction:schedule:viewattendance.tpl');
+}else{
+	$smarty->display('interaction:schedule:viewgroupattendance.tpl');
+}
+

@@ -32,7 +32,7 @@
 	</tr>
 	<tr>
 		<td>{str tag=attendance section=interaction.schedule}</td>
-		<td>{if $event->attendancetaken}{str tag=recorded section=interaction.schedule}{else}{str tag=notrecorded section=interaction.schedule}{/if}</td>
+		<td>{if $event->attendance}{str tag=recorded section=interaction.schedule}{else}{str tag=notrecorded section=interaction.schedule}{/if}</td>
 	</tr>
 </table>
 

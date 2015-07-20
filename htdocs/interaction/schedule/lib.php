@@ -207,6 +207,63 @@ function schedule_get_attendance_events($schedule){
 
 }
 
+function schedule_get_group_attendance_dates($groupid){
+	$events = array();
+	
+        $events = get_records_sql_array(
+            'SELECT date(e.startdate) as title, count( e.attendance) as attendnacecount
+			FROM {interaction_schedule_event} e
+			JOIN {interaction_instance} i on e.schedule = i.id
+			WHERE e.attendance AND e.deleted = 0 AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
+			GROUP BY date(e.startdate)',
+            array($groupid)
+        );
+ 	 
+    return $events;
+
+}
+
+function schedule_get_group_attendance_events($groupid){
+	$events = array();
+	
+        $events = get_records_sql_array(
+            'SELECT e.schedule, e.title, e.id, e.description,'. db_format_tsfield('e.startdate','startdate'). ', '. db_format_tsfield('e.enddate','enddate').', e.location, e.attendance
+	FROM {interaction_schedule_event} e
+	JOIN {interaction_instance} i on e.schedule = i.id
+	WHERE e.attendance AND e.deleted = 0 AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
+	ORDER BY e.startdate, e.enddate',
+            array($groupid)
+        );
+ 	 
+    return $events;
+
+}
+
+
+function schedule_get_group_attendance($groupid, $userid){
+	$attendance = array();
+	
+        $attendance = get_records_sql_array(
+            'SELECT e.id, att.attendance, att.excuse, att.attachment
+			FROM 	{interaction_schedule_event} e 
+			JOIN	{interaction_instance} i on e.schedule = i.id
+			LEFT JOIN (
+			SELECT a.event, a.attendance, a.excuse, a.attachment 
+			FROM	{interaction_schedule_attendance} a
+			WHERE
+			a.user = ?) as att
+
+			on att.event = e.id 
+			WHERE e.deleted = 0 AND e.attendance
+			AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
+			ORDER BY e.startdate, e.enddate',
+            array($userid,$groupid)
+        );
+ 	 
+    return $attendance;
+
+}
+
 
 function schedule_get_schedule_attendance($scheduleid, $userid){
 	$attendance = array();
@@ -234,7 +291,7 @@ function schedule_get_user_group_attendance($userid,$groupid){
 //	var_dump($groupid);
 	$percentages = array();
         $attendance = get_records_sql_array(
-            'SELECT i.id, i.title, ii.group, ii.description, ii.id as schedule, att.attendance, att.excuse, att.attachment ,'. db_format_tsfield('i.startdate','startdate'). '
+            'SELECT i.id, i.title, ii.group, ii.title as scheduletitle, i.location, ii.description, ii.id as schedule, att.attendance, att.excuse, att.attachment ,'. db_format_tsfield('i.startdate','startdate'). '
 			FROM 	{interaction_schedule_event} i LEFT JOIN (
 			SELECT a.event, a.attendance, a.excuse, a.attachment 
 			FROM	{interaction_schedule_attendance} a
@@ -300,7 +357,7 @@ function schedule_get_user_attendance($userid){
 	$attendance = array();
 	$percentages = array();
         $attendance = get_records_sql_array(
-            'SELECT i.id, i.title, ii.group, ii.description, ii.id as schedule, att.attendance, att.excuse, att.attachment ,'. db_format_tsfield('i.startdate','startdate'). '
+            'SELECT i.id, i.title, ii.group, ii.title as scheduletitle, i.location, ii.description, ii.id as schedule, att.attendance, att.excuse, att.attachment ,'. db_format_tsfield('i.startdate','startdate'). '
 			FROM 	{interaction_schedule_event} i LEFT JOIN (
 			SELECT a.event, a.attendance, a.excuse, a.attachment 
 			FROM	{interaction_schedule_attendance} a

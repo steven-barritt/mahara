@@ -9,7 +9,7 @@
 				<tr class="r0">
 			{/if}
 				<td class="attendancecol {if $attendance->attendance == 1}present{/if}{if $attendance->attendance == 2}late{/if}{if $attendance->attendance == 3}absent{/if}{if $attendance->attendance == 4}excused{/if}">
-				<a class="eventlink" href="{$WWWROOT}interaction/schedule/view.php?event={$attendance->id}" title="{$attendance->startdate|format_date:'strftimedayvshortyear'} - {$attendance->title}">&nbsp;</a></td>
+				<a class="eventlink" href="{$WWWROOT}interaction/schedule/view.php?event={$attendance->id}" title="{$attendance->startdate|format_date:'strftimedayvshortyear'}&#13;{$attendance->title} - {$attendance->scheduletitle}&#13;{str tag=when section=interaction.schedule}{$attendance->startdate|format_date:'strftimetime'}&#13;{str tag=where section=interaction.schedule}{$atendance->location}">&nbsp;</a></td>
 		{/foreach}
 		</tr>
 	</table>

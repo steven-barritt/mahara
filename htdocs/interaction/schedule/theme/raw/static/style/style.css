@@ -88,6 +88,7 @@ display: block;
 -webkit-border-radius: 3px;
 -moz-border-radius: 3px;
 border-radius: 3px;
+overflow-x:scroll;
 }
 #viewschedule .rbuttons {
     margin-top: -35px;
@@ -368,3 +369,31 @@ td.attendancecol{
 	opacity: 0.6;
     filter: alpha(opacity=60);
 }
+
+.innerattendnace{
+	width:100%;
+	height:100%;
+}
+
+.innerattendnace td{
+width:25px;
+	height:25px;
+}
+
+.attend{
+	border-right:solid 1px #ddd;
+	vertical-align:middle;
+}
+
+.percent{
+	vertical-align:middle;
+	text-align:center;
+}
+.eventlink{
+	display:block;
+	width:100%;
+}
+.sv{
+	vertical-align:middle;
+}
+
