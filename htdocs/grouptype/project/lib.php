@@ -91,11 +91,11 @@ class GroupTypeProject extends GroupType {
     }
 
     public static function get_roles() {
-        return array('member', 'tutor', 'admin');
+        return array('member', 'tutor', 'admin', 'ta');
     }
 
     public static function get_view_moderating_roles() {
-        return array('tutor', 'admin');
+        return array('tutor', 'admin','ta');
     }
 
     public static function get_view_assessing_roles() {
@@ -110,6 +110,7 @@ class GroupTypeProject extends GroupType {
             'member' => (object) array('view' => true, 'edit' => false, 'republish' => false),
             'tutor'  => (object) array('view' => true, 'edit' => true, 'republish' => true),
             'admin'  => (object) array('view' => true, 'edit' => true, 'republish' => true),
+            'ta'  => (object) array('view' => true, 'edit' => true, 'republish' => true),
         );
     }
 

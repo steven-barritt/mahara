@@ -31,4 +31,6 @@ $string['name'] = 'Project';
 $string['admin'] = 'Admin';
 $string['tutor'] = 'Tutor';
 $string['member'] = 'Member';
+$string['ta'] = 'GAA';
 $string['youaregrouptutor'] = 'You are a tutor in this group.';
+$string['youaregroupta'] = 'You are a GAA in this group.';
