@@ -67,6 +67,8 @@ else {
         'urlid'          => null,
         'editwindowstart' => null,
         'editwindowend'  => null,
+        'request'        => 0,
+        'parent'        => null,
         'sendnow'        => 0,
         'feedbacknotify' => GROUP_ROLES_ALL,
     );
@@ -153,7 +155,7 @@ $elements['request'] = array(
     'type'         => 'checkbox',
     'title'        => get_string('request', 'group'),
     'description'  => get_string('requestdescription', 'group'),
-    'defaultvalue' => !$group_data->open && $group_data->request,
+    'defaultvalue' => !$group_data->open && isset($group_data->request) ? $group_data->request : false,
     'disabled'     => $group_data->open,
 );
 
@@ -357,14 +359,17 @@ $elements['general'] = array(
 $groups = get_group_list();
 $groupsoption = array();
 foreach($groups as $group){
-	$groupsoption[$group->id] = $group->name;
+	if($group_data->id != $group->id){
+		$groupsoption[$group->id] = $group->name;
+	}
 }
 
 $elements['parent'] = array(
 			'type'         => 'select',
 			'title'        => get_string('groupparent', 'group'),
 			'options'      => array(null=>get_string('noparentselected', 'group')) + $groupsoption,
-			'defaultvalue' => $group_data->parent);
+			'defaultvalue' => group_get_parent($group_data->id),
+			);
 
 
 
@@ -394,7 +399,7 @@ $elements['usersautoadded'] = array(
             'defaultvalue' => $group_data->usersautoadded,
             'help'         => true,
             'ignore'       => !$USER->get('admin'));
-$notifyroles = array(get_string('none', 'admin')) + group_get_editroles_options(true);
+$notifyroles = array(null=>get_string('none', 'admin')) + group_get_editroles_options(true);
 $elements['viewnotify'] = array(
     'type' => 'select',
     'title' => get_string('viewnotify', 'group'),

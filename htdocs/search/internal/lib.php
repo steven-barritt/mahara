@@ -539,7 +539,7 @@ class PluginSearchInternal extends PluginSearch {
         list($searchsql, $values) = self::name_search_sql($query_string);
 
         $orderbyoptions = array(
-            'adminfirst' => 'gm.role = \'admin\' DESC, gm.role = \'tutor\' DESC,
+            'adminfirst' => 'gm.role = \'admin\' DESC, gm.role = \'tutor\' DESC, gm.role DESC, 
                            CASE WHEN NOT u.preferredname IS NULL AND u.preferredname <> \'\' THEN u.preferredname ELSE u.firstname END ASC,
                            CASE WHEN NOT u.preferredname IS NULL AND u.preferredname <> \'\' THEN u.preferredname ELSE u.lastname END ASC, gm.ctime, u.id',
             'nameatoz' => 'CASE WHEN NOT u.preferredname IS NULL AND u.preferredname <> \'\' THEN u.preferredname ELSE u.firstname END ASC,

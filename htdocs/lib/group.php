@@ -263,6 +263,92 @@ function group_user_can_assess_submitted_views($groupid, $userid) {
             AND m.group = ?', array($userid, $groupid));
 }
 
+
+/**
+This function deals with inserting the group into the group_hierarchy table
+this is a closure table implementation of hierarchy
+basically every relationship is represented
+so each element represents itself
+Parent	Child	Depth
+ID		ID		0
+
+and then every single child thereafter so
+A->B->C
+Parent	Child	Depth
+A		A		0
+A		B		1
+A		C		2
+B		B		0
+B		C		1
+C		C		0
+see here for more info https://www.percona.com/blog/2011/02/14/moving-subtrees-in-closure-table/
+TODO: initialise all the groups
+INSERT INTO group_hierarchy (parent,child,depth)
+SELECT g.id, g.id, 0 FROM `group` g WHERE 1 = 1
+
+**/
+function group_add_hierarchy($parent, $group){
+    execute_sql(
+    	"INSERT INTO {group_hierarchy} (parent, child, depth)
+	SELECT gh.parent, ?, gh.depth+1 FROM {group_hierarchy} gh WHERE gh.child = ?
+	UNION ALL SELECT ?,?,0;", 
+    	
+    	array($group, $parent,$group,$group));
+
+/*	'INSERT INTO {group_hierarchy} (parent, child, depth)
+	SELECT gh.parent, ?, gh.depth+1 FROM {group_hierarchy} gh WHERE gh.child = ?
+	UNION ALL SELECT ?,?,0;'*/
+}
+
+
+function group_update_hierarchy($parent, $group){
+    execute_sql(
+    	"DELETE gh FROM {group_hierarchy} AS gh 
+    	JOIN {group_hierarchy} AS d ON gh.child = d.child
+    	LEFT JOIN {group_hierarchy} AS x ON x.parent = d.parent AND x.child = gh.parent
+    	WHERE d.parent = ? AND x.parent IS NULL;", 
+    	
+    	array($group));
+    execute_sql(
+    	"INSERT INTO {group_hierarchy} (parent, child, depth)
+    	SELECT super.parent, sub.child,super.depth+sub.depth+1
+    	FROM  {group_hierarchy} AS super join {group_hierarchy} AS sub
+    	WHERE sub.parent = ?
+    	AND super.child = ?",     	
+    	array($group, $parent));
+
+/*	DELETE a FROM TreePaths AS a
+
+JOIN TreePaths AS d ON a.descendant = d.descendant
+LEFT JOIN TreePaths AS x
+ON x.ancestor = d.ancestor AND x.descendant = a.ancestor
+WHERE d.ancestor = 'D' AND x.ancestor IS NULL;
+
+INSERT INTO TreePaths (ancestor, descendant, length)
+SELECT supertree.ancestor, subtree.descendant,
+supertree.length+subtree.length+1
+FROM TreePaths AS supertree JOIN TreePaths AS subtree
+WHERE subtree.ancestor = 'D'
+AND supertree.descendant = 'B';
+
+*/
+}
+
+/*
+Designed to be trun only once to add heirarchies into the database
+it shoud be done with a clever sql statement but I don;t know how...
+*/
+function group_insertall_hierarchies(){
+	$groups = get_records_sql_array("
+				SELECT g.id, g.name, g.parent
+				FROM {group} g WHERE g.deleted = 0 ORDER BY g.parent
+				",array());
+
+	foreach($groups as $group){
+		group_add_hierarchy($group->parent,$group->id);
+	}
+}
+
 // Functions for creation/deletion of groups, and adding/removing users to groups
 
 /**
@@ -413,6 +499,9 @@ function group_create($data) {
     if (!isset($data['sendnow'])) {
         $data['sendnow'] = null;
     }
+    if (!isset($data['parent'])) {
+        $data['parent'] = null;
+    }
 
     db_begin();
 
@@ -452,6 +541,8 @@ function group_create($data) {
         true
     );
 
+	group_add_hierarchy($data['parent'],$id);
+	
     foreach ($data['members'] as $userid => $role) {
         insert_record(
             'group_member',
@@ -635,6 +726,7 @@ function group_update($new, $create=false) {
     }
 
     update_record('group', $new, 'id');
+    group_update_hierarchy($new->parent,$new->id);
 
     // Add users who have requested membership of a group that's becoming
     // open
@@ -825,6 +917,7 @@ function group_delete($groupid, $shortname=null, $institution=null, $notifymembe
             'id' => $group->id,
         )
     );
+    //TODO: update hierarchy
     db_commit();
 }
 
@@ -1449,6 +1542,46 @@ function group_get_type($groupid) {
 }
 
 
+function group_get_parent($groupid) {
+    $parent = get_records_sql_array(
+    	'SELECT gh.parent  FROM {group_hierarchy} gh
+        WHERE gh.child = ? AND gh.depth = 1', array($groupid));
+        
+    if(isset($parent)){
+	    return $parent[0]->parent;
+	}else{
+		return null;
+	}
+}
+
+function group_get_children($groupid,$grouptype=null) {
+    $children = get_records_sql_array(
+    	'SELECT gh.child, gh.depth  FROM {group_hierarchy} gh
+    	join {group} g on gh.child = g.id 
+        WHERE gh.parent = ? AND g.grouptype = ', array($groupid));
+        
+    if(isset($parent)){
+	    return $parent[0]->parent;
+	}else{
+		return null;
+	}
+}
+
+
+
+function group_has_children($groupid) {
+    $children = get_records_sql_array(
+    	'SELECT gh.child  FROM {group_hierarchy} gh
+        WHERE gh.parent = ? AND gh.depth > 0', array($groupid));
+        
+    if(!$children){
+	    return false;
+	}else{
+		return true;
+	}
+}
+
+
 // Retrieve a list of group admins
 function group_get_admins($groupids) {
     $groupids = array_map('intval', $groupids);
@@ -1560,50 +1693,34 @@ function get_group_list($type = null, $category = null){
 			);
 	}else{
 		$groups = get_records_sql_array("
-				SELECT g.id, g.name 
+				SELECT g.id, g.name
 				FROM {group} g WHERE g.deleted = 0 ORDER BY g.name
 				",array());
     }
     return $groups;
 }
 
-function get_group_subgroups_array($group, $type = null, $category = null){
-
+function get_group_subgroups_array($group, $type = null){
 	$groups = array();
-	$where = 'WHERE g.parent = ?';
 	if($type != null){
-		$where = ' AND g.grouptype = ?';
-		if($category){
-			$where .= ' AND gc.title = ?';
-		}
 		$groups = get_records_sql_array("
-				SELECT g.id, g.name,g.grouptype, gc.title 
+				SELECT g.id, g.name,g.grouptype, gh.depth 
 				FROM {group} g 
-				INNER JOIN {group_category} gc on g.category = gc.id ".$where." AND g.deleted = 0 ORDER BY g.name",
-				array($group,$type, $category)
+				JOIN {group_hierarchy} gh ON gh.child = g.id
+				WHERE gh.parent = ? AND g.grouptype = ? AND g.deleted = 0 AND gh.depth > 0 ORDER BY gh.depth, g.name",
+				array($group,$type)
 			);
 	}else{
 		$groups = get_records_sql_array("
-				SELECT g.id, g.name, g.grouptype 
-				FROM {group} g WHERE g.deleted = 0 AND g.parent = ? ORDER BY g.name
-				",array($group));
+				SELECT g.id, g.name,g.grouptype, gh.depth 
+				FROM {group} g 
+				JOIN {group_hierarchy} gh ON gh.child = g.id
+				WHERE gh.parent = ? AND g.deleted = 0 AND gh.depth > 0 ORDER BY gh.depth, g.name",
+				array($group)
+			);
     }
-    if($groups){
-		foreach($groups as &$group){
-	//		$group->subgrouptotalcount = 0;
-			$group->subgroups = get_group_subgroups_array($group->id,$type,$category);
-	/*    	if($group->subgroups){
-				foreach($group->subgroups as $subgroup){
-					$group->subgrouptotalcount += $subgroup->subgroupcount;
-				}
-				$group->subgroupcount = count($group->subgroups);
-			}else{
-				$group->subgroupcount = 0;
-			}*/
-		}
-	}else{
-		$groups = array();
-	}
+
+
     return $groups;
 }
 
@@ -1856,8 +1973,9 @@ function group_get_menu_tabs() {
         'path' => 'groups/views',
         'url' => 'view/groupviews.php?group='.$group->id,
         'title' => get_string('Views', 'group'),
-        'weight' => 50,
+        'weight' => 20,
     );
+    
     $menu['collections'] = array(
         'path' => 'groups/collections',
         'url' => 'collection/index.php?group='.$group->id,
@@ -1889,13 +2007,17 @@ function group_get_menu_tabs() {
             }
         }
     }
+    
+    //SB - Here we need to look at the groupType and see if it implements any extensions
+    //these can then be added to the menu much like the interactions Plugin/ Artefact plugins above
+    //
 
     if (group_role_can_access_report($group, $role)) {
         $menu['report'] = array(
             'path' => 'groups/report',
             'url' => 'group/report.php?group=' . $group->id,
             'title' => get_string('report', 'group'),
-            'weight' => 70,
+            'weight' => 90,
         );
     }
 
@@ -1905,6 +2027,9 @@ function group_get_menu_tabs() {
             $menu[$key]['selected'] = true;
         }
     }
+    
+    uasort($menu, 'menu_sort_items');
+
 
     return $menu;
 }
@@ -2227,18 +2352,16 @@ function group_get_member_ids($group, $roles=null, $includedeleted=false) {
     );
 }
 
-
-function group_get_member_ids2($group, $roles=null, $includedeleted=false) {
+function group_get_member_ids_inc_subgroups($group, $roles=null, $includedeleted=false) {
     $rolesql = is_null($roles) ? '' : (' AND gm.role IN (' . join(',', array_map('db_quote', $roles)) . ')');
-    $values = get_column_sql('
-        SELECT gm.member
-        FROM {group_member} gm INNER JOIN {group} g ON gm.group = g.id
-        WHERE g.id = ? ' . ($includedeleted ? '' : ' AND g.deleted = 0') . $rolesql,
+    return get_column_sql('
+        SELECT distinct gm.member
+        FROM `group_member` gm INNER JOIN `group` g ON gm.group = g.id join `group_hierarchy` gh on g.id = gh.child
+        
+        WHERE gh.parent = ? ' . ($includedeleted ? '' : ' AND g.deleted = 0') .  $rolesql,
         array($group)
     );
-    return array_combine($values,$values);
 }
-
 
 
 

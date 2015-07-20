@@ -45,7 +45,7 @@ if (!group_role_can_access_report($group, $role)) {
 //
 //get users
 //$group, $roles=null, $includedeleted=false
-
+/*
 function countassessmentcols($subgroups1,&$colcount){
 	foreach($subgroups1 as $subgroup){
 		if($subgroup->grouptype == 'assessment'){
@@ -56,9 +56,21 @@ function countassessmentcols($subgroups1,&$colcount){
 		}
 	}
 }
+*/
+function countassessmentcols($subgroups){
+	$colcount = 0;
+	foreach($subgroups as $subgroup){
+		if($subgroup->grouptype == 'assessment'){
+			$colcount++;		
+		}
+	}
+}
 
 
-function buildrows($subgroups1,&$rows, $rowno){
+
+
+function buildrows($subgroups){
+	
 //	$hassubgroups = false;
 //	$cols = array();
 	foreach($subgroups1 as $subgroup){
@@ -96,59 +108,107 @@ function averagegrades($grades){
 }
 
 
-function get_assessments($user,$subgroups1,&$assessments){
-	foreach($subgroups1 as $subgroup){
-		if($subgroup->grouptype == 'assessment'){
-			$grades = array();
-			if(count($subgroup->subgroups) > 0){
-				//find the actual Views shared by the user
-				foreach($subgroup->subgroups as $subsubgroup){
-					//$limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null,$excludetemplates=false,$user=null
-					$sharedviews = View::get_sharedviews_data2(null,0,$subsubgroup->id,false,false,null,false,$user);
+function get_assessment($user,$assessment){
+	$grades = array();
+	$projectgroups = get_group_subgroups_array($assessment->id,'project');
+	if(count($projectgroups) > 0){
+		//find the actual Views shared by the user
+		foreach($projectgroups as $project){
+			//$limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null,$excludetemplates=false,$user=null
+			$sharedviews = View::get_sharedviews_data2(null,0,$project->id,false,false,null,false,$user);
 //					var_dump($user);
-					$sharedviews = $sharedviews->data;
+			$sharedviews = $sharedviews->data;
 //					var_dump($sharedviews);
-					//find the assessment
-					foreach ($sharedviews as &$data) {
+			//find the assessment
+			foreach ($sharedviews as &$data) {
 //						bob::bob();
-						require_once(get_config('docroot') . 'blocktype/lib.php');
-	
-						$sql = "SELECT bi.*
-								FROM {block_instance} bi
-								WHERE bi.view = ?
-								AND bi.blocktype = 'mdxevaluation'
-								";
-						if (!$evaldata = get_records_sql_array($sql, array($data['id']))) {
-							$evaldata = array();
+				require_once(get_config('docroot') . 'blocktype/lib.php');
+
+				$sql = "SELECT bi.*
+						FROM {block_instance} bi
+						WHERE bi.view = ?
+						AND bi.blocktype = 'mdxevaluation'
+						";
+				if (!$evaldata = get_records_sql_array($sql, array($data['id']))) {
+					$evaldata = array();
+				}
+
+				foreach ($evaldata as $eval){
+					$bi = new BlockInstance($eval->id, (array)$eval);
+					$configdata = $bi->get('configdata');
+					if(isset($configdata['evaltype'])){
+						if($configdata['evaltype'] == 3){
+							$published = isset($configdata['published']) ? $configdata['published'] : false;
+							if($published){
+								//TODO: Add individual grade elements - research etc.
+								$grades[] = Intval($configdata['selfmark']);
+							}
 						}
-	
-						foreach ($evaldata as $eval){
-							$bi = new BlockInstance($eval->id, (array)$eval);
-							$configdata = $bi->get('configdata');
-							if(isset($configdata['evaltype'])){
-								if($configdata['evaltype'] == 3){
-									$published = isset($configdata['published']) ? $configdata['published'] : false;
-									if($published){
-										//TODO: Add individual grade elements - research etc.
-										$grades[] = Intval($configdata['selfmark']);
-									}
-								}
-							}		
-						}
-					}
-	
-					
+					}		
 				}
 			}
-			//if there is more than one then average the result and round up
-			$grade = averagegrades($grades);
-			$assessments[] = array($subgroup->name, $grade);
-			//add it to the list of assessments
-		}
-		if(count($subgroup->subgroups) > 0){
-			get_assessments($user,$subgroup->subgroups,$assessments);
+
+			
 		}
 	}
+	//if there is more than one then average the result and round up
+	$grade = averagegrades($grades);
+	return array($assessment->name, $grade);
+
+}
+
+function get_assessments($user,$assessmentgroup){
+	$assessments = array();
+	foreach($assessmentgroup as $assessment){
+		$grades = array();
+		$projectgroups = get_group_subgroups_array($assessment->id,'project');
+		if(count($projectgroups) > 0){
+			//find the actual Views shared by the user
+			foreach($projectgroups as $project){
+				//$limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null,$excludetemplates=false,$user=null
+				$sharedviews = View::get_sharedviews_data2(null,0,$project->id,false,false,null,false,$user);
+//					var_dump($user);
+				$sharedviews = $sharedviews->data;
+//					var_dump($sharedviews);
+				//find the assessment
+				foreach ($sharedviews as &$data) {
+//						bob::bob();
+					require_once(get_config('docroot') . 'blocktype/lib.php');
+
+					$sql = "SELECT bi.*
+							FROM {block_instance} bi
+							WHERE bi.view = ?
+							AND bi.blocktype = 'mdxevaluation'
+							";
+					if (!$evaldata = get_records_sql_array($sql, array($data['id']))) {
+						$evaldata = array();
+					}
+
+					foreach ($evaldata as $eval){
+						$bi = new BlockInstance($eval->id, (array)$eval);
+						$configdata = $bi->get('configdata');
+						if(isset($configdata['evaltype'])){
+							if($configdata['evaltype'] == 3){
+								$published = isset($configdata['published']) ? $configdata['published'] : false;
+								if($published){
+									//TODO: Add individual grade elements - research etc.
+									$grades[] = Intval($configdata['selfmark']);
+								}
+							}
+						}		
+					}
+				}
+
+				
+			}
+		}
+		//if there is more than one then average the result and round up
+		$grade = averagegrades($grades);
+		$assessments[] = array($assessment->name, $grade);
+		//add it to the list of assessments
+
+	}
+	return $assessments;
 	
 }
 
@@ -156,7 +216,8 @@ function get_assessments($user,$subgroups1,&$assessments){
 function getallmembers($subgroups){
 	$members = array();
 	foreach($subgroups as $subgroup){
-		$newmembers = group_get_member_ids2($subgroup->id, array('member'));
+		$newmembers = group_get_member_ids($subgroup->id, array('member'));
+		$newmembers = array_combine($newmembers,$newmembers);
 		if($newmembers){
 			$members = array_merge($members,$newmembers);
 		}
@@ -176,16 +237,12 @@ function getallmembers($subgroups){
 
 if(in_array($group->grouptype, array('year','module','assessment')) ){
 
-	$subgroups = array();
-	$subgroups = get_group_subgroups_array($group->id);
-	if(!$subgroups){
-		$subgroups = array();
-	}
-//	$groupmembers = group_get_member_ids($group->id, array('member'));
-	$groupmembers = group_get_member_ids2($group->id, array('member'));
-//	var_dump($groupmembers);
+	$groupmembers = group_get_member_ids_inc_subgroups($group->id, array('member'));
+	$groupmembers = array_combine($groupmembers,$groupmembers);
+/*	$groupmembers = group_get_member_ids($group->id, array('member'));
+	$groupmembers = array_combine($groupmembers,$groupmembers);
 	$groupmembers = array_merge($groupmembers,getallmembers($subgroups));
-	$groupmembers = array_unique($groupmembers);
+	$groupmembers = array_unique($groupmembers);*/
 //	var_dump(array_unique($groupmembers));
 //var_dump($subgroups);
 	$rows = array();
@@ -194,9 +251,24 @@ if(in_array($group->grouptype, array('year','module','assessment')) ){
 //	var_dump($rows);
 
 
+	$assessmentgroups = array();
+	$modulegroups = null;
+	$modulegroups = get_group_subgroups_array($group->id,'module');
+	if($modulegroups){
+		foreach($modulegroups as $subgroup){
+			$assessments = get_group_subgroups_array($subgroup->id,'assessment');
+			$subgroup->colspan =count($assessments);
+			$assessmentgroups = array_merge($assessmentgroups,$assessments);
+		}
+	}else{
+		$assessmentgroups = get_group_subgroups_array($group->id,'assessment');
+	}
+//	var_dump($modulegroups);
 	//var_dump($subgroups);
-	countassessmentcols($subgroups, $colcount);
-	buildrows($subgroups, $rows,1);
+	$colcount = count($assessmentgroups);
+	
+	
+//	$rows = buildrows($subgroups);
 //	var_dump($rows);
 
 	$columns = array();
@@ -208,9 +280,12 @@ if(in_array($group->grouptype, array('year','module','assessment')) ){
 		$userdata[] = array('id'=>22,'name'=>$name,'assessments'=>$assessments);*/
 	foreach($groupmembers as $member){
 		$user = get_user_for_display($member);
-		$assessments = array();
 	//	var_dump($member);
-		get_assessments($member,$subgroups,$assessments);
+		if($group->grouptype == 'assessment'){
+			$assessments = get_assessments($member,array($group));
+		}else{
+			$assessments = get_assessments($member,$assessmentgroups);
+		}
 		$thisuser = array('id'=>$member,'firstname'=>$user->firstname,'lastname'=>$user->lastname,'profileicon'=>$user->profileicon,'studentnumber'=>$user->studentid);
 		$i = 1;
 		if(!$columns){
@@ -233,7 +308,7 @@ if(in_array($group->grouptype, array('year','module','assessment')) ){
 	//bob::bob();
 
 
-	$nocols = count($userdata[0]['assessments']);
+	//$nocols = count($userdata[0]['assessments']);
 	//var_dump($nocols);
 /*	$i = 1;
 	$columns = array();
@@ -271,7 +346,8 @@ EOF;
 	$smarty->assign('heading', $group->name);
 	$smarty->assign('userdata', $userdata);
 	$smarty->assign('columns', $columns);
-	$smarty->assign('rows', $rows);
+	$smarty->assign('modulegroups', $modulegroups);
+	$smarty->assign('assessmentgroups', $assessmentgroups);
 	$smarty->assign('colcount', $colcount);
 	$smarty->assign('totalcolcount', $colcount+4);
 

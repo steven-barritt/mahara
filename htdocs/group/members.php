@@ -96,7 +96,7 @@ if ('admin' == $role) {
     
 }
 
-if ('admin' == $role || 'tutor' == $role) {
+if (group_role_can_moderate_views($group->id,$role)) {
     $messageurl = get_config('wwwroot') . 'artefact/multirecipientnotification/sendmessage.php?groupid=' . GROUP.'&returnto=outbox';
     $messagebtn = get_string('sendgroupmessage','group');
 }
@@ -179,9 +179,11 @@ if ($role == 'admin') {
         $smarty->assign('membershiptypes', $membershiptypes);
     }
 }
+$group->membershiptype = $role;
 
 $smarty->assign('INLINEJAVASCRIPT', $js);
 $smarty->assign('heading', $group->name);
+$smarty->assign('group',$group);
 $smarty->assign('form', $searchform);
 $smarty->assign('groupid', $group->id);
 $smarty->assign('results', $html);
