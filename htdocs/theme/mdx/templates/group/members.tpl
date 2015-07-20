@@ -1,10 +1,15 @@
 {include file="header.tpl"}
 
     <p>{$instructions|clean_html|safe}</p>
-    {if $messageurl != ""}
-    <p>
-    <a href="{$messageurl}"><button type="button">{$messagebtn}</button></a>
-    </p>
+{if $group->membershiptype == 'admin'}
+	<div class="buttons">
+    <div class="admincontrol">
+        <a href="{$WWWROOT}artefact/multirecipientnotification/sendmessage.php?groupid={$group->id}&returnto=group" title="{str(tag=sendgroupmessage, section=group )}" class="btn">
+            <span class="btn-message">{str(tag=sendgroupmessage, section=group )}</span>
+            <span class="accessible-hidden">{str(tag=sendgroupmessage, section=group )}</span>
+        </a>
+    </div>
+    </div>
     {/if}
     <div class="memberswrap"><div class="memberssearch">
     {if $membershiptypes}

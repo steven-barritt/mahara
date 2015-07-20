@@ -1,7 +1,7 @@
     <div class="blockinstance cb bt-{$blocktype}{if $retractable} retractable{/if}" id="blockinstance_{$id}">
             {if $inlineediting}
             <div class="blockinstance-controls">
-                <input type="image" src="{theme_url filename=images/btn_edit.png}" class="configurebutton" name="action_configureblockinstance_id_{$id}" alt="{$strconfigtitletext}">
+                <input type="image" src="" class="btn-big-edit configurebutton" name="action_configureblockinstance_id_{$id}" alt="{$strconfigtitletext}">
 
         </div>
 			{/if}

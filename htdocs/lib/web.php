@@ -153,9 +153,10 @@ function smarty($javascript = array(), $headers = array(), $pagestrings = array(
 
                     $toolbar = array(
                         null,
-                        '"toolbar_toggle | bold italic underline | bullist numlist  indent outdent | link unlink | image | code | fullscreen"',
-                        '"alignleft aligncenter alignright alignjustify | subscript superscript | forecolor backcolor | removeformat pastetext"',
+                        '" bold italic underline | bullist numlist  indent outdent | link unlink | image | code "',
+                        '"alignleft aligncenter alignright alignjustify | subscript superscript | forecolor backcolor | removeformat pastetext | fullscreen"',
                         '"formatselect | fontselect | fontsizeselect | table "',
+                        '"bold italic underline | bullist numlist  indent outdent | link unlink | image | code "',
                     );
 
                     // For right-to-left langs, reverse button order & align controls right.
@@ -171,20 +172,25 @@ function smarty($javascript = array(), $headers = array(), $pagestrings = array(
     theme: "modern",
     plugins: "tooltoggle,textcolor,link,image,table,spellchecker,paste,code,fullscreen,directionality,searchreplace,nonbreaking,charmap",
     toolbar1: {$toolbar[1]},
-    toolbar2: {$toolbar[2]},
-    toolbar3: {$toolbar[3]},
     menubar: false,
+    resize: "both",
+    width: "100%",
     fix_list_elements: true,
     image_advtab: false,
     {$spellchecker_config}
 EOF;
+/*    toolbar2: {$toolbar[2]},
+    toolbar3: {$toolbar[3]},
+*/
                     }
                     else {
                         $tinymceconfig = <<<EOF
     selector: "textarea.tinywysiwyg",
+    width: "100%",
     theme: "modern",
-    plugins: "fullscreen,autoresize",
-    toolbar: {$toolbar[0]},
+    menubar: false,
+    plugins: "fullscreen,autoresize,link,image,code",
+    toolbar: {$toolbar[4]},
 EOF;
                     }
 

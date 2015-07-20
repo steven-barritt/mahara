@@ -148,8 +148,9 @@ if($posttype == 0){
 		),
 		'defaultvalue' => $title,
 	);
+	
 	$elements['description'] = array(
-		'type' => 'wysiwyg',
+		'type' => 'tinywysiwyg',
 		'rows' => 20,
 		'cols' => 60,
 		'title' => get_string('postbody', 'artefact.blog'),
@@ -436,7 +437,7 @@ EOF;
 
 $smarty = smarty(array(), array(), array(), array(
     'tinymceconfig' => '
-        plugins: "textcolor,hr,link,maharaimage,table,emoticons,spellchecker,paste,code,fullscreen",
+        plugins: "tooltoggle,textcolor,hr,link,maharaimage,table,emoticons,spellchecker,paste,code,fullscreen",
         image_filebrowser: "editpost_filebrowser",
     ',
     'sideblocks' => array(

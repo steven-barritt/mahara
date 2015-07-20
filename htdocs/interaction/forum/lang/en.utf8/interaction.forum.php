@@ -12,25 +12,25 @@
 defined('INTERNAL') || die();
 
 $string['addpostsuccess'] = 'Added post successfully';
-$string['addtitle'] = 'Add forum';
+$string['addtitle'] = 'Add discussion';
 $string['addtopic'] = 'Add topic';
 $string['addtopicsuccess'] = 'Added topic successfully';
 $string['autosubscribeusers'] = 'Automatically subscribe users';
-$string['autosubscribeusersdescription'] = 'Choose whether group users will automatically be subscribed to this forum';
+$string['autosubscribeusersdescription'] = 'Choose whether group users will automatically be subscribed to this discussion';
 $string['Body'] = 'Message';
-$string['cantaddposttoforum'] = 'You are not allowed to post in this forum';
+$string['cantaddposttoforum'] = 'You are not allowed to post in this discussion';
 $string['cantaddposttotopic'] = 'You are not allowed to post in this topic';
-$string['cantaddtopic'] = 'You are not allowed to add topics to this forum';
-$string['cantdeletepost'] = 'You are not allowed to delete posts in this forum';
+$string['cantaddtopic'] = 'You are not allowed to add topics to this discussion';
+$string['cantdeletepost'] = 'You are not allowed to delete posts in this discussion';
 $string['cantdeletethispost'] = 'You are not allowed to delete this post';
-$string['cantdeletetopic'] = 'You are not allowed to delete topics in this forum';
+$string['cantdeletetopic'] = 'You are not allowed to delete topics in this discussion';
 $string['canteditpost'] = 'You are not allowed to edit this post';
 $string['cantedittopic'] = 'You are not allowed to edit this topic';
-$string['cantfindforum'] = 'Could not find forum with id %s';
+$string['cantfindforum'] = 'Could not find discussion with id %s';
 $string['cantfindpost'] = 'Could not find post with id %s';
 $string['cantfindtopic'] = 'Could not find topic with id %s';
 $string['cantmakenonobjectionable'] = 'You are not allowed to mark this post as not objectionable.';
-$string['cantviewforums'] = 'You are not allowed to view forums in this group';
+$string['cantviewforums'] = 'You are not allowed to view discussions in this group';
 $string['cantviewtopic'] = 'You are not allowed to view topics in this forum';
 $string['chooseanaction'] = 'Choose an action';
 $string['clicksetsubject'] = 'Click to set a subject';
@@ -55,12 +55,12 @@ $string['editpost'] = 'Edit post';
 
 $string['editpostsuccess'] = 'Post edited successfully';
 $string['editstothispost'] = 'Edits to this post:';
-$string['edittitle'] = 'Edit forum';
+$string['edittitle'] = 'Edit discussion';
 $string['edittopic'] = 'Edit topic';
 $string['edittopicspecific'] = 'Edit topic "%s"';
 $string['edittopicsuccess'] = 'Topic edited successfully';
-$string['forumname'] = 'Forum name';
-$string['forumposthtmltemplate'] = "<div style=\"padding: 0.5em 0; border-bottom: 1px solid #999;\"><strong>Forum: %s (%s)</strong></div>
+$string['forumname'] = 'Discussion name';
+$string['forumposthtmltemplate'] = "<div style=\"padding: 0.5em 0; border-bottom: 1px solid #999;\"><strong>Discussion: %s (%s)</strong></div>
 
 <div style=\"margin: 1em 0;\">%s</div>
 
@@ -68,7 +68,7 @@ $string['forumposthtmltemplate'] = "<div style=\"padding: 0.5em 0; border-bottom
 <p><a href=\"%s\">Reply to this post online</a></p>
 <p><a href=\"%s\">Unsubscribe from this %s</a></p>
 </div>";
-$string['forumposttemplate'] = "Forum: %s (%s)
+$string['forumposttemplate'] = "Discussion: %s (%s)
 ------------------------------------------------------------------------
 
 %s
@@ -79,41 +79,41 @@ To see and reply to the post online, follow this link:
 
 To unsubscribe from this %s, visit:
 %s";
-$string['forumsuccessfulsubscribe'] = 'Forum subscribed successfully';
-$string['forumsuccessfulunsubscribe'] = 'Forum unsubscribed successfully';
-$string['gotoforums'] = 'Go to forums';
+$string['forumsuccessfulsubscribe'] = 'Discussion subscribed successfully';
+$string['forumsuccessfulunsubscribe'] = 'Discussion unsubscribed successfully';
+$string['gotoforums'] = 'Go to discussions';
 $string['groupadmins'] = 'Group administrators';
 $string['groupadminlist'] = 'Group administrators:';
 $string['Key'] = 'Key';
 $string['lastpost'] = 'Last post';
-$string['latestforumposts'] = 'Latest forum posts';
+$string['latestforumposts'] = 'Latest discussion posts';
 $string['Moderators'] = 'Moderators';
 $string['moderatorsandgroupadminsonly'] = 'Moderators and group administrators only';
 $string['moderatorslist'] = 'Moderators:';
 $string['moderatorsdescription'] = 'Moderators can edit and delete topics and posts. They can also open, close, set and unset topics as sticky.';
-$string['name'] = 'Forum';
-$string['nameplural'] = 'Forums';
-$string['newforum'] = 'New forum';
+$string['name'] = 'Discussion';
+$string['nameplural'] = 'Discussion';
+$string['newforum'] = 'New discussion';
 $string['newforumpostnotificationsubjectline'] = '%s';
 $string['newpost'] = 'New post: ';
 $string['newtopic'] = 'New topic';
 $string['noforumpostsyet'] = 'There are no posts in this group yet';
-$string['noforums'] = 'There are no forums in this group';
-$string['notopics'] = 'There are no topics in this forum';
+$string['noforums'] = 'There are no discussions in this group';
+$string['notopics'] = 'There are no topics in this discussion';
 $string['notifyadministrator'] = 'Notify administrator';
 $string['objectionablepostdeletedsubject'] = 'Objectionable post in forum topic "%s" was deleted by %s.';
 $string['objectionablepostdeletedbody'] = '%s has looked at post by %s previously reported as objectionable and deleted it.
 
 The objectionable post content was:
 %s';
-$string['objectionabletopicdeletedsubject'] = 'Objectionable forum topic "%s" was deleted by %s.';
+$string['objectionabletopicdeletedsubject'] = 'Objectionable discussion topic "%s" was deleted by %s.';
 $string['objectionabletopicdeletedbody'] = '%s has looked at topic by %s previously reported as objectionable and deleted it.
 
 The objectionable topic content was:
 %s';
 $string['Open'] = 'Open';
 $string['Order'] = 'Order';
-$string['orderdescription'] = 'Choose where you want the forum to be ordered compared to the other forums';
+$string['orderdescription'] = 'Choose where you want the forum to be ordered compared to the other discussions';
 $string['Post'] = 'Post';
 $string['postaftertimeout'] = 'You have submitted your change after timeout of %s minutes. Your change has not been applied.';
 $string['postbyuserwasdeleted'] = 'A post by %s was deleted';
@@ -151,7 +151,7 @@ $string['stickydescription'] = 'Sticky topics are at the top of every page';
 $string['stickytopics'] = 'Sticky topics';
 $string['Subscribe'] = 'Subscribe';
 $string['Subscribed'] = 'Subscribed';
-$string['subscribetoforum'] = 'Subscribe to forum';
+$string['subscribetoforum'] = 'Subscribe to discussion';
 $string['subscribetotopic'] = 'Subscribe to topic';
 $string['Subject'] = 'Subject';
 $string['Topic'] = 'Topic';
@@ -167,16 +167,16 @@ $string['topicsuccessfulunsubscribe'] = 'Topic unsubscribed successfully';
 $string['topicunstickysuccess'] = 'Topic unset as sticky successfully';
 $string['topicunsubscribesuccess'] = 'Topics unsubscribed successfully';
 $string['topicupdatefailed'] = 'Topics update failed';
-$string['typenewpost'] = 'New forum post';
-$string['typereportpost'] = 'Objectionable content in forum';
+$string['typenewpost'] = 'New discussion post';
+$string['typereportpost'] = 'Objectionable content in discussion';
 $string['Unsticky'] = 'Unsticky';
 $string['Unsubscribe'] = 'Unsubscribe';
-$string['unsubscribefromforum'] = 'Unsubscribe from forum';
+$string['unsubscribefromforum'] = 'Unsubscribe from discussion';
 $string['unsubscribefromtopic'] = 'Unsubscribe from topic';
 $string['updateselectedtopics'] = 'Update selected topics';
 $string['whocancreatetopics'] = 'Who can create topics';
 $string['youcannotunsubscribeotherusers'] = 'You cannot unsubscribe other users';
-$string['youarenotsubscribedtothisforum'] = 'You are not subscribed to this forum';
+$string['youarenotsubscribedtothisforum'] = 'You are not subscribed to this discussion';
 $string['youarenotsubscribedtothistopic'] = 'You are not subscribed to this topic';
 $string['Moveto'] = 'Move to';
 $string['topicmovedsuccess'] = array(
@@ -188,23 +188,23 @@ $string['yesterday'] = 'Yesterday';
 $string['strftimerecentrelative'] = '%%v, %%k:%%M';
 $string['strftimerecentfullrelative'] = '%%v, %%l:%%M %%p';
 
-$string['indentmode'] = 'Forum indent mode';
+$string['indentmode'] = 'discussion indent mode';
 $string['indentfullindent'] = 'Fully expand';
 $string['indentmaxindent'] = 'Expand to maximum';
 $string['indentflatindent'] = 'No indents';
-$string['indentmodedescription'] = 'Specify how topics in this forum should be indented.';
+$string['indentmodedescription'] = 'Specify how topics in this discussion should be indented.';
 $string['maxindent'] = 'Maximum indent level';
 $string['maxindentdescription'] = 'Set the maximum indentation level for a topic. This only applies if the indent mode has been set to "Expand to maximum".';
 
 $string['closetopics'] = 'Close new topics';
-$string['closetopicsdescription'] = 'If checked, all new topics in this forum will be closed by default. Only moderators and group administrators can reply to closed topics.';
+$string['closetopicsdescription'] = 'If checked, all new topics in this discussion will be closed by default. Only moderators and group administrators can reply to closed topics.';
 
 $string['activetopicsdescription'] = 'Recently updated topics in your groups.';
 
 $string['timeleftnotice'] = 'You have %s minutes left to finish editing.';
 
-$string['objectionablecontentpost'] = 'Objectionable content on forum topic "%s" reported by %s';
-$string['objectionablecontentposthtml'] = '<div style="padding: 0.5em 0; border-bottom: 1px solid #999;">Objectionable content on forum topic "%s" reported by %s
+$string['objectionablecontentpost'] = 'Objectionable content on discussion topic "%s" reported by %s';
+$string['objectionablecontentposthtml'] = '<div style="padding: 0.5em 0; border-bottom: 1px solid #999;">Objectionable content on discussion topic "%s" reported by %s
 <br>%s</div>
 
 <div style="margin: 1em 0;">%s</div>
@@ -218,7 +218,7 @@ $string['objectionablecontentposthtml'] = '<div style="padding: 0.5em 0; border-
 <p>Complaint relates to: <a href="%s">%s</a></p>
 <p>Reported by: <a href="%s">%s</a></p>
 </div>';
-$string['objectionablecontentposttext'] = 'Objectionable content on forum topic "%s" reported by %s
+$string['objectionablecontentposttext'] = 'Objectionable content on discussion topic "%s" reported by %s
 %s
 ------------------------------------------------------------------------
 

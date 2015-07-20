@@ -12,6 +12,7 @@
                     {/if}
                 {/if}
 				</div>
+	<div class="pagecontent">
 
                 <div id="blogdescription">{clean_html($blog->get('description'))|safe}
                 {if $blog->get('tags')}<p class="tags s"><label>{str tag=tags}:</label> {list_tags owner=$blog->get('owner') tags=$blog->get('tags')}</p>{/if}</div>
@@ -39,6 +40,7 @@ addLoadEvent(function() {literal}{{/literal}
                 {if $hiddenblogsnotification}
                 <p class="s dull center">{str tag=hiddenblogsnotification section=artefact.blog arg1=$WWWROOT}</p>
                 {/if}
+            </div>
             </div>
 {include file="footer.tpl"}
 

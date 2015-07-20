@@ -41,8 +41,8 @@
 	vertical-align: top;
 }
 #postlist .changepoststatus input {
-	padding: 0 3px;
-	height: 16px;
+	padding: 0 10px;
+	height: 25px;
 }
 #postlist .published {
 	padding: 10px;

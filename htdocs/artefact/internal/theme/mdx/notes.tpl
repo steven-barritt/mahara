@@ -1,5 +1,6 @@
 {include file="header.tpl"}
 <p>{str tag=notesdescription1 section=artefact.internal}</p>
+<div class="pagecontent">
 <table id="notes" class="fullwidth listing">
   <thead>
     <tr>
@@ -78,7 +79,7 @@
       {if $n->locked}
         <span class="s dull">{str tag=Submitted section=view}</span>
       {else}
-        <a href="{$WWWROOT}artefact/internal/editnote.php?id={$n->id}" title="{str tag=edit}"><img src="{theme_url filename='images/btn_edit.png'}" alt="{str(tag=editspecific arg1=$n->title)|escape:html|safe}"></a>
+        <a href="{$WWWROOT}artefact/internal/editnote.php?id={$n->id}" title="{str tag=edit}" class="btn-big-edit"></a>
         {if $n->deleteform}{$n->deleteform|safe}{/if}
       {/if}
       </td>
@@ -87,4 +88,5 @@
   </tbody>
 </table>
 {$pagination.html|safe}
+</div>
 {include file="footer.tpl"}

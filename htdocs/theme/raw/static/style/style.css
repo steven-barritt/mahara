@@ -84,7 +84,7 @@ p span {
 }
 /* links styling for accessibility */
 :focus {
-    outline: 2px solid #FFFF00;
+    outline:none;
 }
 html:focus {
     outline: 0;
@@ -1027,12 +1027,12 @@ input#designskinform_submit,
 input#cancel_designskinform_submit,
 input#import_submit,
 input#cancel_import_submit {
-    padding: 5px 10px;
-    font-size: 1.167em
+    padding: 0px 10px;
+    font-size: 1em
 }
 .rbuttons input.submit {
-    padding: 4px 10px 5px 10px;
-    font-size: 1.167em;
+    padding: 0 10px;
+    font-size: 1em;
 }
 /* exceptions to the bigger and need to be made back to regular */
 input#delete_all_notifications_submit,

@@ -2133,7 +2133,7 @@ function pieform_element_calendar_configure($element) {
     global $THEME;
     $element['jsroot'] = get_config('wwwroot') . 'js/jquery/jquery-ui/';
     $element['themefile'] = $THEME->get_url('style/datepicker.css');
-    $element['imagefile'] = $THEME->get_url('images/btn_calendar.png');
+    $element['imagefile'] = '';
     $language = substr(current_language(), 0, 2);
     $element['language'] = $language;
     return $element;
@@ -3958,7 +3958,7 @@ function combine_arrays($first, $second) {
 function server_busy($threshold = false) {
     // Get current server load information - code from:
     // http://www.php.net//manual/en/function.sys-getloadavg.php#107243
-    if (stristr(PHP_OS, 'win')) {
+    if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
         $wmi = new COM("Winmgmts://");
         $server = $wmi->execquery("SELECT LoadPercentage FROM Win32_Processor");
         $cpu_num = 0;

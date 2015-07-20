@@ -7,13 +7,13 @@
         {if $retractable && !$configure}
             <img src="{theme_url filename=images/retractable.png}" alt="{str tag='retractable' section='view'}" title="{str tag='retractable' section='view'}" class="retractablebtn">
         {/if}
-        {if $configurable && !$configure}    <input type="image" src="{theme_url filename=images/btn_edit.png}" class="configurebutton" name="action_configureblockinstance_id_{$id}" alt="{$strconfigtitletext}">{/if}
+        {if $configurable && !$configure}    <input type="image" class="btn-big-edit configurebutton" name="action_configureblockinstance_id_{$id}">{/if}
         
         {if !$limitedediting}<!--SB-->
             {if $configure}
-                <input type="image" src="{theme_url filename=images/btn_close.png}" class="deletebutton" name="action_removeblockinstance_id_{$id}" alt="{str tag=Close}">
+                <input type="image" src="" class="btn-big-close deletebutton" name="action_removeblockinstance_id_{$id}">
             {else}
-                <input type="image" src="{theme_url filename=images/btn_deleteremove.png}" class="deletebutton" name="action_removeblockinstance_id_{$id}" alt="{$strremovetitletext}">
+                <input type="image" class="btn-big-del deletebutton" name="action_removeblockinstance_id_{$id}">
             {/if}
         {else}
             <input type="hidden" src="{theme_url filename=images/btn_deleteremove.png}" class="deletebutton" name="action_removeblockinstance_id_{$id}" alt="{$strremovetitletext}">

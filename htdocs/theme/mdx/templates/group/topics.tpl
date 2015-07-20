@@ -1,5 +1,6 @@
 {include file="header.tpl"}
 <p class="intro">{str tag=activetopicsdescription section=interaction.forum}</p>
+<div class="pagecontent">
 <table id="topiclist" class="fullwidth">
   <thead>
     <tr>
@@ -12,5 +13,6 @@
 {include file="group/topicrows.tpl"}
   </tbody>
 </table>
+</div>
 <div id="topics_pagination">{$pagination|safe}</div>
 {include file="footer.tpl"}

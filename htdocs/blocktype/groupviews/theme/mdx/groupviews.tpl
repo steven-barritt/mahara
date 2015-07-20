@@ -20,7 +20,6 @@
 
 {if $sharedviews}
     <div class="groupviewsection">
-        <h3 class="title">{str tag="viewssharedtogroup" section="view"}</h3>
         <div id="sharedviewlist" class="fullwidth listing">
             {$sharedviews.tablerows|safe}
         </div>
@@ -41,7 +40,6 @@
 
 {if $sharedcollections}
     <div class="groupviewsection">
-        <h3 class="title">{str tag="collectionssharedtogroup" section="collection"}</h3>
         <div id="sharedcollectionlist" class="fullwidth listing">
             {$sharedcollections.tablerows|safe}
         </div>

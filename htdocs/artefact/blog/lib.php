@@ -485,7 +485,8 @@ class ArtefactTypeBlog extends ArtefactType {
                 ),
                 'submit' => array(
                     'type' => 'image',
-                    'src' => $THEME->get_url('images/btn_deleteremove.png'),
+                    'class' => 'btn-big-del',
+                    'src' => '',
                     'alt' => get_string('deletespecific', 'mahara', $title),
                     'elementtitle' => get_string('delete'),
                     'confirm' => $confirm,
@@ -1023,7 +1024,8 @@ class ArtefactTypeBlogPost extends ArtefactType {
                 ),
                 'submit' => array(
                     'type' => 'image',
-                    'src' => $THEME->get_url('images/btn_deleteremove.png'),
+                    'class' => 'btn-big-del',
+                    'src' => '',
                     'alt' => get_string('deletespecific', 'mahara', $title),
                     'elementtitle' => get_string('delete'),
                     'confirm' => get_string('deleteblogpost?', 'artefact.blog'),
