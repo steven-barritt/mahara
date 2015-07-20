@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="lib/db" VERSION="20060926" COMMENT="XMLDB file for core Mahara tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <TABLE NAME="interaction_schedule_instance_config">
+            <FIELDS>
+                <FIELD NAME="schedule" TYPE="int" NOTNULL="true" />
+                <FIELD NAME="field" TYPE="text" NOTNULL="true" />
+                <FIELD NAME="value" TYPE="text" NOTNULL="true" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="schedulefk" TYPE="foreign" FIELDS="schedule" REFTABLE="interaction_instance" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+
+        <TABLE NAME="interaction_schedule_event">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
+                <FIELD NAME="schedule" TYPE="int" NOTNULL="true" />
+                <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="false" />
+                <FIELD NAME="description" TYPE="text" NOTNULL="true" />
+                <FIELD NAME="startdate" TYPE="date" NOTNULL="true" />
+                <FIELD NAME="starttime" TYPE="time" NOTNULL="false" />
+                <FIELD NAME="enddate" TYPE="date" NOTNULL="true" />
+                <FIELD NAME="endtime" TYPE="time" NOTNULL="false" />
+                <FIELD NAME="attendance" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" />
+                <FIELD NAME="location" TYPE="char" LENGTH="255" NOTNULL="false" />                
+                <FIELD NAME="ctime" TYPE="datetime" NOTNULL="true" />                
+                <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+                <KEY NAME="schedulefk" TYPE="foreign" FIELDS="schedule" REFTABLE="interaction_instance" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+
+        <TABLE NAME="interaction_schedule_attendance">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
+                <FIELD NAME="event" TYPE="int" NOTNULL="true" />
+                <FIELD NAME="user" TYPE="int" NOTNULL="true" />
+                <FIELD NAME="attendance" TYPE="int" NOTNULL="true" />
+                <FIELD NAME="excuse" TYPE="text" NOTNULL="false"  />
+                <FIELD NAME="attachment" TYPE="int" NOTNULL="false"  />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+                <KEY NAME="eventfk" TYPE="foreign" FIELDS="event" REFTABLE="interaction_schedule_event" REFFIELDS="id" />
+                <KEY NAME="userfk" TYPE="foreign" FIELDS="user" REFTABLE="usr" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+
+    </TABLES>
+</XMLDB>

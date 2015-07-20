@@ -1,0 +1,359 @@
+/**
+ * CSS rules for the schedule interaction plugin
+ *
+ * @author     Catalyst IT Ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
+ * @copyright  For copyright information on Mahara, please see the README file distributed with this software.
+
+ * This file is distributed under the same terms as Mahara itself
+ */
+ 
+/* top buttons */
+#schedulebtns {
+    line-height: 2.1em;
+    float: right;
+    margin-top: 4px;
+}
+#schedulebtns a.btn {
+    margin: 0 0 0 8px;
+    padding: 6px 5px 4px 5px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+#schedulebtns a.btn {
+    padding: 4px 5px 3px 5px;
+}
+}
+.ie9 #schedulebtns a.btn {
+    padding: 5px 5px 4px 5px;
+}
+.ie8 #schedulebtns a.btn {
+    padding: 5px 5px 3px 5px;
+}
+#schedulebtns form,
+#schedulebtns form div {
+    display: inline-block;
+    margin: 0 0 0 4px;
+}
+/* schedule description */
+#scheduledescription {
+    clear: both;
+    margin: 0 0 10px 0;
+}
+/* schedule list */
+#subscribe_schedule {
+    display: inline;
+}
+#scheduleslist .subscribetd table th,
+#scheduleslist .subscribetd table td {
+    background: none;
+    padding: 2px;
+    border: 0;
+}
+#schedulelist td {
+}
+
+#schedulelist td.event_date{
+	width:15%;
+}
+#schedulelist td.event_time{
+	min-width:120px;
+}
+#schedulelist td.event_details{
+	width:70%;
+}
+.event_details td p{
+	padding:0;
+	margin:0;
+}
+.event_details td.event_details_title{
+	width:20%;
+}
+
+#scheduleslist td .inlinelist {
+    font-size: .9167em;
+    line-height: 1.8em;
+}
+#scheduleslist td .inlinelist span {
+    font-weight: bold;
+}
+/* topic list */
+#viewschedule {
+    padding: 10px;
+    margin: 0;
+}
+#viewschedule .rbuttons {
+    margin-top: -35px;
+}
+/* to get user picts to align with text */
+.scheduleuser,
+.inlinelist a img {
+    vertical-align: middle;
+}
+.postertd a img {
+    vertical-align: middle;
+}
+/* schedule action selector */
+.scheduleselectwrap {
+    margin: 5px 0;
+}
+/* schedule footer */
+.schedulefooter {
+    margin: 10px;
+}
+/* admin & moderator */
+.schedulemods {
+    padding: 5px;
+    margin: 5px 0;
+}
+.schedulemods a {
+    margin-right: 5px;
+}
+/* posts */
+.schedulepost {
+    clear: both;
+}
+.postedits .posttime {
+    font-size: .9167em;
+}
+.schedulepostleft .author img {
+    margin: 3px 5px 3px 3px;
+}
+.schedulepostleft .author .poster {
+    margin: 0;
+}
+.schedulepostleft .author .postcount {
+    font-weight: normal;
+    margin: 0;
+}
+
+#schedulelist .r1 td, #schedulelist .r0 td{
+	background-color:#fff;
+	padding-bottom:5px;
+	padding-top:5px;
+	border-bottom:none;
+}
+
+#schedulelist .r1, #schedulelist .r0{
+	border-bottom:none;
+}
+
+.line_breaker {
+	border-bottom:solid 1px #ddd;
+}
+
+.postedits {
+    padding: 10px;
+}
+.postbtns {
+    text-align: right;
+    margin: 7px 0 10px 0;
+}
+.postbtns a {
+    text-decoration: none;
+    cursor: default;
+    line-height: 2.3333em;
+    margin: 0 0 0 5px;
+}
+.deletedpost {
+    margin-top: 0;
+    font-style: italic;
+    font-weight: normal;
+    padding: 5px 10px;
+}
+.postreply {
+    padding: 0 0 0 10px;
+}
+.editstopost {
+    padding: 5px 10px;
+}
+.editstopost ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.editstopost ul li {
+    padding: 0;
+    margin: 0 0 3px 0;
+}
+.editstopost ul li a {
+    font-size: 0.9167em;
+}
+.editstopost ul li a img {
+    vertical-align: sub;
+}
+/* post and topic editing*/
+.timeleftnotice {
+    margin-top: 0.8em;
+    font-size: .9167em;
+}
+/* objection */
+.btn-objection {
+    background: url(../images/objectionable.png) no-repeat 0 0;
+    padding-left: 21px !important;
+}
+#reportpost {
+    background: #FEE7E7;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+.schedulepost.reported {
+    border-color: #FEE7E7;
+}
+.schedulepost.reported .postedits {
+    background-color: #FEE7E7;
+}
+.reportedaction {
+    background-color: #FEE7E7;
+    clear: both;
+    padding: 5px 5px;
+}
+.reportedaction .postnotobjectionable {
+    display: inline-block;
+    width: 80%;
+    font-weight: bold;
+}
+.reportedaction .btn-notobjectionable {
+    float: right;
+    display: inline-block;
+    position: relative;
+    right: -2px;
+}
+
+.reportedaction fieldset.collapsible legend {
+    font-size: 1em;
+}
+
+#scheduletopicstable .containobjectionable td {
+    background-color: #FEE7E7;
+}
+
+
+#editevent_title{
+	width:100%;
+}
+#editevent_location{
+	width:100%;
+}
+#addevent_title{
+	width:100%;
+}
+#addevent_location{
+	width:100%;
+}
+
+.attendance{
+	padding:2px 5px;
+	border: solid 1px #dcc;
+}
+
+.attendanceColumnHead{
+	vertical-align: bottom;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.attendanceColumnHeadVertical{
+	text-align: center;
+	vertical-align: bottom;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+
+}
+
+tr.r0 td.attendPresent{
+	background: #b8dea7 url(../images/present.png) no-repeat center;
+}
+tr.r0 td.attendAbsent{
+	background: #dea7a7 url(../images/absent.png) no-repeat center;
+}
+tr.r0 td.attendLate{
+	background: #eeeb9c url(../images/late.png) no-repeat center;
+}
+tr.r0 td.attendExcused{
+	background: #9cd2ee url(../images/excused.png) no-repeat center;
+}
+tr.r1 td.attendPresent{
+	background: #a8ce97 url(../images/present.png) no-repeat center;
+}
+tr.r1 td.attendAbsent{
+	background: #ce9797 url(../images/absent.png) no-repeat center;
+}
+tr.r1 td.attendLate{
+	background: #dedb8c url(../images/late.png) no-repeat center;
+}
+tr.r1 td.attendExcused{
+	background: #8cc2de url(../images/excused.png) no-repeat center;
+}
+
+tr.r0 td.present{
+	background: #b8dea7;
+}
+tr.r0 td.absent{
+	background: #dea7a7;
+}
+tr.r0 td.late{
+	background: #eeeb9c;
+}
+tr.r0 td.excused{
+	background: #9cd2ee;
+}
+
+tr.r1 td.present{
+	background: #a8ce97;
+}
+tr.r1 td.absent{
+	background: #ce9797;
+}
+tr.r1 td.late{
+	background: #dedb8c;
+}
+tr.r1 td.excused{
+	background: #8cc2de;
+}
+.attendancelink{
+	width:100%;
+	height:100%;
+}
+
+.color_swatch{
+float:left;
+	margin-top:10px;
+	margin-left:10px;
+	width:30px;
+	height:30px;
+	border: solid 1px #ccc;
+}
+.schedule_title{
+	margin-left:50px;
+}
+
+.event_title{
+	font-size:1em;
+	font-weight:bold;
+}
+.event_schedule_title{
+	font-size:12px;
+	font-weight:lighter;
+}
+.event_location{
+	font-weight:lighter;
+}
+
+.event_date{
+	color:rgb(17,85,204);
+	font-weight:bold;
+	
+}
+
+.linebreak{
+	display:block;
+}
+td.attendancecol{
+	text-align:center;
+}
+
+.greyedout{
+	opacity: 0.6;
+    filter: alpha(opacity=60);
+}

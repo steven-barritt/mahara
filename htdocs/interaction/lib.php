@@ -67,7 +67,7 @@ abstract class PluginInteraction extends Plugin implements IPluginInteraction {
             'title' => array(
                 'type'         => 'text',
                 'title'        => get_string('title', 'group'),
-                'defaultvalue' => (isset($instance) ? $instance->get('title') : ''),
+                'defaultvalue' => (isset($instance) ? $instance->get('title') : DEFAULTTITLE),
                 'rules'        => array(
                     'required' => true,
                 )
@@ -79,7 +79,7 @@ abstract class PluginInteraction extends Plugin implements IPluginInteraction {
                 'cols'         => 60,
                 'defaultvalue' => (isset($instance) ? $instance->get('description') : ''),
                 'rules'        => array(
-                    'required' => true,
+                    'required' => false,
                     'maxlength' => 65536,
                 )
             ),

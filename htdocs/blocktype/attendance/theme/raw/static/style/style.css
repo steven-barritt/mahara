@@ -1,0 +1,433 @@
+/**
+ * CSS rules for the attendance interaction plugin
+ *
+ * @author     Catalyst IT Ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
+ * @copyright  For copyright information on Mahara, please see the README file distributed with this software.
+
+ * This file is distributed under the same terms as Mahara itself
+ */
+ 
+/* top buttons */
+#attendancebtns {
+    line-height: 2.1em;
+    float: right;
+    margin-top: 4px;
+}
+#attendancebtns a.btn {
+    margin: 0 0 0 8px;
+    padding: 6px 5px 4px 5px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+#attendancebtns a.btn {
+    padding: 4px 5px 3px 5px;
+}
+}
+.ie9 #attendancebtns a.btn {
+    padding: 5px 5px 4px 5px;
+}
+.ie8 #attendancebtns a.btn {
+    padding: 5px 5px 3px 5px;
+}
+#attendancebtns form,
+#attendancebtns form div {
+    display: inline-block;
+    margin: 0 0 0 4px;
+}
+/* attendance description */
+#attendancedescription {
+    clear: both;
+    margin: 0 0 10px 0;
+}
+/* attendance list */
+#subscribe_attendance {
+    display: inline;
+}
+
+#attendancelist {
+	width:100%;
+}
+#profileattendancelist {
+	width:98%;
+	margin-bottom:15px;
+}
+
+#attendanceslist .subscribetd table th,
+#attendanceslist .subscribetd table td {
+    background: none;
+    padding: 2px;
+    border: 0;
+}
+#attendancelist td {
+	max-width:50px;
+}
+
+#attendancelist td.event_date{
+	width:15%;
+}
+#attendancelist td.event_time{
+	min-width:120px;
+}
+#attendancelist td.event_details{
+	width:70%;
+}
+.event_details td p{
+	padding:0;
+	margin:0;
+}
+.event_details td.event_details_title{
+	width:20%;
+}
+
+#attendanceslist td .inlinelist {
+    font-size: .9167em;
+    line-height: 1.8em;
+}
+#attendanceslist td .inlinelist span {
+    font-weight: bold;
+}
+/* topic list */
+#viewattendance {
+	padding-top:10px;
+	padding-bottom:15px;
+	padding-left:5px;
+	padding-right:5px;
+    margin: 0;
+    	overflow:scroll;
+
+}
+#viewattendance .rbuttons {
+    margin-top: -35px;
+}
+/* to get user picts to align with text */
+.attendanceuser,
+.inlinelist a img {
+    vertical-align: middle;
+}
+.postertd a img {
+    vertical-align: middle;
+}
+/* attendance action selector */
+.attendanceselectwrap {
+    margin: 5px 0;
+}
+/* attendance footer */
+.attendancefooter {
+    margin: 10px;
+}
+/* admin & moderator */
+.attendancemods {
+    padding: 5px;
+    margin: 5px 0;
+}
+.attendancemods a {
+    margin-right: 5px;
+}
+/* posts */
+.attendancepost {
+    clear: both;
+}
+.postedits .posttime {
+    font-size: .9167em;
+}
+.attendancepostleft .author img {
+    margin: 3px 5px 3px 3px;
+}
+.attendancepostleft .author .poster {
+    margin: 0;
+}
+.attendancepostleft .author .postcount {
+    font-weight: normal;
+    margin: 0;
+}
+
+#attendancelist .r1 td, #attendancelist .r0 td{
+	padding-bottom:5px;
+	padding-top:5px;
+	border-bottom:none;
+	padding:10px;
+}
+
+#attendancelist .r1, #attendancelist .r0{
+	border-bottom:none;
+}
+
+.line_breaker {
+	border-bottom:solid 1px #ddd;
+}
+
+.postedits {
+    padding: 10px;
+}
+.postbtns {
+    text-align: right;
+    margin: 7px 0 10px 0;
+}
+.postbtns a {
+    text-decoration: none;
+    cursor: default;
+    line-height: 2.3333em;
+    margin: 0 0 0 5px;
+}
+.deletedpost {
+    margin-top: 0;
+    font-style: italic;
+    font-weight: normal;
+    padding: 5px 10px;
+}
+.postreply {
+    padding: 0 0 0 10px;
+}
+.editstopost {
+    padding: 5px 10px;
+}
+.editstopost ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.editstopost ul li {
+    padding: 0;
+    margin: 0 0 3px 0;
+}
+.editstopost ul li a {
+    font-size: 0.9167em;
+}
+.editstopost ul li a img {
+    vertical-align: sub;
+}
+/* post and topic editing*/
+.timeleftnotice {
+    margin-top: 0.8em;
+    font-size: .9167em;
+}
+/* objection */
+.btn-objection {
+    background: url(../images/objectionable.png) no-repeat 0 0;
+    padding-left: 21px !important;
+}
+#reportpost {
+    background: #FEE7E7;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+.attendancepost.reported {
+    border-color: #FEE7E7;
+}
+.attendancepost.reported .postedits {
+    background-color: #FEE7E7;
+}
+.reportedaction {
+    background-color: #FEE7E7;
+    clear: both;
+    padding: 5px 5px;
+}
+.reportedaction .postnotobjectionable {
+    display: inline-block;
+    width: 80%;
+    font-weight: bold;
+}
+.reportedaction .btn-notobjectionable {
+    float: right;
+    display: inline-block;
+    position: relative;
+    right: -2px;
+}
+
+.reportedaction fieldset.collapsible legend {
+    font-size: 1em;
+}
+
+#attendancetopicstable .containobjectionable td {
+    background-color: #FEE7E7;
+}
+
+
+#editevent_title{
+	width:100%;
+}
+#editevent_location{
+	width:100%;
+}
+#addevent_title{
+	width:100%;
+}
+#addevent_location{
+	width:100%;
+}
+
+.attendance{
+	padding:2px 5px;
+	border: solid 1px #dcc;
+}
+
+.attendanceColumnHead{
+	vertical-align: bottom;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.attendanceColumnHeadVertical{
+	text-align: center;
+	vertical-align: bottom;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+
+}
+
+tr.r0 td.attendPresent{
+	background: #b8dea7 url(../images/present.png) no-repeat center;
+}
+tr.r0 td.attendAbsent{
+	background: #dea7a7 url(../images/absent.png) no-repeat center;
+}
+tr.r0 td.attendLate{
+	background: #eeeb9c url(../images/late.png) no-repeat center;
+}
+tr.r0 td.attendExcused{
+	background: #9cd2ee url(../images/excused.png) no-repeat center;
+}
+tr.r1 td.attendPresent{
+	background: #a8ce97 url(../images/present.png) no-repeat center;
+}
+tr.r1 td.attendAbsent{
+	background: #ce9797 url(../images/absent.png) no-repeat center;
+}
+tr.r1 td.attendLate{
+	background: #dedb8c url(../images/late.png) no-repeat center;
+}
+tr.r1 td.attendExcused{
+	background: #8cc2de url(../images/excused.png) no-repeat center;
+}
+
+
+tr.r0 td.present{
+	background: #b8dea7;
+}
+tr.r0 td.absent{
+	background: #dea7a7;
+}
+tr.r0 td.late{
+	background: #eeeb9c;
+}
+tr.r0 td.excused{
+	background: #9cd2ee;
+}
+
+tr.r1 td.present{
+	background: #a8ce97;
+}
+tr.r1 td.absent{
+	background: #ce9797;
+}
+tr.r1 td.late{
+	background: #dedb8c;
+}
+tr.r1 td.excused{
+	background: #8cc2de;
+}
+.attendancelink{
+	width:100%;
+	height:100%;
+}
+#profileattendancelist td{
+	border: 1px solid #aaa;
+	padding:0;
+}
+
+.color_swatch{
+float:left;
+	margin-top:10px;
+	margin-left:10px;
+	width:30px;
+	height:30px;
+	border: solid 1px #ccc;
+}
+.attendance_title{
+	margin-left:50px;
+}
+
+.event_title{
+	font-size:1em;
+	font-weight:bold;
+}
+.event_attendance_title{
+	font-size:12px;
+	font-weight:lighter;
+}
+.event_location{
+	font-weight:lighter;
+}
+
+.event_date{
+	color:rgb(17,85,204);
+	font-weight:bold;
+	
+}
+
+.linebreak{
+	display:block;
+}
+td.attendancecol{
+	text-align:center;
+}
+
+.greyedout{
+	opacity: 0.6;
+    filter: alpha(opacity=60);
+}
+
+
+.attendancekey{
+	width:100%;
+}
+
+.one-quater{
+	display:inline-block;
+	width:24%;
+}
+
+.attendancekey .present{
+	margin:10px;
+	display:inline-block;
+	width:15px;
+	height:15px;
+	border:solid 1px #aaa;
+	background: #b8dea7;
+
+}
+.attendancekey .late{
+	margin:10px;
+	display:inline-block;
+	width:15px;
+	height:15px;
+	border:solid 1px #aaa;
+	background: #dedb8c;
+
+}
+.attendancekey .absent{
+	margin:10px;
+	display:inline-block;
+	width:15px;
+	height:15px;
+	border:solid 1px #aaa;
+	background: #dea7a7;
+
+}
+.attendancekey .excused{
+	margin:10px;
+	display:inline-block;
+	width:15px;
+	height:15px;
+	border:solid 1px #aaa;
+	background: #9cd2ee;
+
+}
+
+.eventlink{
+	display:block;
+	width:100%;
+}
+.attendancecol{
+}
