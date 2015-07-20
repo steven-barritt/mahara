@@ -399,4 +399,5 @@ $string['publishbtn'] = "Publish All Grades and Feedback";
 
 $string['groupparent'] = "Parent Group";
 $string['noparentselected'] = "No Parent";
+$string['attendance'] = "%% Attendance";
 

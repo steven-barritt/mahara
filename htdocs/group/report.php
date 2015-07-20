@@ -14,6 +14,7 @@ require_once('view.php');
 require_once('group.php');
 require_once('user.php');
 safe_require('artefact', 'comment');
+safe_require('interaction', 'schedule');
 define('TITLE', get_string('report', 'group'));
 define('MENUITEM', 'groups/report');
 define('GROUP', param_integer('group'));
@@ -281,12 +282,20 @@ if(in_array($group->grouptype, array('year','module','assessment')) ){
 	foreach($groupmembers as $member){
 		$user = get_user_for_display($member);
 	//	var_dump($member);
+		list($attendance, $percentages) = schedule_get_user_group_attendance($member,$group->id);
+
 		if($group->grouptype == 'assessment'){
 			$assessments = get_assessments($member,array($group));
 		}else{
 			$assessments = get_assessments($member,$assessmentgroups);
 		}
-		$thisuser = array('id'=>$member,'firstname'=>$user->firstname,'lastname'=>$user->lastname,'profileicon'=>$user->profileicon,'studentnumber'=>$user->studentid);
+		$thisuser = array('id'=>$member,
+							'firstname'=>$user->firstname,
+							'lastname'=>$user->lastname,
+							'profileicon'=>$user->profileicon,
+							'studentnumber'=>$user->studentid,
+							'attendance'=>$attendances,
+							'percentages'=>$percentages);
 		$i = 1;
 		if(!$columns){
 			foreach($assessments as $assessment){
@@ -341,11 +350,12 @@ addLoadEvent(function () {
 });
 EOF;
 
-	$smarty = smarty(array('paginator'));
+$smarty = smarty(array('paginator'),array(),array(),array('sidebars' => false));
 	$smarty->assign('baseurl', get_config('wwwroot') . 'group/report.php?group=' . $group->id);
 	$smarty->assign('heading', $group->name);
 	$smarty->assign('userdata', $userdata);
 	$smarty->assign('columns', $columns);
+	$smarty->assign('group',$group);
 	$smarty->assign('modulegroups', $modulegroups);
 	$smarty->assign('assessmentgroups', $assessmentgroups);
 	$smarty->assign('colcount', $colcount);
@@ -405,7 +415,11 @@ foreach ($sharedviews as &$data) {
 			}
 		}		
 	}
-	
+   
+	list($attendance, $percentages) = schedule_get_user_group_attendance($view->get('owner'),$group->id);
+
+	$data['attendnace'] = $attendance;
+	$data['percentages'] = $percentages;
     $extcommenters = 0;
     $membercommenters = 0;
     $extcomments = 0;
@@ -560,7 +574,7 @@ addLoadEvent(function () {
 });
 EOF;
 
-$smarty = smarty(array('paginator'));
+$smarty = smarty(array('paginator'),array(),array(),array('sidebars' => false));
 $smarty->assign('baseurl', get_config('wwwroot') . 'group/report.php?group=' . $group->id);
 $smarty->assign('heading', $group->name);
 $smarty->assign('sharedviews', $sharedviews);
@@ -571,6 +585,7 @@ $smarty->assign('publishform', $publishform);
 $smarty->assign('gvcount', $groupviewscount);
 $smarty->assign('svcount', $sharedviewscount);
 $smarty->assign('sort', $sort);
+$smarty->assign('group',$group);
 $smarty->assign('direction', $direction);
 $smarty->display('group/report.tpl');
 

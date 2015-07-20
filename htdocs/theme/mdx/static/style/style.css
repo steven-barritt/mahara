@@ -2696,6 +2696,13 @@ td.gradecolumn{
 	margin-left:15px;
 }
 
+.r1 td.alert{
+	background: #dea7a7;
+}
+.r0 td.alert{
+	background: #dea7a7;
+}
+
 /******************** Responsive design ********************/
 /* for 1000px or less */
 @media screen and (max-width: 1000px) {

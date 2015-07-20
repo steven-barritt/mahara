@@ -37,6 +37,10 @@ $string['edittitle'] = 'Schedule Settings';
 $string['enddate'] = 'End Date & Time';
 $string['event'] = 'Event: ';
 $string['when'] = 'When: ';
+$string['present'] = 'Present';
+$string['late'] = 'Late';
+$string['absent'] = 'Absent';
+$string['excused'] = 'Excused';
 
 $string['editeventsuccess'] = 'Event edited successfully';
 $string['groupadminlist'] = 'Group Admins';

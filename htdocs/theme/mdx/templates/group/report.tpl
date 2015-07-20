@@ -19,6 +19,9 @@
       <th class="pc {if $sort == postcount && $direction == asc}asc{elseif $sort == postcount}sorted{/if}">
         <a href="{$baseurl}&sort=postcount{if $sort == postcount && $direction == asc}&direction=desc{/if}">{str tag=postcount section=group}</a>
       </th>
+      <th class="pc {if $sort == attendance && $direction == asc}asc{elseif $sort == attendance}sorted{/if}">
+        <a href="{$baseurl}&sort=attendance{if $sort == attendance && $direction == asc}&direction=desc{/if}">{str tag=attendance section=group}</a>
+      </th>
       <th class="sg {if $sort == selfgrade && $direction == asc}asc{elseif $sort == selfgrade}sorted{/if}">
         <a href="{$baseurl}&sort=selfgrade{if $sort == selfgrade && $direction == asc}&direction=desc{/if}">{str tag=selfgrade section=group}</a>
       </th>
@@ -55,6 +58,11 @@
      	<div class="bloginfo"> {str tag=posts section=blocktype.groupviews arg1=$view.postcount}</div>
      {/if}
 
+        </ul>
+      </td>
+      <td class="sg"><label class="hidden">{str tag=attendance section=group}: </label>
+        <ul>
+        	<a href="{$WWWROOT}interaction/schedule/viewattendance.php?group={$group->id}" title="{str tag=present section=interaction.schedule}: {$view.percentages[0]->percentage}%&#13;{str tag=late section=interaction.schedule}: {$view.percentages[1]->percentage}%&#13;{str tag=absent section=interaction.schedule}: {$view.percentages[2]->percentage}%&#13;{str tag=excused section=interaction.schedule}: {$view.percentages[3]->percentage}%">{$view.percentages[0]->percentage + $view.percentages[1]->percentage}</a>
         </ul>
       </td>
       <td class="sg"><label class="hidden">{str tag=selfgrade section=group}: </label>

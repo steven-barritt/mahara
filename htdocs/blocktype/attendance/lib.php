@@ -63,13 +63,6 @@ class PluginBlocktypeAttendance extends SystemBlocktype {
 		if($instance->get_view()->get('type') == 'profile'){
 			
 			list($attendances,$percentages) = schedule_get_user_attendance($instance->get_view()->get('owner'));
-			$total = 0;
-			foreach($percentages as $percent){
-				$total += $percent->total;
-			}
-			foreach($percentages as $percent){
-				$percent->percentage = intval(($percent->total / $total)*100) ;
-			}
 		}else{
 			$groups = self::get_groups($instance);
 		

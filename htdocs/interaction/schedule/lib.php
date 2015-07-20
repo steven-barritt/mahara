@@ -228,6 +228,74 @@ function schedule_get_schedule_attendance($scheduleid, $userid){
 
 }
 
+function schedule_get_user_group_attendance($userid,$groupid){
+	$attendance = array();
+//	var_dump($userid);
+//	var_dump($groupid);
+	$percentages = array();
+        $attendance = get_records_sql_array(
+            'SELECT i.id, i.title, ii.group, ii.description, ii.id as schedule, att.attendance, att.excuse, att.attachment ,'. db_format_tsfield('i.startdate','startdate'). '
+			FROM 	{interaction_schedule_event} i LEFT JOIN (
+			SELECT a.event, a.attendance, a.excuse, a.attachment 
+			FROM	{interaction_schedule_attendance} a
+			WHERE
+			a.user = ?) as att
+
+			on att.event = i.id
+                        JOIN {interaction_instance} ii on i.schedule = ii.id                        
+                        WHERE  i.deleted = 0 AND i.attendance  AND ii.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
+			ORDER BY i.startdate, i.enddate',
+            array($userid,$groupid)
+        );
+        
+        $percentages = get_records_sql_array("SELECT 'present' as attendance, count(a.id) as total 
+			FROM 	{interaction_schedule_attendance} a
+                        JOIN	{interaction_schedule_event} e on a.event = e.id
+                        JOIN	{interaction_instance} i on i.id = e.schedule
+			WHERE
+			a.user = ? AND e.deleted = 0 AND e.attendance AND a.attendance = 1 AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
+		UNION
+		SELECT 'late' as attendance, count(a.id) as total 
+					FROM 	{interaction_schedule_attendance} a
+								JOIN	{interaction_schedule_event} e on a.event = e.id
+                        JOIN	{interaction_instance} i on i.id = e.schedule
+					WHERE
+					a.user = ? AND e.deleted = 0 AND e.attendance AND a.attendance = 2 AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
+		UNION
+		SELECT 'absent' as attendance, count(a.id) as total 
+					FROM 	{interaction_schedule_attendance} a
+								JOIN	{interaction_schedule_event} e on a.event = e.id
+                        JOIN	{interaction_instance} i on i.id = e.schedule
+					WHERE
+					a.user = ? AND e.deleted = 0 AND e.attendance AND a.attendance = 3 AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
+		UNION
+		SELECT 'excused' as attendance, count(a.id) as total 
+			FROM 	{interaction_schedule_attendance} a
+                        JOIN	{interaction_schedule_event} e on a.event = e.id
+                        JOIN	{interaction_instance} i on i.id = e.schedule
+			WHERE
+			a.user = ? AND e.deleted = 0 AND e.attendance AND a.attendance = 4 AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)",
+			array($userid,$groupid,$userid,$groupid,$userid,$groupid,$userid,$groupid)
+		);
+//		var_dump($percentages);
+ //	 	bob::bob();
+
+	$total = 0;
+	foreach($percentages as $percent){
+		$total += $percent->total;
+	}
+	foreach($percentages as $percent){
+		if($total > 0){
+			$percent->percentage = intval(round(($percent->total / $total)*100));
+		}else{
+			$percent->percentage = 0;
+		}
+	}
+	$percentages['total'] = $total;
+
+
+    return array($attendance,$percentages);}
+
 function schedule_get_user_attendance($userid){
 	$attendance = array();
 	$percentages = array();
@@ -249,31 +317,43 @@ function schedule_get_user_attendance($userid){
         );
         
         $percentages = get_records_sql_array("SELECT 'present' as attendance, count(a.id) as total 
-			FROM 	interaction_schedule_attendance a
-                        JOIN	interaction_schedule_event e on a.event = e.id
+			FROM 	{interaction_schedule_attendance} a
+                        JOIN	{interaction_schedule_event} e on a.event = e.id
 			WHERE
 			a.user = ? AND e.deleted = 0 AND e.attendance AND a.attendance = 1
 		UNION
 		SELECT 'late' as attendance, count(a.id) as total 
-					FROM 	interaction_schedule_attendance a
-								JOIN	interaction_schedule_event e on a.event = e.id
+					FROM 	{interaction_schedule_attendance} a
+								JOIN	{interaction_schedule_event} e on a.event = e.id
 					WHERE
 					a.user = ? AND e.deleted = 0 AND e.attendance AND a.attendance = 2
 		UNION
 		SELECT 'absent' as attendance, count(a.id) as total 
-					FROM 	interaction_schedule_attendance a
-								JOIN	interaction_schedule_event e on a.event = e.id
+					FROM 	{interaction_schedule_attendance} a
+								JOIN	{interaction_schedule_event} e on a.event = e.id
 					WHERE
 					a.user = ? AND e.deleted = 0 AND e.attendance AND a.attendance = 3
 		UNION
 		SELECT 'excused' as attendance, count(a.id) as total 
-			FROM 	interaction_schedule_attendance a
-                        JOIN	interaction_schedule_event e on a.event = e.id
+			FROM 	{interaction_schedule_attendance} a
+                        JOIN	{interaction_schedule_event} e on a.event = e.id
 			WHERE
 			a.user = ? AND e.deleted = 0 AND e.attendance AND a.attendance = 4",
 			array($userid,$userid,$userid,$userid)
 		);
- 	 
+ 	 	$total = 0;
+	foreach($percentages as $percent){
+		$total += $percent->total;
+	}
+	foreach($percentages as $percent){
+		if($total > 0){
+			$percent->percentage = intval(round(($percent->total / $total)*100));
+		}else{
+			$percent->percentage = 0;
+		}
+	}
+	$percentages['total'] = $total;
+
     return array($attendance,$percentages);
 
 }
