@@ -38,6 +38,9 @@ $group = group_current_group();
 
 safe_require('interaction', $plugin);
 
+define('DEFAULTTITLE', get_string('default'.$plugin.'title', 'interaction.' . $plugin, $group->name));
+
+
 $membership = group_user_access($groupid);
 if ($membership != 'admin') {
     throw new AccessDeniedException(get_string('notallowedtoeditinteractions', 'group'));
