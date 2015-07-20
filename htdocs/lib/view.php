@@ -611,9 +611,9 @@ class View {
     }
 
     public function default_columnsperrow() {
-        $default = array(1 => (object)array('row' => 1, 'columns' => 3, 'widths' => '33,33,33'));
+        $default = array(1 => (object)array('row' => 1, 'columns' => 1, 'widths' => '100'));
         if (!$id = get_field('view_layout_columns', 'id', 'columns', $default[1]->columns, 'widths', $default[1]->widths)) {
-            throw new SystemException("View::default_columnsperrow: Default columns = 3, widths = '33,33,33' not in view_layout_columns table");
+            throw new SystemException("View::default_columnsperrow: Default columns = 1, widths = '100' not in view_layout_columns table");
         }
         return $default;
     }
@@ -4728,6 +4728,7 @@ class View {
 
                 $collection = new Collection(0, $c);
                 $c['url'] = $collection->get_url(false);
+                $c['views'] = $collection->views();
                 $c['fullurl'] = $needsubdomain ? $collection->get_url(true) : ($wwwroot . $c['url']);
             }
         }
@@ -5357,7 +5358,9 @@ class View {
                         'submittedtime'  => $r['csubmittime'],
                         'submittedstatus' => $r['csubmitstatus'],
                         'template'       => $r['template'],
+                        'homepage'       => $vid,
                         'views' => array(),
+                        'createviewform' => pieform(create_view_form($r['group'], null, null, $cid)),
                     );
                     if (isset($r['user'])) {
                         $collections[$cid]['ownername'] = $v['ownername'];
