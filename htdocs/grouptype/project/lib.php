@@ -38,8 +38,24 @@ class PluginGrouptypeProject extends PluginGrouptype {
     public static function can_be_disabled() {
         return false;
     }
+    
+    public static function get_cron() {
+        return array(
+            (object)array(
+                'callfunction' => 'grouptype_project_marknonsubmissions',
+                'minute'       => '*/30',
+            ),
+        );
+    }
 
 
+	public static function grouptype_project_marknonsubmissions{
+		//TODO: Find all views that are shared with groups that have a deadline and whos submitted status is 0
+		// Then mark them as submitted status = 3 = non submission.
+		
+	}
+	
+	
 	public static function get_event_subscriptions() {
         $sub = new stdClass();
         $sub->plugin = 'project';
