@@ -101,6 +101,7 @@ class PluginBlocktypeMyviews extends SystemBlocktype {
 			}
 			$view['grade'] = $grade;
 			$view['published'] = $published;
+			$view['duedate'] = View::due_date($view['id']);
 		}
 		
         $smarty->assign('isstaff',$isstaff);

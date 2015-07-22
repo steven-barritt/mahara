@@ -16,3 +16,4 @@ $string['otherusertitle'] = "%s's pages";
 $string['description'] = 'Display all your pages that are visible to the person viewing your profile';
 $string['notgraded'] = 'Not Graded Yet';
 $string['grade'] = 'Grade : ';
+$string['viewislate'] = 'Project not submitted. Due on: %s';

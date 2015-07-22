@@ -1,12 +1,14 @@
 {if $VIEWS}
     <div id="userviewstable" class="viewlist fullwidth listing">
     {foreach from=$VIEWS item=item name=view}
-            <div class="{cycle values='r0,r1'} {if $item.submittedtime}viewsubmitted{/if} listrow">
+            <div class="{cycle values='r0,r1'} {if $item.submittedtime}viewsubmitted{elseif $item.duedate}viewlate{/if} listrow">
             	<div class="viewcontainer">
                 <h3 class="title"><a href="{$item.fullurl}">{$item.title}</a></h3>
                 <span class="submitted">{if $item.submittedtime}
                 	<strong>{str tag=viewsubmittedon section=view arg1=$item.submittedtime|format_date:'strftimerecentyear'}</strong>
                 {if $item.submittedtime && ($isstaff || $owner)}<div class="gradecontainer">{if $item.published}{str tag=grade section=blocktype.myviews}<div class="grade">{$item.grade}</div>{else}{str tag=notgraded section=blocktype.myviews}{/if}</div>{/if}
+                {elseif $item.duedate}
+                	<strong>{str tag=viewislate section=blocktype.myviews arg1=$item.duedate|format_date:'strftimerecentyear'}</strong>
                 {/if}
                 </span>
                 {if $item.tags}

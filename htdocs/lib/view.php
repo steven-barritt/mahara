@@ -5600,6 +5600,27 @@ class View {
         ArtefactType::update_locked($userid);
         db_commit();
     }
+    
+    //function to calculate if a view is overdue of not based on
+    //the group it is shared with
+    //				g.grouptype = 'project' AND
+	// have missed this bit out for now but maybe it should be in there but
+	//it implies that view knows about project grouptype which it certainly doesn;t
+	//this fucks up the encapsulation
+	//this should probably be some sort to function of the grouptype object but cannot see how that works
+	//when we have a list of views and want to know if they are overdue or not.
+    //and then if the end date is set and this is after that date.
+    public static function due_date($viewid){
+    	$sql="SELECT DISTINCT " .db_format_tsfield('g.editwindowend', 'duedate') . " FROM {view} v
+				JOIN {view_access} va on v.id = va.view
+				JOIN {group} g on va.group = g.id
+				WHERE 
+				v.id = ? AND
+				g.editwindowend < now()";
+    	$late = get_records_sql_array($sql,array($viewid));
+    	return $late[0]->duedate;
+
+    }
 }
 
 function create_view_form($group=null, $institution=null, $template=null, $collection=null) {

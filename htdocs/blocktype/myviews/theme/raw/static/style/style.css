@@ -24,6 +24,10 @@
 	text-align:left;
 }
 
+
+#userviewstable .viewlate{
+	background-color:#dea7a7;
+}
 .grade{
 border:solid 1px;
 		padding:5px;
