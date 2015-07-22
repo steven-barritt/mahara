@@ -49,7 +49,7 @@ class PluginGrouptypeProject extends PluginGrouptype {
     }
 
 
-	public static function grouptype_project_marknonsubmissions{
+	public static function grouptype_project_marknonsubmissions(){
 		//TODO: Find all views that are shared with groups that have a deadline and whos submitted status is 0
 		// Then mark them as submitted status = 3 = non submission.
 		
