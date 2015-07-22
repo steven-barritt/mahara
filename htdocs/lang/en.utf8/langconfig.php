@@ -19,6 +19,7 @@ $string['strftimedatetimeshort'] = '%%Y/%%m/%%d %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%l:%%M %%p';
 $string['strftimedayshort'] = '%%A, %%d %%B';
+$string['strftimeday'] = '%%A';
 $string['strftimedayvshort'] = '%%a %%d %%b';
 $string['strftimedayvshortyear'] = '%%a, %%d %%b %%y';
 $string['strftimedayvshorttime'] = '%%k:%%M %%a, %%d %%b';

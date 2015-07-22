@@ -302,21 +302,18 @@ tr.r1 td.attendExcused{
 tr.r0 td.present{
 	background: #b8dea7;
 }
-tr.r0 td.absent{
-	background: #dea7a7;
-}
 tr.r0 td.late{
 	background: #eeeb9c;
 }
 tr.r0 td.excused{
 	background: #9cd2ee;
 }
+tr.r0 td.absent{
+	background: #dea7a7;
+}
 
 tr.r1 td.present{
 	background: #a8ce97;
-}
-tr.r1 td.absent{
-	background: #ce9797;
 }
 tr.r1 td.late{
 	background: #dedb8c;
@@ -324,9 +321,28 @@ tr.r1 td.late{
 tr.r1 td.excused{
 	background: #8cc2de;
 }
+tr.r1 td.absent{
+	background: #ce9797;
+}
 .attendancelink{
 	width:100%;
 	height:100%;
+}
+
+.r0 td.Monday, .Monday,.r1 td.Monday{
+	background:#fcead7;
+}
+.r0 td.Tuesday,.r1 td.Tuesday, .Tuesday{
+	background:#d7fcfc;
+}
+.r0 td.Wednesday, .r1 td.Wednesday, .Wednesday{
+background:#d7ddfc;
+}
+.r0 td.Thursday, .r1 td.Thursday, .Thursday{
+background:#fcd7ee;
+}
+.r0 td.Friday, .r1 td.Friday, .Friday{
+background:#ecfee6;
 }
 
 .color_swatch{

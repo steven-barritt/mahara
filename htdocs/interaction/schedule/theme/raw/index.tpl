@@ -41,12 +41,23 @@
 					<div class="detail hidden">
 						<table class="event_details">
 							<tr>
-								<td class="event_details_title">Where :</td>
+								<td class="event_details_title">{str tag=where section=interaction.schedule}</td>
 								<td>{$event->location}</td>
+							</tr>
+							<tr>
+								
+								<td class="event_details_title">{str tag=attendance section=interaction.schedule}</td>
+								<td>{if $event->attendance}{str tag=recorded section=interaction.schedule}{else}{str tag=notrecorded section=interaction.schedule}{/if}</td>
+							</tr>
+							<tr>
+								<td class="event_details_title">{str tag=schedule section=interaction.schedule}</td>
+								<td>
+									<span class="event_schedule_title"><a href="{$WWWROOT}interaction/schedule/index.php?group={$event->eventgroup}" style="color:{$event->color}">{$event->scheduletitle}</a></span>
+								</td>
 							</tr>
 							{if $event->description}
 							<tr>
-								<td class="event_details_title">Details :</td>
+								<td class="event_details_title">{str tag=details section=interaction.schedule}</td>
 								<td>{$event->description|safe}</td>
 							</tr>
 							{/if}

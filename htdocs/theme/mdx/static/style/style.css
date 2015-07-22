@@ -2656,7 +2656,8 @@ tr[id*="selfmark_container"] div.radio{
 	padding-top: 10px;
 	white-space: nowrap;
 	-webkit-transform: rotate(-90deg); 
-	-moz-transform: rotate(-90deg);                 
+	-moz-transform: rotate(-90deg); 
+	margin:auto;               
 }
 
 .reportLastRow
@@ -2701,6 +2702,36 @@ td.gradecolumn{
 }
 .r0 td.alert{
 	background: #dea7a7;
+}
+
+.percent{
+	vertical-align:middle;
+	text-align:center;
+}
+tr.r0 td.present{
+	background: #b8dea7;
+}
+tr.r0 td.late{
+	background: #eeeb9c;
+}
+tr.r0 td.excused{
+	background: #9cd2ee;
+}
+tr.r0 td.absent{
+	background: #dea7a7;
+}
+
+tr.r1 td.present{
+	background: #a8ce97;
+}
+tr.r1 td.late{
+	background: #dedb8c;
+}
+tr.r1 td.excused{
+	background: #8cc2de;
+}
+tr.r1 td.absent{
+	background: #ce9797;
 }
 
 /******************** Responsive design ********************/

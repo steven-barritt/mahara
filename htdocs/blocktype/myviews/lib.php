@@ -69,7 +69,9 @@ class PluginBlocktypeMyviews extends SystemBlocktype {
         $sort = array(array('column'=>'submittedtime','desc'=>false));
         $views = View::view_search(null, null, (object) array('owner' => $userid), null, null, 0, true, $sort, array('portfolio'),false,$accesstypes,null,false,true);
 //        $views = View::view_search(null, null, (object) array('owner' => $userid), null, null, 0, true, null, array('portfolio'),false,$accesstypes,null,false,true);
+        
         $views = $views->count ? $views->data : array();
+        
         $smarty->assign('VIEWS',$views);
         return $smarty->fetch('blocktype:myviews:myviews.tpl');
     }

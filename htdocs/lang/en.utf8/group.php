@@ -375,7 +375,7 @@ $string['allowsarchives'] = 'Allow archiving of submissions';
 $string['allowsarchivesdescription'] = 'Pages / collections are archived as zipped Leap2A files during the submission release process.';
 
 // Group reports
-$string['report'] = 'Report';
+$string['report'] = 'Grades';
 $string['grouphasntcreatedanyviewsyet'] = "This group has not created any pages yet.";
 $string['noviewssharedwithgroupyet'] = "There are no pages shared with this group yet.";
 $string['groupsharedviewsscrolled'] = "You have scrolled past the end of the shared pages list.";

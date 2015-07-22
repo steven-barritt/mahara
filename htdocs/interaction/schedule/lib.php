@@ -10,6 +10,7 @@
  */
 
 require_once('activity.php');
+require_once('group.php');
 
 
 
@@ -211,7 +212,7 @@ function schedule_get_group_attendance_dates($groupid){
 	$events = array();
 	
         $events = get_records_sql_array(
-            'SELECT date(e.startdate) as title, count( e.attendance) as attendnacecount
+            'SELECT date(e.startdate) as title, '. db_format_tsfield('e.startdate','startdate'). ', count( e.attendance) as attendnacecount
 			FROM {interaction_schedule_event} e
 			JOIN {interaction_instance} i on e.schedule = i.id
 			WHERE e.attendance AND e.deleted = 0 AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
@@ -463,7 +464,18 @@ class PluginInteractionSchedule extends PluginInteraction {
             $instanceconfig = get_records_assoc('interaction_schedule_instance_config', 'schedule', $instance->get('id'), '', 'field,value');
         }
 //        var_dump($instanceconfig['attendance']->value);
-
+		//find group parent colour
+		if(!isset($instanceconfig['color'])){
+			$parent = group_get_parent($group->id);
+			if($parent){
+				$schedules = get_schedule_list($parent);
+				if($schedules){
+					$parentconfig = get_records_assoc('interaction_schedule_instance_config', 'schedule', $schedules[0]->id, '', 'field,value');
+					$instanceconfig['color'] = $parentconfig['color'];
+				}
+			}
+		}
+		
         return array(
             'fieldset' => array(
                 'type' => 'fieldset',
@@ -482,7 +494,7 @@ class PluginInteractionSchedule extends PluginInteraction {
                         'type'         => 'color',
                         'title'        => get_string('scheduleattendance', 'interaction.schedule'),
                         'description'  => get_string('scheduleattendancedescription', 'interaction.schedule'),
-                        'defaultvalue' => isset($instanceconfig['color']) ? $instanceconfig['color']->value : null,
+                        'defaultvalue' => isset($instanceconfig['color']) ? $instanceconfig['color']->value : "#000000",
                         'help'         => true,
                     ),
                 )
@@ -592,11 +604,11 @@ EOF;
 
     public static function menu_items() {
         return array(
-            'groups/schedule' => array(
-                'path' => 'groups/schedule',
+            'schedule' => array(
+                'path' => 'schedule',
                 'url' => 'interaction/schedule/schedule.php',
                 'title' => get_string('name', 'interaction.schedule'),
-                'weight' => 15,
+                'weight' => 45,
             ),
         );
     }
@@ -618,7 +630,7 @@ EOF;
                 'path' => 'groups/attendance',
                 'url' => 'interaction/schedule/viewattendance.php?group=' . $group->id,
                 'title' => get_string('attendance', 'interaction.schedule'),
-                'weight' => 26,
+                'weight' => 80,
             );
             }
         }
@@ -683,8 +695,19 @@ EOF;
             'description' => get_string('defaultscheduledescription', 'interaction.schedule', $eventdata['name']),
         ));
         $schedule->commit();
+        $defaultcolor->value = "#000000";
+		$parent = group_get_parent($eventdata['id']);
+		if($parent){
+			$schedules = get_schedule_list($parent);
+			if($schedules){
+				$parentconfig = get_records_assoc('interaction_schedule_instance_config', 'schedule', $schedules[0]->id, '', 'field,value');
+				$defaultcolor = $parentconfig['color'];
+			}
+		}
+
         self::instance_config_save($schedule, array(
             'attendance' => 1,
+            'color' => $defaultcolor->value,
         ));
         db_commit();
     }

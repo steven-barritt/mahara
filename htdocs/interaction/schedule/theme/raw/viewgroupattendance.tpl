@@ -18,8 +18,8 @@
 				</div></th>
 			{cycle values='r0,r1' assign=class}
 			{foreach from=$attendnaceevents item=attendanceevent}
-			<th class="attendanceColumnHeadVertical" style="height:{$columnheight}">
-				<div class="verticalText"><span>{$attendanceevent->title}</span>
+			<th class="attendanceColumnHeadVertical {$attendanceevent->startdate|format_date:'strftimeday'}" style="height:{$columnheight}">
+				<div class="verticalText"><span>{$attendanceevent->startdate|format_date:'strftimedayvshortyear'}</span>
 				</div>
 			</th>
 			{/foreach}
@@ -29,7 +29,7 @@
   {if $userdata}
     	{foreach from=$userdata item=user}
 	    <tr class="{cycle values='r0,r1'}">
-	    	<td class="{if (($user.percentages[0]->percentage + $user.percentages[1]->percentage) <= 70) && ($user.percentages.total > 0)}alert{/if} {if ($user.percentages[1]->percentage > 25) && ($user.percentages.total > 0)}late{/if}">
+	    	<td class="{if (($user.percentages[0]->percentage + $user.percentages[1]->percentage) <= 70) && ($user.percentages.total > 0)}absent{/if} {if ($user.percentages[1]->percentage > 25) && ($user.percentages.total > 0)}late{/if}">
             <a href="{profile_url($user.id)}">
                <img src="{profile_icon_url user=$user.id maxwidth=40 maxheight=40}" alt="{str tag=profileimagetext arg1=$user.id|display_default_name}" title="{$user.id|display_default_name|escape}">
             </a>
@@ -47,7 +47,7 @@
 					{if !$dwoo.foreach.att.first}
 						</tr></table></td>
 					{/if}
-					<td class="attend"><table class="innerattendnace"><tr>
+					<td class="attend {$attendance->startdate|format_date:'strftimeday'}"><table class="innerattendnace"><tr>
 				{/if}
 				{if $attendance->attendance != null}
 	    		<td  class="attendancecol {if $attendance->attendance == 1}attendPresent{/if}{if $attendance->attendance == 2}attendLate{/if}{if $attendance->attendance == 3}attendAbsent{/if}{if $attendance->attendance == 4}attendExcused{/if}"><a class="eventlink" href="{$WWWROOT}interaction/schedule/view.php?event={$attendance->id}" title="{$attendance->title} - {$attendance->scheduletitle}&#13;{str tag=when section=interaction.schedule}{$attendance->startdate|format_date:'strftimetime'}&#13;{str tag=where section=interaction.schedule}{$atendance->location}">{if $attendance->attendance != null}&nbsp;{/if}</td>

@@ -305,27 +305,27 @@ tr.r1 td.attendExcused{
 tr.r0 td.present{
 	background: #b8dea7;
 }
-tr.r0 td.absent{
-	background: #dea7a7;
-}
 tr.r0 td.late{
 	background: #eeeb9c;
 }
 tr.r0 td.excused{
 	background: #9cd2ee;
 }
+tr.r0 td.absent{
+	background: #dea7a7;
+}
 
 tr.r1 td.present{
 	background: #a8ce97;
-}
-tr.r1 td.absent{
-	background: #ce9797;
 }
 tr.r1 td.late{
 	background: #dedb8c;
 }
 tr.r1 td.excused{
 	background: #8cc2de;
+}
+tr.r1 td.absent{
+	background: #ce9797;
 }
 .attendancelink{
 	width:100%;
