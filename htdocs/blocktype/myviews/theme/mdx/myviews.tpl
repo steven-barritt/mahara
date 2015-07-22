@@ -14,6 +14,8 @@
                 {/if}
 				 {if $item.artefacts}
 					<div class="bloginfo"> <a href="{$item.artefacts[0]['bloglink']}">{str tag=workbook section=blocktype.groupviews}</a> - {str tag=posts section=blocktype.groupviews arg1=$item.artefacts[0]["postcount"]} - {str tag=latestpost section=blocktype.groupviews} {$item.artefacts[0]["latestpost"]}</div>
+				 {else}
+					<div class="bloginfo">&nbsp;</div>
 				 {/if}
 				 </div>
             </div>
