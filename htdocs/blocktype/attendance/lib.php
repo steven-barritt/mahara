@@ -59,7 +59,7 @@ class PluginBlocktypeAttendance extends SystemBlocktype {
 	//likewise we then get the schedule for that group but at present there is assumed only one
 	//this again should be changed later to allow more than one schedule per group
 
-
+		$events = array();
 		if($instance->get_view()->get('type') == 'profile'){
 			
 			list($attendances,$percentages) = schedule_get_user_attendance($instance->get_view()->get('owner'));
