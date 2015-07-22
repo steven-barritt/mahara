@@ -35,11 +35,14 @@ class PluginBlocktypeMyviews extends SystemBlocktype {
 
     public static function render_instance(BlockInstance $instance, $editing=false) {
 
+    	global $USER;
         $userid = $instance->get_view()->get('owner');
         if (!$userid) {
             return '';
         }
 
+		$owner = $userid == $USER->get('id');
+		$isstaff = $USER->is_staff_for_user(new User($userid));
         $smarty = smarty_core();
 
         // Get viewable views
@@ -59,7 +62,6 @@ class PluginBlocktypeMyviews extends SystemBlocktype {
 */
         //TODO - in here get if the current user is institution staff then pass this to the search in order to get all pages
         $accesstypes = null;
-    	global $USER;
         $staff = $USER->get('staff');
         if($staff){
         	$accesstypes = array('staff');
@@ -71,7 +73,38 @@ class PluginBlocktypeMyviews extends SystemBlocktype {
 //        $views = View::view_search(null, null, (object) array('owner' => $userid), null, null, 0, true, null, array('portfolio'),false,$accesstypes,null,false,true);
         
         $views = $views->count ? $views->data : array();
-        
+        //TODO: This should be put into a function somewhere or where the grades are stored should be worked out better
+        //there must be a better way to link the grades to the view more easily rather than this whole rigmerole.
+        foreach($views as &$view){
+			$published = false;
+			$grade = 20;
+			require_once(get_config('docroot') . 'blocktype/lib.php');
+	
+			$sql = "SELECT bi.*
+					FROM {block_instance} bi
+					WHERE bi.view = ?
+					AND bi.blocktype = 'mdxevaluation'
+					";
+			if (!$evaldata = get_records_sql_array($sql, array($view['id']))) {
+				$evaldata = array();
+			}
+	
+			foreach ($evaldata as $eval){
+				$bi = new BlockInstance($eval->id, (array)$eval);
+				$configdata = $bi->get('configdata');
+				if(isset($configdata['evaltype'])){
+					if($configdata['evaltype'] == 3){
+						$published = isset($configdata['published']) ? $configdata['published'] : false;
+						$grade = isset($configdata['selfmark']) ? $configdata['selfmark'] : 20;
+					}
+				}		
+			}
+			$view['grade'] = $grade;
+			$view['published'] = $published;
+		}
+		
+        $smarty->assign('isstaff',$isstaff);
+        $smarty->assign('owner',$owner);
         $smarty->assign('VIEWS',$views);
         return $smarty->fetch('blocktype:myviews:myviews.tpl');
     }
