@@ -155,7 +155,7 @@ addLoadEvent(function () {
 });
 EOF;
 
-$smarty = smarty(array('paginator'));
+$smarty = smarty();
 
 if ($role == 'admin') {
     $membershiptypes = array();
