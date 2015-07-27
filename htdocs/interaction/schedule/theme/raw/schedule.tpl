@@ -1,8 +1,8 @@
 {include file="header.tpl"}
 		<h2>{$heading}</h2>
-
-	{if $events}
 	<div id="viewschedule">
+<div class="">{str tag=showingfrom section=interaction.schedule}{$mindate|format_date:'strftimedayvshortyear'}  <a href="{$WWWROOT}interaction/schedule/schedule.php?limit=31&offset={$offset-7}">{str tag=showearlier section=interaction.schedule}</a></div>
+	{if $events}
 	<table id="schedulelist" class="fullwidth nohead">
 		{assign '' olddate}
 		{cycle values='r0,r1' assign=class}
@@ -20,7 +20,6 @@
 					{else}
 					{$event->enddate|format_date:'strftimetime'}
 					{/if}{/if}
-
 				</td>
 				<td class="event_details">
 					<span {if $event->attendance}class="attendance"{/if}><a  class="event_title" style="color:{$event->color}" href="{$WWWROOT}interaction/schedule/view.php?id={$event->id}">{$event->title}</a></span>
@@ -67,8 +66,11 @@
 
 		{/foreach}
 		<tr class="line_breaker"><td colspan="20"></td></tr>
-	</table></div>
+	</table>
 	{else}
-	<div class="message">{str tag=noevents section=interaction.schedule}</div>
+	<div class="message">{str tag=noeventsyet section=interaction.schedule arg1=$limit}</div>
 	{/if}
+	<div class="">{str tag=showingto section=interaction.schedule}{$maxdate|format_date:'strftimedayvshortyear'}
+	<a href="{$WWWROOT}interaction/schedule/schedule.php?limit={if $limit < 63}{$limit+14}&offset={$offset}{else}{$limit}&offset={$offset+7}{/if}">{str tag=showmore section=interaction.schedule}</a></div>
+	</div>
 {include file="footer.tpl"}

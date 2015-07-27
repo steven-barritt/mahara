@@ -65,9 +65,19 @@ function schedule_get_event($eventid){
 
 }
 
-function schedule_get_user_events($limit,$offset=null){
+function schedule_get_user_events($limit=31,$offset=null){
 	global $USER;
-		$maxdate =new DateTime(Date('Y-m-d'));
+		$mindate = new DateTime(Date('Y-m-d'));
+		if($offset){
+			$diff = DateInterval::createFromDateString($offset.' days');
+			$mindate->add($diff);
+		}
+		$maxdate = new DateTime($mindate->format('Y-m-d'));
+		if($limit){
+			$diff = DateInterval::createFromDateString($limit.' days');
+			$maxdate->add($diff);
+		}
+/*		$maxdate =new DateTime(Date('Y-m-d'));
 		$mindate = new DateTime(Date('Y-m-d'));
 		if($offset){
 			$diff = DateInterval::createFromDateString($offset.' days');
@@ -91,7 +101,7 @@ function schedule_get_user_events($limit,$offset=null){
 				$diff = new DateInterval('P2M');
 				break;
 		}
-		$maxdate->add($diff);
+		$maxdate->add($diff);*/
 
 	$events = array();
 	

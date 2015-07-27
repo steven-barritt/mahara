@@ -11,7 +11,7 @@
 
 define('PUBLIC', 1);
 define('INTERNAL', 1);
-define('MENUITEM', 'groups/schedule');
+define('MENUITEM', 'schedule');
 define('SECTION_PLUGINTYPE', 'interaction');
 define('SECTION_PLUGINNAME', 'schedule');
 define('SECTION_PAGE', 'index');
@@ -28,10 +28,14 @@ $offset = param_signed_integer('offset',0);
 
 global $USER;
 
+if (!is_logged_in()) {
+    throw new AccessDeniedException();
+}
+
+
 define('TITLE', get_string('myschedule', 'interaction.schedule'));
 
 
-//if there is only one schedule which there should be for now then go straight to it.
 
 
 
@@ -56,10 +60,26 @@ EOF;
 $headers = array();
 
 
+$mindate = new DateTime(Date('Y-m-d'));
+if($offset){
+	$diff = DateInterval::createFromDateString($offset.' days');
+	$mindate->add($diff);
+}
+$maxdate = new DateTime($mindate->format('Y-m-d'));
+if($limit){
+	$diff = DateInterval::createFromDateString($limit.' days');
+	$maxdate->add($diff);
+}
+
+
+
+
 $smarty = smarty(array(), $headers, array(), array());
 $smarty->assign('INLINEJAVASCRIPT', $javascript);
 $smarty->assign('heading',get_string('myschedule', 'interaction.schedule') );
 $smarty->assign('limit', $limit);
+$smarty->assign('maxdate', $maxdate->getTimestamp());
+$smarty->assign('mindate', $mindate->getTimestamp());
 $smarty->assign('offset', $offset);
 $smarty->assign('events', $events);
 $smarty->display('interaction:schedule:schedule.tpl');
