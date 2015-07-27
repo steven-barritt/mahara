@@ -162,6 +162,7 @@ function get_assessments($user,$assessmentgroup){
 	$assessments = array();
 	foreach($assessmentgroup as $assessment){
 		$grades = array();
+		$duedate = null;
 		$projectgroups = get_group_subgroups_array($assessment->id,'project');
 		if(count($projectgroups) > 0){
 			//find the actual Views shared by the user
@@ -174,8 +175,12 @@ function get_assessments($user,$assessmentgroup){
 				//find the assessment
 				foreach ($sharedviews as &$data) {
 //						bob::bob();
+					if(!isset($duedate)){
+						$duedate = View::due_date($data['id']);
+					}
 					require_once(get_config('docroot') . 'blocktype/lib.php');
 
+					
 					$sql = "SELECT bi.*
 							FROM {block_instance} bi
 							WHERE bi.view = ?
@@ -205,7 +210,7 @@ function get_assessments($user,$assessmentgroup){
 		}
 		//if there is more than one then average the result and round up
 		$grade = averagegrades($grades);
-		$assessments[] = array($assessment->name, $grade);
+		$assessments[] = array($assessment->name, $grade, $duedate);
 		//add it to the list of assessments
 
 	}
@@ -282,7 +287,7 @@ if(in_array($group->grouptype, array('year','module','assessment')) ){
 	foreach($groupmembers as $member){
 		$user = get_user_for_display($member);
 	//	var_dump($member);
-		list($attendance, $percentages) = schedule_get_user_group_attendance($member,$group->id);
+		list($attendances, $percentages) = schedule_get_user_group_attendance($member,$group->id);
 
 		if($group->grouptype == 'assessment'){
 			$assessments = get_assessments($member,array($group));
@@ -306,7 +311,7 @@ if(in_array($group->grouptype, array('year','module','assessment')) ){
 		}
 		$i = 1;
 		foreach($assessments as $assessment){
-			$thisuser[$i] = $assessment[1];
+			$thisuser[$i] = $assessment;
 			$i++;
 		}
 //		$userdata[] = array('id'=>$member,'firstname'=>$user->firstname,'lastname'=>$user->lastname,'profileicon'=>$user->profileicon,'assessments'=>$assessments);

@@ -5615,10 +5615,12 @@ class View {
 				JOIN {view_access} va on v.id = va.view
 				JOIN {group} g on va.group = g.id
 				WHERE 
-				v.id = ? AND
-				g.editwindowend < now()";
+				v.id = ? 
+				AND v.template = 0
+				AND v.submittedstatus = 0 
+				AND g.editwindowend < now()";
     	$late = get_records_sql_array($sql,array($viewid));
-    	return $late[0]->duedate;
+    	return isset($late[0]->duedate) ? $late[0]->duedate :null ;
 
     }
 }
