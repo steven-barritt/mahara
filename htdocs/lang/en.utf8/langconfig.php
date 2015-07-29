@@ -14,6 +14,7 @@ defined('INTERNAL') || die();
 $string['parentlanguage'] = '';
 $string['strftimedate'] = '%%e %%B %%Y'; //6 November 2014
 $string['strftimedateshort'] = '%%d %%B'; //06 November
+$string['strftimedatevshort'] = '%%d %%b'; //06 Nov
 $string['strftimedatetime'] = '%%d %%B %%Y, %%l:%%M %%p'; //06 November 2014, 5:57 PM
 $string['strftimedatetimeshort'] = '%%Y/%%m/%%d %%H:%%M'; //2014/11/06 17:57
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y'; //Thursday, 06 November 2014
@@ -32,7 +33,7 @@ $string['strftimerecentyear'] = '%%d %%b %%Y, %%k:%%M %%p'; // 06 Nov 2014, 17:5
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%l:%%M %%p'; //Thu, 06 Nov 2014, 5:57 PM
 $string['strftimetime'] = '%%l:%%M %%p';
 $string['strftimetimezero'] = '%%k:%%M';
-$string['strfdaymonthyearshort'] = '%%d/%%m/%%Y';
+$string['strfdaymonthyearshort'] = '%%d/%%m/%%Y'; //  22/09/2015
 $string['strfdateofbirth'] = '%%Y/%%m/%%d';
 $string['strftimew3cdatetime'] = '%%Y-%%m-%%dT%%H:%%M:%%S%%z';
 $string['strftimew3cdate'] = '%%Y-%%m-%%d';

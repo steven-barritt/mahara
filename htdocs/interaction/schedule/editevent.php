@@ -24,6 +24,7 @@ require_once('pieforms/pieform.php');
 $userid = $USER->get('id');
 $eventid = param_integer('id', 0);
 $returnto = param_alpha('returnto', 'schedule');
+$view = param_integer('view',0);
 
 if ($eventid == 0) { // new topic
     unset($eventid);
@@ -203,11 +204,15 @@ $editform = array(
                 isset($topic) ? get_string('save') : get_string('post','interaction.schedule'),
                 get_string('cancel')
             ),
-            'goto'      => get_config('wwwroot') . 'interaction/schedule/index.php?group='.$schedule->groupid
+            'goto'      => get_config('wwwroot') . 'interaction/schedule/index.php?group='.$schedule->groupid.'&view='.$view
         ),
         'event' => array(
             'type' => 'hidden',
             'value' => isset($event) ? $event->eventid : false
+        ),
+        'view' => array(
+            'type' => 'hidden',
+            'value' => $view
         ),
         'editrecord' => array(
             'type' => 'hidden',
@@ -287,7 +292,7 @@ function addevent_submit(Pieform $form, $values) {
     }
     db_commit();
     $SESSION->add_ok_msg(get_string('addeventsuccess', 'interaction.schedule'));
-    redirect('/interaction/schedule/index.php?group='.$schedule->groupid);
+    redirect('/interaction/schedule/index.php?group='.$schedule->groupid.'&view='.$values['view']);
 }
 
 function editevent_submit(Pieform $form, $values) {
@@ -297,6 +302,7 @@ function editevent_submit(Pieform $form, $values) {
     global $SESSION, $USER, $event, $schedule;
     $eventid = param_integer('id');
     $returnto = param_alpha('returnto', 'schedule');
+    $view = param_integer('view', 0);
     db_begin();
     // check the post content actually changed
     // otherwise topic could have been set as sticky/closed
@@ -315,10 +321,10 @@ function editevent_submit(Pieform $form, $values) {
     db_commit();
     $SESSION->add_ok_msg(get_string('editeventsuccess', 'interaction.schedule'));
     if ($returnto == 'schedule') {
-        redirect('/interaction/schedule/index.php?group=' . $schedule->groupid);
+        redirect('/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view);
     }
     else {
-        redirect('/interaction/schedule/index.php?group=' . $schedule->groupid);
+        redirect('/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view);
     }
 }
 

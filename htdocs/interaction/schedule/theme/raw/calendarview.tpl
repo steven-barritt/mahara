@@ -1,10 +1,14 @@
 {include file="header.tpl"}
+<div id="scheduleoptions">
+<a href="{$WWWROOT}interaction/schedule/index.php?group={$groupid}&view=0" class="btn newschedule {if $view == 0}selected{/if}">{str tag="scheduleview" section=interaction.schedule}</a>
+<a href="{$WWWROOT}interaction/schedule/index.php?group={$groupid}&view=1" class="btn newschedule {if $view == 1}selected{/if}">{str tag="yearplannerview" section=interaction.schedule}</a>
+<a href="{$WWWROOT}interaction/schedule/index.php?group={$groupid}&view=2" class="btn newschedule {if $view == 2}selected{/if}">{str tag="calendarview" section=interaction.schedule}</a>
+</div>
 {if $admin}
 <div id="schedulebtns">
 {if !$schedule}
 <a href="{$WWWROOT}interaction/edit.php?group={$groupid}&amp;plugin=schedule&amp;returnto=index" class="btn newschedule">{str tag="newschedule" section=interaction.schedule}</a>
-{/if}
-{if $schedule}
+{else}
 <a href="{$WWWROOT}interaction/schedule/editevent.php?schedule={$schedule->id}" class="btn newschedule">{str tag="newevent" section=interaction.schedule}</a>
 <a href="{$WWWROOT}interaction/edit.php?id={$schedule->id}&amp;group={$groupid}&amp;plugin=schedule&amp;returnto=index" class="btn newschedule">{str tag="schedulesettings" section=interaction.schedule}</a>
 {/if}

@@ -23,6 +23,11 @@ require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'interaction/lib.php');
 
 $groupid = param_integer('group');
+//different views 
+//0 = schedule view - the default
+//1 = year planner view
+//2 = calendar view
+$view = param_integer('view',0);
 define('GROUP', $groupid);
 $group = group_current_group();
 $membership = group_user_access($groupid);
@@ -45,13 +50,6 @@ $schedules = get_schedule_list($group->id, $USER->get('id'));
 
 $events = array();
 $events = schedule_get_all_groupevents($group->id);
-/*if(group_has_children($group->id)){
-	$events = schedule_get_all_groupevents($group->id);
-}else{
-	if($schedules){
-		$events = get_schedule_events($schedules[0]);
-	}
-}*/
 
 $javascript = <<<EOF
 
@@ -66,19 +64,53 @@ addLoadEvent(function () {
 });
 
 EOF;
-
+$table = '';
+if($view == 2){
+	$smarty = smarty(array(), array(), array(),array());
+	$smarty->assign('admin', group_user_can_assess_submitted_views($groupid,null));
+	if($schedules){
+	$smarty->assign('schedule',$schedules[0]);
+	}
+	$smarty->assign('events', $events);
+	$table = $smarty->fetch('interaction:schedule:scheduleview.tpl');
+}elseif($view == 1){
+	$weeksanddays = schedule_events_per_day($events,$groupid);
+	$smarty = smarty(array(), array(), array(),array());
+	$smarty->assign('admin', group_user_can_assess_submitted_views($groupid,null));
+	if($schedules){
+	$smarty->assign('schedule',$schedules[0]);
+	}
+	$smarty->assign('events', $events);
+	$smarty->assign('weeksanddays',$weeksanddays);
+//	var_dump($weeksanddays);
+	$table = $smarty->fetch('interaction:schedule:yearplannerview.tpl');
+}else{
+	$smarty = smarty(array(), array(), array(),array());
+	$smarty->assign('admin', group_user_can_assess_submitted_views($groupid,null));
+	if($schedules){
+	$smarty->assign('schedule',$schedules[0]);
+	}
+	$smarty->assign('events', $events);
+	$table = $smarty->fetch('interaction:schedule:scheduleview.tpl');
+}
 
 $headers = array();
+$sidebars = array();
+//we want the whole screen for the yearplanner view
+if($view == 1){
+	$sidebars['sidebars'] =  false;
+}
+$smarty = smarty(array(), $headers, array(),$sidebars);
 
-
-$smarty = smarty(array(), $headers, array(), array());
 $smarty->assign('groupid', $groupid);
 $smarty->assign('INLINEJAVASCRIPT', $javascript);
 $smarty->assign('heading', $group->name);
+$smarty->assign('view',$view);
 $smarty->assign('admin', group_user_can_assess_submitted_views($groupid,null));
 $smarty->assign('groupadmins', group_get_admins(array($groupid)));
 if($schedules){
 $smarty->assign('schedule',$schedules[0]);
 }
 $smarty->assign('events', $events);
+$smarty->assign('table', $table);
 $smarty->display('interaction:schedule:index.tpl');

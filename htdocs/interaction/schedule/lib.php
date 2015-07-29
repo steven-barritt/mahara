@@ -138,10 +138,10 @@ function schedule_get_user_events($limit=31,$offset=null){
 }
 
 function schedule_get_all_groupevents($groupid){
+	global $USER;
 	$events = array();
-	
-        $events = get_records_sql_array(
-            "SELECT e.schedule, 
+	$options = array();
+	$sql = "SELECT e.schedule, 
             	e.title, 
             	e.id, 
             	e.description, 
@@ -152,26 +152,137 @@ function schedule_get_all_groupevents($groupid){
             	sc.value as color,
             	DATEDIFF(e.enddate,e.startdate) AS longerthanaday, 
             	s.title as scheduletitle,
-            	s.group as eventgroup
+            	s.group as eventgroup,
+            	(SELECT gh.depth as horder from `group_hierarchy` gh
+					Where gh.child = g.id ORDER by gh.depth desc LIMIT 1) as horder
 			FROM {interaction_schedule_event} e
 			LEFT JOIN {interaction_schedule_instance_config} sc on e.schedule = sc.schedule AND sc.field = 'color' 
 			JOIN {interaction_instance} s on e.schedule = s.id
+			JOIN {group} g on s.group = g.id
 			WHERE s.plugin = 'schedule' AND e.deleted = 0
-			AND s.group in (
-				SELECT DISTINCT gh.child as group_id from {group_hierarchy} gh where gh.parent = ?
-					UNION
-				SELECT DISTINCT gh.parent as group_id from {group_hierarchy} gh where gh.child = ?
-			) 
-			ORDER BY e.startdate, e.enddate",
-            array($groupid, $groupid)
-        );
+			AND s.group in ";
+		//if the user is a member of staff then show all events in all groups and sub groups
+		if($USER->is_institutional_staff()){
+			$sql .="	
+				(
+					SELECT DISTINCT gh.child as group_id from {group_hierarchy} gh where gh.parent = ?
+						UNION
+					SELECT DISTINCT gh.parent as group_id from {group_hierarchy} gh where gh.child = ?
+				) ";
+				$options = array($groupid, $groupid);
+		}else{
+		//otherwise only show sub grop events for groups the user is in. but still show all events for groups going up the hierarchy
+			$sql .="	
+				(
+					SELECT DISTINCT gh.child as group_id from {group_hierarchy} gh 
+					JOIN {group_member} gm on gh.child = gm.group where gh.parent = ? AND gm.member = ?
+						UNION
+					SELECT DISTINCT gh.parent as group_id from {group_hierarchy} gh where gh.child = ?
+				) ";
+				$options = array($groupid,$USER->get('id'),$groupid);
+		}
+			
+		$sql .=	"ORDER BY e.startdate, horder, e.enddate";
+	
+        $events = get_records_sql_array($sql,$options);
 /*
+SELECT DISTINCT gh.child as group_id from `group_hierarchy` gh join `group_member` gm on gh.child = gm.group where gh.parent = 3 and gm.member = 14
+					UNION
+				SELECT DISTINCT gh.parent as group_id from `group_hierarchy` gh join `group_member` gm on gh.child = gm.group where gh.child = 3 and gm.member = 14
+
 			JOIN {group_hierarchy} gh on s.group = gh.child
 			WHERE s.plugin = 'schedule' AND e.deleted = 0
 			AND gh.parent = ? 
 			ORDER BY e.startdate, e.enddate",
 */ 	
 	return $events;	
+}
+
+//looks for the editwindowstartdate of group falling back on the hierarchy 
+//so that it will get its parent or grandparents etc as default
+//if finds the first one in the hierarchy
+function schedule_get_groupstartdate($groupid){
+	$sql="SELECT g.id, ". db_format_tsfield("g.editwindowstart","startdate"). ", gh.depth 
+			FROM {group} g join {group_hierarchy} gh on g.id = gh.parent 
+			WHERE gh.child = ? 
+			AND g.editwindowstart is not null order by gh.depth 
+			LIMIT 1";
+	return get_records_sql_array($sql,array($groupid));
+}
+
+function schedule_get_groupenddate($groupid){
+	$sql="SELECT g.id, ". db_format_tsfield("g.editwindowend","enddate"). ", gh.depth 
+			FROM {group} g join {group_hierarchy} gh on g.id = gh.parent 
+			WHERE gh.child = ? 
+			AND g.editwindowend is not null order by gh.depth 
+			LIMIT 1";
+	return get_records_sql_array($sql,array($groupid));
+}
+
+
+
+function schedule_events_per_day($events,$groupid){
+	//based on hiearchichal search for the starteditwindow time
+	//we can work out which week that lies in and use that as the start of the year
+	$startdate = schedule_get_groupstartdate($groupid);
+	//we need to know how many weeks there are in this year
+	$weeksinyear = intval(date('W',mktime(0,0,0,12,31,date('o',time()))));
+	if($weeksinyear == 1){
+		$weeksinyear = 52;
+	}
+	//current year
+	$currentyear = date('o',time());
+	$startweek = 1;
+	if($startdate){	
+		//if the startdate is set then override the defaults
+		$weeksinyear = intval(date('W',mktime(0,0,0,12,31,date('o',$startdate[0]->startdate))));
+		$currentyear = date('o',$startdate[0]->startdate);
+		if($weeksinyear == 1){
+			$weeksinyear = 52;
+		}
+		$startweek = intval(date('W',$startdate[0]->startdate));
+	}
+	//work out the monday of the starting week
+	$startdate = strtotime($currentyear.'W'.str_pad($startweek, 2, "0", STR_PAD_LEFT));
+	$startdate = $startdate + (60*60*2);
+	$weeksanddays = array();
+	$days = 0;
+	//there is possibly a 53 week year so wee need to know that...
+	for($i = 1; $i <= 52; $i++){
+		$weeksanddays[$i] = array();
+		for($j = 1; $j <= 7; $j++){
+			$date = strtotime("+".$days." days", $startdate);
+			$days++;
+			$weeksanddays[$i][$j] = array('date'=>$date,'events'=>array());
+		}
+	}
+	foreach($events as $event){
+		$week = intval(date('W',intval($event->startdate)));
+		if($week >= $startweek){
+			$week = $week - $startweek + 1;
+		}else{
+			$week = $week + $weeksinyear - $startweek + 1;
+		}
+		$day = intval(date('N',intval($event->startdate)));
+		$weeksanddays[$week][$day]['events'][] = $event;
+		if($event->longerthanaday){
+			$startdate = new DateTime(date('Y-m-d',intval($event->startdate)));
+			$enddate = new DateTime(date('Y-m-d',intval($event->enddate)));
+			$dDiff = $startdate->diff($enddate);
+  			$noofdays = $dDiff->days;
+  			$j = 0;
+  			for($i = 1; $i <= $noofdays; $i++){
+  				$day++;
+  				if($day > 7){
+  					$day = 1;
+  					$week++;
+  				}
+				$weeksanddays[$week][$day]['events'][] = $event;
+  			}
+  			
+		}
+	}
+	return $weeksanddays;
 }
 
 function get_schedule_events($schedule){

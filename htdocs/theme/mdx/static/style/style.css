@@ -78,6 +78,7 @@ thead th {
 .r0 td,.r1 td{
     background-color: #fff;
     border-bottom:none;
+    vertical-align:middle;
 }
 
 

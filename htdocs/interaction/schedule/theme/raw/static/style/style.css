@@ -50,6 +50,7 @@
     border: 0;
 }
 #schedulelist td {
+	vertical-align:top;
 }
 
 #schedulelist td.event_date{
@@ -149,6 +150,31 @@ overflow-x:scroll;
 #schedulelist .r0 td{
 	background-color:#fff;
 }
+
+.subpage{
+position:relative;
+}
+#scheduleoptions{
+	text-align:center;
+	width:100%;
+}
+
+#scheduleoptions .btn{
+	padding:8px;
+	margin-right:0px;
+	color:#aaa
+}
+
+#scheduleoptions .btn:hover{
+	color:#222
+}
+
+
+#scheduleoptions .btn.selected{
+	color:#222;
+}
+
+
 .line_breaker {
 	border-bottom:solid 1px #ddd;
 }
@@ -413,3 +439,72 @@ width:25px;
 	vertical-align:middle;
 }
 
+
+.yearplanday{
+	min-height:50px;
+	overflow:visible;
+	font-size:.9em;
+	line-height:1.2em;
+}
+
+.yearplanday ul{
+	margin-top:0px;
+	margin-bottom:0px;
+}
+.yearplanday ul li{
+	list-style:none;
+	margin:0px;
+}
+
+#yearplanlist{
+border-collapse: separate;
+    border-spacing: 3px;
+}
+.weekday{
+	width:15%;
+	background-color:#b5d1d4;
+}
+.weekend{
+	width:8%;
+	background-color:#e7e3d9;
+}
+.daynumber{
+	float:right;
+}
+@media print{
+	#main-column-container h1{
+		display:none;
+	}
+	.subpage{
+		border:none;
+	}
+	#viewschedule{
+		border:none;
+	}
+	#site-logo{
+		display:none;
+	}
+	.schedule_title{
+		display:none;
+	}
+	.color_swatch{
+		display:none;
+	}
+	td.weekday{
+		width:18% !important;
+		background-color:#b5d1d4!important;
+	}
+	td.weekend{
+		display:none;
+		background-color:#e7e3d9!important;
+	}
+	
+	.noprint{
+		display:none;
+	}
+
+	.yearplanday{
+		height:auto;
+		overflow:visible
+	}
+}

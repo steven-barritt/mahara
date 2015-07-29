@@ -98,11 +98,11 @@ a:active,
 a:visited,
 a:hover {
     color: #0033ff;
-    text-decoration: underline;
+    text-decoration: none;
 }
 a:link[href^="http://"]:after,
 a[href^="http://"]:visited:after {
-    content: " (" attr(href) ") ";
+    content:none;
     font-size: 11px;
 }
 a[href^="http://"] {
@@ -280,6 +280,7 @@ label {
 .tablerenderer-loading {
     display: none;
 }
+
 th,
 tr,
 td,
@@ -299,6 +300,7 @@ legend a:active {
     color: #000;
 }
 /* Alternative row background colours */
+
 .r0,
 .r0 td,
 .d0,
@@ -318,6 +320,7 @@ tr.incomplete td,
 .stickytopic td {
     background: none;
 }
+
 .uploaddisabled,
 .fileupload,
 #createfolder,

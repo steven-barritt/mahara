@@ -17,6 +17,8 @@ $string['addeventsuccess'] = 'Added event successfully';
 $string['attendance'] = 'Attendance';
 $string['attendancedescription'] = 'Ticking this box means that you will need to take attendance for this event.';
 
+$string['calendarview'] = 'Calendar';
+
 $string['cantviewschedule'] = 'You are not allowed to view schedules in this group';
 $string['cantviewevent'] = 'You are not allowed to view events in this group';
 $string['cantviewattendance'] = 'You are not allowed to view attendance in this group';
@@ -73,6 +75,7 @@ $string['takeattendance'] = 'Take Attendance';
 $string['repeat'] = 'Repeat this event';
 $string['repeatdescription'] = 'You can tick this box to specify the number of times to repeat this event. This will create the number of events specified at the specified interval.';
 $string['schedule'] = 'Schedule:';
+$string['scheduleview'] = 'Schedule';
 $string['details'] = 'Details:';
 $string['where'] = 'Where:';
 $string['attendancetaken'] = 'Attendance: ';
@@ -83,6 +86,7 @@ $string['notrecorded'] = 'Not Recorded';
 $string['today'] = 'Today';
 $string['viewattendance'] = 'View Attendance';
 $string['yesterday'] = 'Yesterday';
+$string['yearplannerview'] = 'Year Plan';
 $string['strftimerecentrelative'] = '%%v, %%k:%%M';
 $string['strftimerecentfullrelative'] = '%%v, %%l:%%M %%p';
 $string['schedulesettings'] = 'Settings';
@@ -103,5 +107,13 @@ $string['closetopicsdescription'] = 'If checked, all new topics in this forum wi
 $string['activetopicsdescription'] = 'Recently updated topics in your groups.';
 
 $string['timeleftnotice'] = 'You have %s minutes left to finish editing.';
+
+$string['monday'] = 'Monday';
+$string['tuesday'] = 'Tuesday';
+$string['wednesday'] = 'Wednesday';
+$string['thursday'] = 'Thursday';
+$string['friday'] = 'Friday';
+$string['saturday'] = 'Saturday';
+$string['sunday'] = 'Sunday';
 
 
