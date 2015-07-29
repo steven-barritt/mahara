@@ -23,6 +23,7 @@ require_once(get_config('docroot') . 'interaction/lib.php');
 
 $eventid = param_integer('id');
 $returnto = param_alpha('returnto', 'schedule');
+$view = param_integer('view',0);
 
 $event = get_record_sql(
 	'SELECT e.schedule, e.title, e.id AS eventid, e.description,'. db_format_tsfield('e.startdate','startdate'). ', '. db_format_tsfield('e.enddate','enddate').', e.location, e.attendance
@@ -76,6 +77,10 @@ $form = pieform(array(
         'schedule' => array(
             'type' => 'hidden',
             'value' => $scheduleid
+        ),
+        'view' => array(
+            'type' => 'hidden',
+            'value' => $view
         )
     )
 ));
@@ -89,7 +94,7 @@ function deleteevent_submit(Pieform $form, $values) {
         array('id' => $eventid)
     );
     $SESSION->add_ok_msg(get_string('deletetopicsuccess', 'interaction.forum'));
-    redirect('/interaction/schedule/index.php?group=' . $schedule->groupid);
+    redirect('/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$values['view']);
 }
 
 $smarty = smarty();

@@ -137,7 +137,7 @@ function schedule_get_user_events($limit=31,$offset=null){
 
 }
 
-function schedule_get_all_groupevents($groupid){
+function schedule_get_all_groupevents($groupid,$mindate=null,$maxdate=null){
 	global $USER;
 	$events = array();
 	$options = array();
@@ -181,9 +181,14 @@ function schedule_get_all_groupevents($groupid){
 				) ";
 				$options = array($groupid,$USER->get('id'),$groupid);
 		}
+		if($mindate){
+			$sql .=" AND e.startdate >= '".db_format_timestamp($mindate)."'";
+		}
+		if($maxdate){
+			$sql .=" AND e.enddate <= '".db_format_timestamp($maxdate)."'";
+		}
 			
-		$sql .=	"ORDER BY e.startdate, horder, e.enddate";
-	
+		$sql .=	" ORDER BY e.startdate, horder, e.enddate";
         $events = get_records_sql_array($sql,$options);
 /*
 SELECT DISTINCT gh.child as group_id from `group_hierarchy` gh join `group_member` gm on gh.child = gm.group where gh.parent = 3 and gm.member = 14

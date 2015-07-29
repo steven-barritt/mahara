@@ -141,7 +141,8 @@ $editform = array(
 			'type'         => 'calendar',
                 'caloptions' => array(
                     'showsTime'      => true,
-                    'ifFormat'       => '%Y/%m/%d %H:%M'
+                    'ifFormat'       => '%Y/%m/%d %H:%M',
+                    'firstDay'		=> 1
                     ),
 			'title'        => get_string('startdate', 'interaction.schedule'),
 			'changehandler' => 'onDateChange()',
@@ -154,7 +155,8 @@ $editform = array(
 			'type'         => 'calendar',
                 'caloptions' => array(
                     'showsTime'      => true,
-                    'ifFormat'       => '%Y/%m/%d %H:%M'
+                    'ifFormat'       => '%Y/%m/%d %H:%M',
+                    'firstDay'		=> 1
                     ),
 			'title'        => get_string('enddate', 'interaction.schedule'),
 			'defaultvalue' => isset($event->enddate) ? $event->enddate : $defaultendtime,
@@ -363,5 +365,7 @@ $smarty = smarty(array('interaction/schedule/js/edit.js'));
 $smarty->assign('INLINEJAVASCRIPT', $javascript);
 $smarty->assign('heading', $schedule->groupname);
 $smarty->assign('subheading', TITLE);
+$smarty->assign('eventid', $eventid);
+$smarty->assign('view', $view);
 $smarty->assign('editform', $editform);
 $smarty->display('interaction:schedule:editevent.tpl');

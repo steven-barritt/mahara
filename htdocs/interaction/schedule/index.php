@@ -49,7 +49,21 @@ $schedules = get_schedule_list($group->id, $USER->get('id'));
 
 
 $events = array();
-$events = schedule_get_all_groupevents($group->id);
+$startdate = schedule_get_groupstartdate($groupid);
+$enddate = schedule_get_groupenddate($groupid);
+if($startdate){
+	$startdate = $startdate[0]->startdate;
+}else{
+	$startdate = null;
+}
+if($enddate){
+	$enddate = $enddate[0]->enddate;
+}else{
+	$enddate = null;
+}
+//var_dump($startdate);
+//var_dump($enddate);
+$events = schedule_get_all_groupevents($group->id,$startdate,$enddate);
 
 $javascript = <<<EOF
 
@@ -65,32 +79,20 @@ addLoadEvent(function () {
 
 EOF;
 $table = '';
-if($view == 2){
-	$smarty = smarty(array(), array(), array(),array());
-	$smarty->assign('admin', group_user_can_assess_submitted_views($groupid,null));
-	if($schedules){
+$smarty = smarty(array(), array(), array(),array());
+$smarty->assign('admin', group_user_can_assess_submitted_views($groupid,null));
+if($schedules){
 	$smarty->assign('schedule',$schedules[0]);
-	}
-	$smarty->assign('events', $events);
+}
+$smarty->assign('events', $events);
+$smarty->assign('view',$view);
+if($view == 2){
 	$table = $smarty->fetch('interaction:schedule:scheduleview.tpl');
 }elseif($view == 1){
 	$weeksanddays = schedule_events_per_day($events,$groupid);
-	$smarty = smarty(array(), array(), array(),array());
-	$smarty->assign('admin', group_user_can_assess_submitted_views($groupid,null));
-	if($schedules){
-	$smarty->assign('schedule',$schedules[0]);
-	}
-	$smarty->assign('events', $events);
 	$smarty->assign('weeksanddays',$weeksanddays);
-//	var_dump($weeksanddays);
 	$table = $smarty->fetch('interaction:schedule:yearplannerview.tpl');
 }else{
-	$smarty = smarty(array(), array(), array(),array());
-	$smarty->assign('admin', group_user_can_assess_submitted_views($groupid,null));
-	if($schedules){
-	$smarty->assign('schedule',$schedules[0]);
-	}
-	$smarty->assign('events', $events);
 	$table = $smarty->fetch('interaction:schedule:scheduleview.tpl');
 }
 
