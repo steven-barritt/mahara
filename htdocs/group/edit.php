@@ -329,9 +329,13 @@ $elements['editability'] = array(
 );
 
 $currentdate = getdate();
-
 $elements['editwindowstart'] = array (
-    'type'         => 'date',
+			'type'         => 'calendar',
+                'caloptions' => array(
+                    'showsTime'      => true,
+                    'ifFormat'       => '%Y/%m/%d %H:%M',
+                    'firstDay'		=> 1
+                    ),
     'title'        => get_string('windowstart', 'group'),
     'defaultvalue' => $group_data->editwindowstart,
     'description'  => get_string('windowstartdesc', 'group'),
@@ -341,7 +345,12 @@ $elements['editwindowstart'] = array (
 );
 
 $elements['editwindowend'] = array (
-    'type'         => 'date',
+			'type'         => 'calendar',
+                'caloptions' => array(
+                    'showsTime'      => true,
+                    'ifFormat'       => '%Y/%m/%d %H:%M',
+                    'firstDay'		=> 1
+                    ),
     'title'        => get_string('windowend', 'group'),
     'defaultvalue' => $group_data->editwindowend,
     'description'  => get_string('windowenddesc', 'group'),
