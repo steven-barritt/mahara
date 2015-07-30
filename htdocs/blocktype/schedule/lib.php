@@ -84,8 +84,15 @@ class PluginBlocktypeSchedule extends SystemBlocktype {
 			$limit = intval($configdata['limit']);
 		}
 
+		$mindate = new DateTime(Date('Y-m-d'));
+		$maxdate = new DateTime($mindate->format('Y-m-d'));
+		if($limit){
+			$diff = DateInterval::createFromDateString($limit.' days');
+			$maxdate->add($diff);
+		}
+
 		if(!$events & !$role){
-			$events = schedule_get_user_events($limit);
+			$events = schedule_get_user_events($mindate,$maxdate);
 		}
 		
 		//var_dump($events);

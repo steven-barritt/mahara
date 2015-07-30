@@ -24,9 +24,60 @@ require_once(get_config('docroot') . 'interaction/lib.php');
 
 $limit = param_integer('limit',31);
 $offset = param_signed_integer('offset',0);
-
+$this_month = date('n',time());
+$this_year = date('Y',time());
 
 global $USER;
+//different views 
+//0 = schedule view - the default
+//1 = year planner view
+//2 = calendar view
+$view = param_integer('view',0);
+
+$month = param_integer('month',$this_month);
+$year = param_integer('year',$this_year);
+if($month < 1){
+	$month = 12;
+	$year--;
+}
+if($month >12){
+	$month = 1;
+	$year++;
+}
+
+$mindate = new DateTime(Date('Y-m-d'));
+if($offset){
+	$diff = DateInterval::createFromDateString($offset.' days');
+	$mindate->add($diff);
+}
+$maxdate = new DateTime($mindate->format('Y-m-d'));
+if($limit){
+	$diff = DateInterval::createFromDateString($limit.' days');
+	$maxdate->add($diff);
+}
+
+if($view == 2){
+	list($startdate,$enddate) = schedule_get_start_and_enddates($month,$year,6);
+	$mindate->setTimestamp(intval($startdate));
+	$maxdate->setTimestamp(intval($enddate));
+}elseif($view == 1){
+	$month = 1;
+	$startdate = schedule_get_user_startdate($USER->get('id'));
+	if($startdate){
+		$startdate = $startdate[0]->startdate;
+		$month = intval(date('n',$startdate));
+		$year = intval(date('Y',$startdate));
+	}
+	//need some more logic in here to work out the term startdate somehow for a user
+	//without knowing what the top level group is.
+	list($startdate,$enddate) = schedule_get_start_and_enddates($month,$year,52);	
+	$mindate->setTimestamp(intval($startdate));
+	$maxdate->setTimestamp(intval($enddate));
+}
+
+
+
+
 
 if (!is_logged_in()) {
     throw new AccessDeniedException();
@@ -40,7 +91,7 @@ define('TITLE', get_string('myschedule', 'interaction.schedule'));
 
 
 $events = array();
-$events = schedule_get_user_events($limit,$offset);
+$events = schedule_get_user_events($mindate,$maxdate);
 
 $javascript = <<<EOF
 
@@ -60,26 +111,33 @@ EOF;
 $headers = array();
 
 
-$mindate = new DateTime(Date('Y-m-d'));
-if($offset){
-	$diff = DateInterval::createFromDateString($offset.' days');
-	$mindate->add($diff);
-}
-$maxdate = new DateTime($mindate->format('Y-m-d'));
-if($limit){
-	$diff = DateInterval::createFromDateString($limit.' days');
-	$maxdate->add($diff);
-}
 
-
+$table = '';
+$smarty = smarty(array(), array(), array(),array());
+$smarty->assign('events', $events);
+$smarty->assign('view',$view);
+if($view == 2){
+	$weeksanddays = schedule_events_per_cal_day($events, $groupid,$month,$year);
+	$smarty->assign('weeksanddays',$weeksanddays);
+	$smarty->assign('month',$month);
+	$smarty->assign('year',$year);
+	$table = $smarty->fetch('interaction:schedule:calendarview.tpl');
+}elseif($view == 1){
+	$weeksanddays = schedule_events_per_day($events,$groupid, $mindate->getTimestamp());
+	$smarty->assign('weeksanddays',$weeksanddays);
+	$table = $smarty->fetch('interaction:schedule:yearplannerview.tpl');
+}else{
+	$table = $smarty->fetch('interaction:schedule:scheduleview.tpl');
+}
 
 
 $smarty = smarty(array(), $headers, array(), array());
 $smarty->assign('INLINEJAVASCRIPT', $javascript);
 $smarty->assign('heading',get_string('myschedule', 'interaction.schedule') );
+$smarty->assign('view',$view);
 $smarty->assign('limit', $limit);
 $smarty->assign('maxdate', $maxdate->getTimestamp());
 $smarty->assign('mindate', $mindate->getTimestamp());
 $smarty->assign('offset', $offset);
-$smarty->assign('events', $events);
+$smarty->assign('table', $table);
 $smarty->display('interaction:schedule:schedule.tpl');
