@@ -65,44 +65,8 @@ function schedule_get_event($eventid){
 
 }
 
-function schedule_get_user_events($limit=31,$offset=null){
+function schedule_get_user_events($mindate,$maxdate){
 	global $USER;
-		$mindate = new DateTime(Date('Y-m-d'));
-		if($offset){
-			$diff = DateInterval::createFromDateString($offset.' days');
-			$mindate->add($diff);
-		}
-		$maxdate = new DateTime($mindate->format('Y-m-d'));
-		if($limit){
-			$diff = DateInterval::createFromDateString($limit.' days');
-			$maxdate->add($diff);
-		}
-/*		$maxdate =new DateTime(Date('Y-m-d'));
-		$mindate = new DateTime(Date('Y-m-d'));
-		if($offset){
-			$diff = DateInterval::createFromDateString($offset.' days');
-			$mindate->add($diff);
-		}
-    	$diff = new DateInterval('P15D');
-		switch ($limit) {
-			case 7:
-				$diff = new DateInterval('P8D');
-				break;
-			case 14:
-				$diff = new DateInterval('P15D');
-				break;
-			case 21:
-				$diff = new DateInterval('P22D');
-				break;
-			case 31:
-				$diff = new DateInterval('P1M');
-				break;
-			case 62:
-				$diff = new DateInterval('P2M');
-				break;
-		}
-		$maxdate->add($diff);*/
-
 	$events = array();
 	
         $events = get_records_sql_array(
@@ -224,12 +188,26 @@ function schedule_get_groupenddate($groupid){
 	return get_records_sql_array($sql,array($groupid));
 }
 
+function schedule_get_user_startdate($userid){
+	$sql="SELECT g.id, ". db_format_tsfield("g.editwindowstart","startdate"). ", gh.depth 
+			FROM {group} g join {group_hierarchy} gh on g.id = gh.parent 
+			WHERE gh.child IN (SELECT gm.group from `group_member` gm where gm.member = ?)
+			AND g.editwindowstart is not null order by gh.depth desc
+			LIMIT 1";
+	return get_records_sql_array($sql,array($userid));
+}
 
 
-function schedule_events_per_day($events,$groupid){
+
+function schedule_events_per_day($events,$groupid,$startdate=null){
 	//based on hiearchichal search for the starteditwindow time
 	//we can work out which week that lies in and use that as the start of the year
-	$startdate = schedule_get_groupstartdate($groupid);
+	if(!$startdate){
+		$startdate = schedule_get_groupstartdate($groupid);
+		if($startdate){
+			$startdate = $startdate[0]->startdate;
+		}
+	}
 	//we need to know how many weeks there are in this year
 	$weeksinyear = intval(date('W',mktime(0,0,0,12,31,date('o',time()))));
 	if($weeksinyear == 1){
@@ -240,12 +218,12 @@ function schedule_events_per_day($events,$groupid){
 	$startweek = 1;
 	if($startdate){	
 		//if the startdate is set then override the defaults
-		$weeksinyear = intval(date('W',mktime(0,0,0,12,31,date('o',$startdate[0]->startdate))));
-		$currentyear = date('o',$startdate[0]->startdate);
+		$weeksinyear = intval(date('W',mktime(0,0,0,12,31,date('o',$startdate))));
+		$currentyear = date('o',$startdate);
 		if($weeksinyear == 1){
 			$weeksinyear = 52;
 		}
-		$startweek = intval(date('W',$startdate[0]->startdate));
+		$startweek = intval(date('W',$startdate));
 	}
 	//work out the monday of the starting week
 	$startdate = strtotime($currentyear.'W'.str_pad($startweek, 2, "0", STR_PAD_LEFT));
@@ -289,6 +267,88 @@ function schedule_events_per_day($events,$groupid){
 	}
 	return $weeksanddays;
 }
+
+function schedule_get_start_and_enddates($month,$year,$noweeks){
+	//this could be one line of code but it is pretty unreadable
+	$startdate = strtotime(intval(date('o',mktime(0,0,0,$month,1,$year))).'W'.str_pad(intval(date('W',mktime(0,0,0,$month,1,$year))), 2, "0", STR_PAD_LEFT))+(60*60*2);
+	//first of the month specified
+/*	$startmonthweek  = mktime(0,0,0,$month,1,$year);
+	//get the iso week number of the 1st
+	$startweek = intval(date('W',$startmonthweek));
+	// work out the monday
+	$startdate = strtotime(intval(date('o',$startmonthweek)).'W'.str_pad($startweek, 2, "0", STR_PAD_LEFT));
+	//this makes sure the date is in the morning in case of summer time
+	$startdate = $startdate + (60*60*2);*/
+	$enddate = $date = strtotime("+".$noweeks." weeks", $startdate);
+	return array($startdate,$enddate);
+}
+
+function schedule_events_per_cal_day($events,$groupid, $month,$year){
+	//this function gets all events for a calendar month
+	//we need to figure out how many weeks are in the month this should be either 4 or 5 not sure if it can be 6
+	//there will always be 6 weeks shown and the days fit in based on that
+	//we need to work out the first day of the month
+	//then we need to calculate the monday of that week
+	//then we need to populate 6 weeks worth of data.
+	list($startdate,$enddate) = schedule_get_start_and_enddates($month,$year,6);
+	$startweek = intval(date('W',$startdate));
+
+	$weeksanddays = array();
+	$days = 0;
+	//build the array with the dates in it
+	for($i = 1; $i <= 6; $i++){
+		$weeksanddays[$i] = array();
+		for($j = 1; $j <= 7; $j++){
+			$date = strtotime("+".$days." days", $startdate);
+			$days++;
+			$weeksanddays[$i][$j] = array('date'=>$date,'events'=>array());
+		}
+	}
+	foreach($events as $event){
+		$week = intval(date('W',intval($event->startdate)));
+//		var_dump('<br>'.$week);
+		//calculate relative week we populate weeks 1 - 6 January
+		if($startweek >=52){
+			//so the year starts in week 52 or 53 so all events in week one need to be in the second slot onwards
+			if($week < 52){
+				$week = $week - 1 + 2;
+			}else{
+				//if it is in the last week the put it in the first week
+				$week = $week - $startweek + 1;
+			}
+		}else{
+				$week = $week - $startweek + 1;
+/*			if($week >= 52){
+				$week = 1;
+			}else{
+				$week = $week - $startweek + 1;
+			}*/
+			if($week < 0){
+				$week = 6;
+			}
+		}
+		$day = intval(date('N',intval($event->startdate)));
+		$weeksanddays[$week][$day]['events'][] = $event;
+		if($event->longerthanaday){
+			$startdate = new DateTime(date('Y-m-d',intval($event->startdate)));
+			$enddate = new DateTime(date('Y-m-d',intval($event->enddate)));
+			$dDiff = $startdate->diff($enddate);
+  			$noofdays = $dDiff->days;
+  			$j = 0;
+  			for($i = 1; $i <= $noofdays; $i++){
+  				$day++;
+  				if($day > 7){
+  					$day = 1;
+  					$week++;
+  				}
+				$weeksanddays[$week][$day]['events'][] = $event;
+  			}
+  			
+		}
+	}
+	return $weeksanddays;
+}
+
 
 function get_schedule_events($schedule){
 	$events = array();

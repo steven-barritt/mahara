@@ -20,7 +20,7 @@
 				<div class="daynumber">{$weeksanddays[$i][$j].date|format_date:'strftimedatevshort'}</div>
 				<ul>
 					{foreach $weeksanddays[$i][$j].events as event}
-					<li><a style="color:{$event->color}" href="{$WWWROOT}interaction/schedule/{if $admin}editevent{else}view{/if}.php?id={$event->id}&view={$view}" title="{$event->scheduletitle}&#13;{str tag=where section=interaction.schedule}{$event->location}">{$event->title}</a></li>	
+					<li><a style="color:{$event->color}" href="{$WWWROOT}interaction/schedule/{if $admin}editevent.php?id={else}view.php?event={/if}{$event->id}&view={$view}" title="{$event->scheduletitle}&#13;{str tag=where section=interaction.schedule}{$event->location}">{$event->title}</a></li>	
 					{/foreach}
 				</ul>
 				</div>

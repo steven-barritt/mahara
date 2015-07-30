@@ -1,3 +1,4 @@
+	{if $events}
 	<table id="schedulelist" class="fullwidth nohead">
 		{assign '' olddate}
 		{cycle values='r0,r1' assign=class}
@@ -10,10 +11,11 @@
 				{if $olddate != $event->startdate|format_date:'strfdaymonthyearshort'}<span class="event_date"> {$event->startdate|format_date:'strftimedayvshort'}</span>{/if}
 			</td>
 				<td class="event_time">			
-					{$event->startdate|format_date:'strftimetime'} - {if $event->longerthanaday}
-					{$event->enddate|format_date:'strftimedaydatetime'}
-					{else}
-					{$event->enddate|format_date:'strftimetime'}
+					{$event->startdate|format_date:'strftimetime'}{if $event->enddate != $event->startdate} - {if $event->longerthanaday}
+						{$event->enddate|format_date:'strftimedaydatetime'}
+						{else}
+						{$event->enddate|format_date:'strftimetime'}
+						{/if}
 					{/if}
 
 				</td>
@@ -63,3 +65,6 @@
 		{/foreach}
 		<tr class="line_breaker"><td colspan="20"></td></tr>
 	</table>
+	{else}
+	<div class="message">{str tag=noevents section=interaction.schedule}</div>
+	{/if}

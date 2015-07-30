@@ -23,11 +23,30 @@ require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'interaction/lib.php');
 
 $groupid = param_integer('group');
+
+
+$this_month = date('n',time());
+$this_year = date('Y',time());
+
+
 //different views 
 //0 = schedule view - the default
 //1 = year planner view
 //2 = calendar view
 $view = param_integer('view',0);
+
+$month = param_integer('month',$this_month);
+$year = param_integer('year',$this_year);
+if($month < 1){
+	$month = 12;
+	$year--;
+}
+if($month >12){
+	$month = 1;
+	$year++;
+}
+
+
 define('GROUP', $groupid);
 $group = group_current_group();
 $membership = group_user_access($groupid);
@@ -49,17 +68,24 @@ $schedules = get_schedule_list($group->id, $USER->get('id'));
 
 
 $events = array();
-$startdate = schedule_get_groupstartdate($groupid);
-$enddate = schedule_get_groupenddate($groupid);
-if($startdate){
-	$startdate = $startdate[0]->startdate;
+$startdate = null;
+$enddate = null;
+//calendar works slightly differently
+if($view == 2){
+	list($startdate,$enddate) = schedule_get_start_and_enddates($month,$year,6);
 }else{
-	$startdate = null;
-}
-if($enddate){
-	$enddate = $enddate[0]->enddate;
-}else{
-	$enddate = null;
+	$startdate = schedule_get_groupstartdate($groupid);
+	$enddate = schedule_get_groupenddate($groupid);
+	if($startdate){
+		$startdate = $startdate[0]->startdate;
+	}else{
+		$startdate = null;
+	}
+	if($enddate){
+		$enddate = $enddate[0]->enddate;
+	}else{
+		$enddate = null;
+	}
 }
 //var_dump($startdate);
 //var_dump($enddate);
@@ -87,7 +113,12 @@ if($schedules){
 $smarty->assign('events', $events);
 $smarty->assign('view',$view);
 if($view == 2){
-	$table = $smarty->fetch('interaction:schedule:scheduleview.tpl');
+	$weeksanddays = schedule_events_per_cal_day($events, $groupid,$month,$year);
+	$smarty->assign('weeksanddays',$weeksanddays);
+	$smarty->assign('groupid', $groupid);
+	$smarty->assign('month',$month);
+	$smarty->assign('year',$year);
+	$table = $smarty->fetch('interaction:schedule:calendarview.tpl');
 }elseif($view == 1){
 	$weeksanddays = schedule_events_per_day($events,$groupid);
 	$smarty->assign('weeksanddays',$weeksanddays);

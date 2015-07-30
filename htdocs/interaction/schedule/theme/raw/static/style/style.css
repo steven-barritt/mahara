@@ -89,6 +89,7 @@ display: block;
 -webkit-border-radius: 3px;
 -moz-border-radius: 3px;
 border-radius: 3px;
+width:98%;
 overflow-x:scroll;
 }
 #viewschedule .rbuttons {
@@ -383,6 +384,17 @@ float:left;
 	margin-left:50px;
 }
 
+.month_title{
+	margin-left:80px;
+	
+}
+
+.cal_forward_back{
+float:left;
+	margin-top:10px;
+	margin-left:10px;
+}
+
 .event_title{
 	font-size:1em;
 	font-weight:bold;
@@ -460,9 +472,13 @@ width:25px;
 border-collapse: separate;
     border-spacing: 3px;
 }
+#calendarlist{
+border-collapse: separate;
+    border-spacing: 3px;
+}
 .weekday{
 	width:15%;
-	background-color:#b5d1d4;
+	background-color:#d0dfe1;
 }
 .weekend{
 	width:8%;
@@ -470,6 +486,12 @@ border-collapse: separate;
 }
 .daynumber{
 	float:right;
+}
+
+.greyed{
+	opacity:0.6;
+	background-color:#e1e1e1;
+
 }
 @media print{
 	#main-column-container h1{

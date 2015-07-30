@@ -17,13 +17,9 @@
 {if $schedule}
 	<div class="color_swatch" style="background-color:{$schedule->color}"></div>
 	<h2 class="schedule_title">{$schedule->title}</h2>
-	{if $events}
 	<div id="viewschedule">
 		{$table|safe}
 	</div>
-	{else}
-	<div class="message">{str tag=noevents section=interaction.schedule}</div>
-	{/if}
 {else}
 	<h2>{str tag=name section=interaction.schedule}</h2>
 
