@@ -57,33 +57,35 @@ class PluginGrouptypeProject extends PluginGrouptype {
 	
 	
 	public static function get_event_subscriptions() {
-        $sub = new stdClass();
-        $sub->plugin = 'project';
-        $sub->event = 'userjoinsgroup';
-        $sub->callfunction = 'copy_template_page';
-        return array($sub);
+        return array(
+            (object)array(
+                'plugin'       => 'project',
+                'event'        => 'userjoinsgroup',
+                'callfunction' => 'copy_template_page',
+            ),
+        );
     }
  
     public static function copy_template_page($event, $eventdata) {
 		//SB this is where we have to fnd the pages shared with group and with copynewuser
 		//then we need to call the user function copy template page with the page
 		if(group_get_type($eventdata['group']) == 'project' && $eventdata['copy_views']){
-			$sharedviews = View::get_sharedviews_data(0,0,$eventdata['group'],true);
-			$sharedviews = $sharedviews->data;
-			$ids = array();
-			foreach ($sharedviews as &$data) {
-				$ids[] = $data['id'];
+			$sharedviews = View::get_copynewuser_views($eventdata['group']);
+/*			$sharedviews = View::get_sharedviews_data(0,0,$eventdata['group'],true);
+			$sharedviews = $sharedviews->data;*/
+			if($sharedviews){
+				$ids = array();
+				foreach ($sharedviews as &$data) {
+					$ids[] = $data->id;
+				}
+				$userobj = new User();
+				$userobj->find_by_id($eventdata['member']);
+				//var_dump($userobj);
+				$userobj->copy_views_from_group($ids,$eventdata['group']);
 			}
-			
-			$userobj = new User();
-			$userobj->find_by_id($eventdata['member']);
-			//var_dump($userobj);
-			$userobj->copy_views_from_group($ids,$eventdata['group']);
 		}
 		
     }
-	
-
 }
 
 class GroupTypeProject extends GroupType {
@@ -112,6 +114,10 @@ class GroupTypeProject extends GroupType {
 
     public static function get_view_moderating_roles() {
         return array('tutor', 'admin','ta');
+    }
+    
+    public static function get_group_artefact_plugins() {
+        return array('blog');
     }
 
     public static function get_view_assessing_roles() {

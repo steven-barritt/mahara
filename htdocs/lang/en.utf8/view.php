@@ -46,6 +46,7 @@ $string['viewname']               = 'Page name';
 $string['templatedashboard']      = 'Dashboard template';
 $string['templategrouphomepage']  = 'Group homepage template';
 $string['templateprofile']        = 'Profile template';
+$string['templateportfolio']        = 'Portfolio template';
 
 // my views
 $string['artefacts'] = 'Artefacts';
@@ -345,6 +346,7 @@ $string['nothemeselected'] = 'No theme selected';
 
 // Templates
 $string['Template'] = 'Template';
+$string['templatepages'] = 'Template Pages';
 $string['allowcopying'] = 'Allow copying';
 $string['retainviewrights1'] = 'Retain view access on copied pages or collections';
 $string['templatedescriptionplural1'] = 'Check this box if you would like the people who can see your selected pages / collections to be able to make their own copies of them, along with any files and folders they contain.';
@@ -356,7 +358,7 @@ $string['choosetemplateinstitutionpageandcollectiondescription'] = '<p>Here you 
 $string['choosetemplatesitepageandcollectiondescription1'] = '<p>Here you can search through the pages that can be copied on the site level as a starting point for making a new page. You can see a preview of each page by clicking on its name. Once you have found the page you wish to copy, click the corresponding "Copy page" button to make a copy and begin customising it. You may also choose to copy the entire collection that the page belongs to by clicking the corresponding "Copy collection" button.</p><p><strong>Note:</strong> Currently, it is not possible to have copies of journals, journal entries, plans and résumé information in site-level pages.</p>';
 $string['copiedblocksandartefactsfromtemplate'] = 'Copied %d blocks and %d artefacts from %s';
 $string['filescopiedfromviewtemplate'] = 'Files copied from %s';
-$string['viewfilesdirname'] = 'viewfiles';
+$string['viewfilesdirname'] = 'Project Files';
 $string['viewfilesdirdesc'] = 'Files from copied pages';
 $string['thisviewmaybecopied'] = 'Copying is allowed';
 $string['copythisview'] = 'Copy this page';

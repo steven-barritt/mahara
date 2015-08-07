@@ -10,7 +10,9 @@
  */
 
 define('INTERNAL', 1);
-define('MENUITEM', 'groups/groupsiown');
+//define('MENUITEM', 'groups/groupsiown');
+define('MENUITEM', 'groups/info');
+
 require(dirname(dirname(__FILE__)) . '/init.php');
 require_once('pieforms/pieform.php');
 require_once('group.php');
@@ -54,9 +56,9 @@ else {
         'category'       => 0,
         'public'         => 0,
         'usersautoadded' => 0,
-        'viewnotify'     => GROUP_ROLES_ALL,
+        'viewnotify'     => GROUP_ROLES_NONMEMBER,
         'submittableto'  => 1,
-        'allowarchives'  => 1,
+        'allowarchives'  => 0,
         'editroles'      => 'notmember',
         'hidden'         => 1,
         'hidemembers'    => 1,
@@ -69,8 +71,8 @@ else {
         'editwindowend'  => null,
         'request'        => 0,
         'parent'        => null,
-        'sendnow'        => 0,
-        'feedbacknotify' => GROUP_ROLES_ALL,
+        'sendnow'        => 1,
+        'feedbacknotify' => GROUP_ROLES_NONMEMBER,
     );
 }
 
@@ -337,6 +339,7 @@ $elements['editwindowstart'] = array (
                     'firstDay'		=> 1
                     ),
     'title'        => get_string('windowstart', 'group'),
+			'changehandler' => null,
     'defaultvalue' => $group_data->editwindowstart,
     'description'  => get_string('windowstartdesc', 'group'),
     'minyear'      => $currentdate['year'],
@@ -352,6 +355,7 @@ $elements['editwindowend'] = array (
                     'firstDay'		=> 1
                     ),
     'title'        => get_string('windowend', 'group'),
+			'changehandler' => null,
     'defaultvalue' => $group_data->editwindowend,
     'description'  => get_string('windowenddesc', 'group'),
     'minyear'      => $currentdate['year'],

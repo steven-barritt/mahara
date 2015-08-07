@@ -556,21 +556,31 @@ function group_create($data) {
     }
 
     // Copy views for the new group
-    $templates = get_column('view_autocreate_grouptype', 'view', 'grouptype', $data['grouptype']);
+//    $templates = get_column('view_autocreate_grouptype', 'view', 'grouptype', $data['grouptype']);
     $templates = get_records_sql_array("
-        SELECT v.id, v.title, v.description
+        SELECT v.id, v.title, v.description,v.template,v.copynewuser
         FROM {view} v
         INNER JOIN {view_autocreate_grouptype} vag ON vag.view = v.id
         LEFT JOIN {collection_view} cv ON v.id = cv.view
-        WHERE vag.grouptype = 'standard'
-            AND cv.view IS NULL", array());
+        WHERE vag.grouptype = ?
+            AND cv.view IS NULL", array($data['grouptype']));
     if ($templates) {
         require_once(get_config('libroot') . 'view.php');
         foreach ($templates as $template) {
+        	$title = $template->title;
+        	if($template->copynewuser){
+        		if(strpos($data['name'],'-')){
+        			$title = trim(substr($data['name'],0,strpos($data['name'],'-')));
+        		}else{
+                	$title = $data['name'];
+        		}
+        	}
             list($view) = View::create_from_template(array(
                 'group'       => $id,
-                'title'       => $template->title,
+                'title'       => $title,
                 'description' => $template->description,
+                'template'	=> $template->template,
+                'copynewuser' => $template->copynewuser,
             ), $template->id, null, false);
             $view->set_access(array(array(
                 'type'      => 'group',
@@ -1009,9 +1019,10 @@ function group_remove_user($groupid, $userid=null, $force=false) {
             INNER JOIN {view_access} a ON
                 v.id=a.view	 
 			WHERE v.owner = ? AND a.group = ?", array($userid, $groupid));
-
-	foreach($viewaccess as $view){
-	    delete_records('view_access', 'view', $view->id);
+	if($viewaccess){
+		foreach($viewaccess as $view){
+			delete_records('view_access', 'view', $view->id);
+		}
 	}
 
     delete_records('group_member', 'group', $groupid, 'member', $userid);
@@ -1547,7 +1558,7 @@ function group_get_parent($groupid) {
     	'SELECT gh.parent  FROM {group_hierarchy} gh
         WHERE gh.child = ? AND gh.depth = 1', array($groupid));
         
-    if(isset($parent)){
+    if($parent){
 	    return $parent[0]->parent;
 	}else{
 		return null;
@@ -1948,7 +1959,7 @@ function group_get_menu_tabs() {
             'path' => 'groups/info',
             'url' => group_homepage_url($group, false),
             'title' => get_string('About', 'group'),
-            'weight' => 20
+            'weight' => 10
         ),
     );
 
@@ -1957,7 +1968,7 @@ function group_get_menu_tabs() {
             'path' => 'groups/members',
             'url' => 'group/members.php?id='.$group->id,
             'title' => get_string('Members', 'group'),
-            'weight' => 30
+            'weight' => 50
         );
     }
 
@@ -1976,7 +1987,7 @@ function group_get_menu_tabs() {
         'weight' => 20,
     );
     
-    $menu['collections'] = array(
+/*    $menu['collections'] = array(
         'path' => 'groups/collections',
         'url' => 'collection/index.php?group='.$group->id,
         'title' => get_string('Collections', 'group'),
@@ -1992,7 +2003,7 @@ function group_get_menu_tabs() {
             'weight' => 70,
         );
     }
-
+*/
     if ($role) {
         safe_require('grouptype', $group->grouptype);
         $artefactplugins = call_static_method('GroupType' . $group->grouptype, 'get_group_artefact_plugins');

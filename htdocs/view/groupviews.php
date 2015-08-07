@@ -49,6 +49,13 @@ $currentviewid = param_integer('currentview',null);
 
 
 	list($collections,$views) = View::get_views_and_collections(null, $group->id,null);
+	$templates = array();
+	foreach($views as $key => $view){
+		if($view['copynewuser'] == 1){
+			$templates[] = $view;
+			unset($views[$key]);
+		}
+	}
 //	var_dump($collections);
 //	var_dump("bob");
 //	var_dump($views);
@@ -157,7 +164,9 @@ if(isset($currentview)){
 			'<link rel="stylesheet" type="text/css" href="' . get_config('wwwroot') . 'lib/slimbox2/css/slimbox2' . $langdir . '.css?v=' . get_config('release'). '">'
 		));
 	}
-
+	$submittedgroup = (int)$currentview->get('submittedgroup');
+	$collection = $currentview->get('collection');
+	
 	$can_edit = $USER->can_edit_view($currentview) && !$submittedgroup && !$currentview->is_submitted();
 
 	$viewgroupform = false;
@@ -214,10 +223,10 @@ EOF;
 	}
 */
 	$smarty->assign('INLINEJAVASCRIPT', $javascript . $inlinejs);
-	$smarty->assign('new', $new);
-	$smarty->assign('viewid', $viewid);
+//	$smarty->assign('new', $new);
+//	$smarty->assign('viewid', $viewid);
 	$smarty->assign('viewtype', $viewtype);
-	$smarty->assign('feedback', $feedback);
+//	$smarty->assign('feedback', $feedback);
 	$smarty->assign('owner', $owner);
 //	$smarty->assign('tags', $currentview->get('tags'));
 
@@ -237,17 +246,17 @@ EOF;
 
 	$titletext = ($collection && $shownav) ? hsc($collection->get('name')) : $currentview->display_title(true, false, false);
 
-	if ($can_edit) {
+/*	if ($can_edit) {
 		$smarty->assign('visitstring', $currentview->visit_message());
 		$smarty->assign('editurl', get_config('wwwroot') . 'view/blocks.php?id=' . $viewid . ($new ? '&new=1' : ''));
-	}
+	}*/
 
 	$title = hsc(TITLE);
 
 
 	$smarty->assign('viewdescription', $currentview->get('description'));
 	$smarty->assign('viewcontent', $viewcontent);
-	$smarty->assign('releaseform', $releaseform);
+//	$smarty->assign('releaseform', $releaseform);
 	if (isset($addfeedbackform)) {
 		$smarty->assign('enablecomments', 1);
 		$smarty->assign('addfeedbackform', $addfeedbackform);
@@ -256,7 +265,7 @@ EOF;
 		$smarty->assign('objectionform', $objectionform);
 		$smarty->assign('notrudeform', $notrudeform);
 	}
-	$smarty->assign('viewbeingwatched', $viewbeingwatched);
+//	$smarty->assign('viewbeingwatched', $viewbeingwatched);
 
 	if ($viewgroupform) {
 		$smarty->assign('view_group_submission_form', $viewgroupform);
@@ -291,13 +300,14 @@ $smarty->assign('currentviewid', $currentviewid);
 $smarty->assign('currentcollectionid',$currentcollectionid);
 $smarty->assign('canedit', $can_edit);
 $smarty->assign('views', $views);
+$smarty->assign('templates', $templates);
 $smarty->assign('group', $group);
 $smarty->assign('collections', $collections);
-$smarty->assign('pagination', $pagination['html']);
+//$smarty->assign('pagination', $pagination['html']);
 	$smarty->assign('viewcontent',$viewcontent);
     $smarty->assign('query', param_variable('query', null));
     $smarty->assign('querystring', get_querystring());
     $smarty->assign('editlocked', $role == 'admin');
-    $smarty->assign('searchform', $searchform);
+//    $smarty->assign('searchform', $searchform);
     $smarty->assign('createviewform', $createviewform);
     $smarty->display('view/groupviews.tpl');

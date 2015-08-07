@@ -910,7 +910,7 @@ abstract class ArtefactTypeFileBase extends ArtefactType {
 
         $viewfilesfolder = ArtefactTypeFolder::get_folder_id(get_string('viewfilesdirname', 'view'), get_string('viewfilesdirdesc', 'view'),
                                                              null, true, $view->get('owner'), $view->get('group'), $view->get('institution'), $artefactstoignore);
-        $foldername = $viewid;
+        $foldername = $template->get('title');
         $existing = get_column_sql("
             SELECT title
             FROM {artefact}

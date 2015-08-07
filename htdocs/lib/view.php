@@ -4343,7 +4343,22 @@ class View {
 
     }
 
-
+    /**
+     * get a list of viewids that have been shared witht the group or belong to the group
+     * where they are templates and have the copy new user flag set
+     * this is for when we are copying views to users who have just joined the group
+     */
+    public static function get_copynewuser_views($groupid) {
+        require_once(get_config('libroot') . 'group.php');
+        $sql = 'SELECT distinct v.id
+					FROM  {view} v
+					INNER JOIN {view_access} a ON (a.view = v.id)
+					WHERE a.group = ?
+					AND v.template
+					AND v.copynewuser';
+    	$viewdata = get_records_sql_array($sql,array($groupid));
+    	return $viewdata;
+	}
     /**
      * Get views which have been explicitly shared to a group and are
      * not owned by the group excluding the view in collections
@@ -5280,7 +5295,7 @@ class View {
             $includeprofile = false;
         }
         $sql = "
-            SELECT v.id, v.type, v.title, v.accessconf, v.ownerformat, v.startdate, v.stopdate, v.template,
+            SELECT v.id, v.type, v.title, v.accessconf, v.ownerformat, v.startdate, v.stopdate, v.template, v.copynewuser,
                 v.owner, v.group, v.institution, v.urlid, v.submittedgroup, v.submittedhost, " .
                 db_format_tsfield('v.submittedtime', 'submittedtime') . ", v.submittedstatus,
                 c.id AS cid, c.name AS cname,
@@ -5331,6 +5346,7 @@ class View {
                 'startdate'      => $r['startdate'],
                 'stopdate'       => $r['stopdate'],
                 'template'       => $r['template'],
+                'copynewuser'       => $r['copynewuser'],
                 'owner'          => $r['owner'],
                 'submittedgroup' => $r['submittedgroup'],
                 'submittedhost'  => $r['submittedhost'],
