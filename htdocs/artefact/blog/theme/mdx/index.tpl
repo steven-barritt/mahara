@@ -1,10 +1,13 @@
 {include file="header.tpl"}
-			{if !$limitedediting}
-            <div class="rbuttons">
-                <a class="btn" href="{$WWWROOT}artefact/blog/new/index.php">{str section="artefact.blog" tag="addblog"}</a>
-            </div>
-            {/if}
-            <div class="pagecontent">
+    <div class="pagecontent">
+		<div class="blogheader">
+				{if !$limitedediting}
+				<div class="rbuttons">
+					<a class="btn" href="{$WWWROOT}artefact/blog/new/index.php">{str section="artefact.blog" tag="addblog"}</a>
+				</div>
+				{/if}
+			<h2>{str section="artefact.blog" tag="myblogs"}</h2>
+		</div>
 		<div id="myblogs rel">
 {if !$blogs->data}
            <div>{str tag=youhavenoblogs section=artefact.blog}</div>
@@ -17,6 +20,24 @@
            </table>
            {$blogs->pagination|safe}
 {/if}
-                </div>
-                </div>
+        </div>
+{if $blogs->groupdata}
+		<div class="blogheader">
+				{if !$limitedediting}
+				<div class="rbuttons">
+					<a class="btn" href="{$WWWROOT}artefact/blog/new/index.php?group=1">{str section="artefact.blog" tag="addblog"}</a>
+				</div>
+				{/if}
+			<h2>{str section="artefact.blog" tag="groupblogs"}</h2>
+		</div>
+
+		<div id="myblogs rel">
+           <table id="bloglist" class="tablerenderer fullwidth">
+             <tbody>
+              {$blogs->grouptablerows|safe}
+             </tbody>
+           </table>
+        </div>
+{/if}
+    </div>
 {include file="footer.tpl"}

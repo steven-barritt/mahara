@@ -109,13 +109,16 @@ class PluginBlocktypeMdxEvaluation extends SystemBlocktype {
 					}
 				}
 				else{
-					//for now it only lets the tutor of the gorup see it but should let all tutors see it.
-					//$submitteddata = $view->submitted_to();
-					if(group_user_can_assess_submitted_views($view->get('id'),$userid) || $view->is_staff_or_admin_for_page()){
-						return true;
-					}else{
-						return false;
+					if($view->get('owner')){
+						//for now it only lets the tutor of the gorup see it but should let all tutors see it.
+						//$submitteddata = $view->submitted_to();
+						if(group_user_can_assess_submitted_views($view->get('id'),$userid) || $view->is_staff_or_admin_for_page()){
+							return true;
+						}else{
+							return false;
+						}
 					}
+					return true;
 				}
 			}else{
 				return true;

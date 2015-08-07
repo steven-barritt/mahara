@@ -26,6 +26,18 @@ class PluginArtefactBlog extends PluginArtefact {
     public static function get_block_types() {
         return array();
     }
+    
+/*	public static function group_tabs($groupid) {
+	return array(
+		'blogs' => array(
+			'path' => 'groups/blogs',
+			'url' => 'artefact/blog/groupblogs.php?group='.$groupid,
+			'title' => get_string('blogs', 'artefact.blog'),
+			'weight' => 80,
+		),
+	);
+    }*/
+
 
     public static function get_plugin_name() {
         return 'blog';
@@ -64,6 +76,11 @@ class PluginArtefactBlog extends PluginArtefact {
                 'event'        => 'createuser',
                 'callfunction' => 'create_default_blog',
             ),
+            (object)array(
+                'plugin'       => 'blog',
+                'event'        => 'creategroup',
+                'callfunction' => 'create_default_group_blog',
+            ),
         );
     }
 
@@ -99,6 +116,14 @@ class PluginArtefactBlog extends PluginArtefact {
         ));
         $blog->commit();
     }
+	public static function create_default_group_blog($event, $eventdata) {
+        $blog = new ArtefactTypeBlog(0, (object) array(
+            'title'       => get_string('defaultgroupblogtitle', 'artefact.blog'),
+            'group'       => $eventdata['id'],
+        ));
+        $blog->commit();
+    }
+
 
     public static function get_artefact_type_content_types() {
         return array(
@@ -177,9 +202,18 @@ class ArtefactTypeBlog extends ArtefactType {
      */
     public function check_permission() {
         global $USER;
-        if ($USER->get('id') != $this->owner) {
-            throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
-        }
+        if($this->owner){
+			if ($USER->get('id') != $this->owner) {
+				throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
+			}
+		}elseif($this->group){
+			
+			if (!group_user_can_edit_views($this->group)) {
+				throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
+			}
+		}else{
+				throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
+		}
     }
 
 
@@ -295,6 +329,31 @@ class ArtefactTypeBlog extends ArtefactType {
         return array($count, $result);
     }
 
+    public static function get_blog_group_list($limit, $offset) {
+        global $USER;
+        ($result = get_records_sql_array("
+         SELECT b.id, b.title, b.description, b.locked, COUNT(p.id) AS postcount, g.name as groupname, g.id as groupid
+         FROM {artefact} b LEFT JOIN {artefact} p ON (p.parent = b.id AND p.artefacttype = 'blogpost')
+         JOIN {group_member} gm on b.group = gm.group
+         JOIN {group} g on g.id = gm.group
+         WHERE gm.member = ? AND b.artefacttype = 'blog'
+         AND gm.role in ('admin','tutor','ta') 
+         GROUP BY b.id, b.title, b.description, b.locked
+         ORDER BY b.locked, b.title", array($USER->get('id')), $offset, $limit))
+            || ($result = array());
+
+        foreach ($result as &$r) {
+            if (!$r->locked) {
+                $r->deleteform = ArtefactTypeBlog::delete_form($r->id, $r->title);
+            }
+        }
+
+        $count = (int)get_field('artefact', 'COUNT(*)', 'owner', $USER->get('id'), 'artefacttype', 'blog');
+
+        return array($count, $result);
+    }
+
+
     public static function build_blog_list_html(&$blogs) {
         global $USER;
 		$smarty = smarty_core();
@@ -302,6 +361,7 @@ class ArtefactTypeBlog extends ArtefactType {
 		//SB
 		$smarty->assign('limitedediting', get_account_preference($USER->id, 'limitedediting'));
         $blogs->tablerows = $smarty->fetch('artefact:blog:bloglist.tpl');
+        $blogs->grouptablerows = $smarty->fetch('artefact:blog:groupbloglist.tpl');
         $pagination = build_pagination(array(
             'id' => 'bloglist_pagination',
             'class' => 'center',
@@ -333,7 +393,11 @@ class ArtefactTypeBlog extends ArtefactType {
         $artefact = new ArtefactTypeBlog();
         $artefact->set('title', $values['title']);
         $artefact->set('description', $values['description']);
-        $artefact->set('owner', $user->get('id'));
+        if($values['group']){
+	        $artefact->set('group', $values['group']);
+        }else{
+	        $artefact->set('owner', $user->get('id'));
+	    }
         $artefact->set('tags', $values['tags']);
         if (get_config('licensemetadata')) {
             $artefact->set('license', $values['license']);
@@ -391,6 +455,13 @@ class ArtefactTypeBlog extends ArtefactType {
 
     public function copy_extra($new) {
        global $USER;
+       	if($this->get('group')){
+	       	$viewinstances = $this->get_views_instances();
+	       	if($viewinstances){
+				$new->set('title', $viewinstances[0]->get('title').' - '.get_string('blog','artefact.blog'));
+			}
+	    }
+       	
 		if(get_config('renamecopies')){
 			$new->set('title', get_string('Copyof', 'mahara', $this->get('title')));
 		}
@@ -499,7 +570,7 @@ class ArtefactTypeBlog extends ArtefactType {
     /**
      * During the copying of a view, we might be allowed to copy
      * blogs. Users need to have multipleblogs enabled for these
-     * to be visible.
+     * to be visible. UNLESS it is a group page
      */
     public function default_parent_for_copy(&$view, &$template, $artefactstoignore) {
         global $USER, $SESSION;
@@ -507,21 +578,23 @@ class ArtefactTypeBlog extends ArtefactType {
         $viewid = $view->get('id');
 
         try {
-            $user = get_user($view->get('owner'));
-            set_account_preference($user->id, 'multipleblogs', 1);
+        	if($view->get('owner')){
+            	$user = get_user($view->get('owner'));
+	            set_account_preference($user->id, 'multipleblogs', 1);
+            }
             $SESSION->add_ok_msg(get_string('copiedblogpoststonewjournal', 'collection'));
         }
         catch (Exception $e) {
             $SESSION->add_error_msg(get_string('unabletosetmultipleblogs', 'error', $user->username, $viewid, get_config('wwwroot') . 'account/index.php'), false);
         }
-
+		if(isset($user)){
         try {
             $USER->accountprefs = load_account_preferences($user->id);
         }
         catch (Exception $e) {
             $SESSION->add_error_msg(get_string('pleaseloginforjournals', 'error'));
         }
-
+		}
         return null;
     }
 }
@@ -660,10 +733,24 @@ class ArtefactTypeBlogPost extends ArtefactType {
      */
     public function check_permission() {
         global $USER;
-        if ($USER->get('id') != $this->owner) {
-            throw new AccessDeniedException(get_string('youarenottheownerofthisblogpost', 'artefact.blog'));
-        }
+
+        if($this->owner){
+			if ($USER->get('id') != $this->owner) {
+				throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
+			}
+		}elseif($this->group){
+			
+			if (group_user_can_edit_views($this->group)) {
+				throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
+			}
+		}else{
+				throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
+		}
+
+
     }
+    
+    
 
     public function describe_size() {
         return $this->count_attachments() . ' ' . get_string('attachments', 'artefact.blog');

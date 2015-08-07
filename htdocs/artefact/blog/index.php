@@ -30,10 +30,12 @@ if ($delete = param_integer('delete', 0)) {
 
 $blogs = (object) array(
     'offset' => param_integer('offset', 0),
-    'limit'  => param_integer('limit', 10),
+    'limit'  => param_integer('limit', 100),
 );
 
 list($blogs->count, $blogs->data) = ArtefactTypeBlog::get_blog_list($blogs->limit, $blogs->offset);
+
+list($blogs->groupcount, $blogs->groupdata) = ArtefactTypeBlog::get_blog_group_list($blogs->limit, $blogs->offset);
 
 ArtefactTypeBlog::build_blog_list_html($blogs);
 

@@ -96,7 +96,11 @@ class PluginBlocktypeBlog extends PluginBlocktype {
             $smarty->assign('editing', $editing);
             $smarty->assign('blogid', $blog->get('id'));
 			$smarty->assign_by_ref('blog', $blog);
-			$smarty->assign('isowner',$USER->get('id') == $blog->get('owner'));
+			if($blog->get('group')){
+				$smarty->assign('isowner',group_user_can_edit_views($blog->get('group')));
+			}else{
+				$smarty->assign('isowner',$USER->get('id') == $blog->get('owner'));
+			}
             $smarty->assign('posts', $posts);
 
             $result = $smarty->fetch('artefact:blog:blog.tpl');
@@ -128,7 +132,7 @@ class PluginBlocktypeBlog extends PluginBlocktype {
         //
         // Note: the owner check will have to change when we do group/site
         // blogs
-        if (empty($configdata['artefactid']) || $blog->get('owner') == $USER->get('id')) {
+        if (empty($configdata['artefactid']) || $blog->get('owner') == $USER->get('id') || $blog->get('group') || $blog->get('institution')) {
             $elements[] = self::artefactchooser_element((isset($configdata['artefactid'])) ? $configdata['artefactid'] : null);
             $elements['count'] = array(
                 'type' => 'text',
@@ -167,7 +171,6 @@ class PluginBlocktypeBlog extends PluginBlocktype {
         $artefacts = array();
         if (isset($configdata['artefactid'])) {
             $artefacts[] = $configdata['artefactid'];
-
             // Artefacts that are linked to directly in blog post text aren't
             // strictly children of blog posts, which means that
             // artefact_in_view won't understand that they are "within the
@@ -190,6 +193,7 @@ class PluginBlocktypeBlog extends PluginBlocktype {
             'type'  => 'artefactchooser',
             'title' => get_string('blog', 'artefact.blog'),
             'defaultvalue' => $default,
+
             'blocktype' => 'blog',
             'limit'     => 10,
             'selectone' => true,
@@ -229,7 +233,17 @@ class PluginBlocktypeBlog extends PluginBlocktype {
      * there's no such thing as group/site blogs
      */
     public static function allowed_in_view(View $view) {
-        return $view->get('owner') != null;
+    	if($view->get('owner') != null){
+    		return true;
+    	}
+		if($view->get('group') !=null){
+			return true;
+		}
+		if($view->get('institution') != null){
+			return true;
+		}
+    		
+        return false;
     }
 
     public static function feed_url(BlockInstance $instance) {

@@ -21,49 +21,73 @@ require_once('license.php');
 require_once('pieforms/pieform.php');
 safe_require('artefact', 'blog');
 
-$form = pieform(array(
-    'name' => 'newblog',
-    'method' => 'post',
-    'action' => '',
-    'plugintype' => 'artefact',
-    'pluginname' => 'blog',
-    'elements' => array(
-        'title' => array(
+$groupblog = param_integer('group',0);
+$elements = array();
+if($groupblog){
+	$groups = group_get_user_admintutor_groups();
+	if($groups){
+		$groupoptions = array();
+		$groupoptions[] = NULL; //add an empty option
+		foreach($groups as $rs){
+			$groupoptions[$rs->id] = $rs->name;
+		}
+	$elements['group'] = array(
+		'title' => get_string('group', 'group'),
+		'type' => 'select',
+        'options' => $groupoptions,
+		'defaultvalue' => NULL,
+		'rules' => array(
+			'required' => true
+		),
+	);
+
+	}
+}
+
+$elements['title'] = array(
             'type'        => 'text',
             'title'       => get_string('blogtitle', 'artefact.blog'),
             'description' => get_string('blogtitledesc', 'artefact.blog'),
             'rules' => array(
                 'required'    => true
             ),
-        ),
-        'description' => array(
-            'type'        => 'wysiwyg',
-            'rows'        => 10,
-            'cols'        => 70,
-            'title'       => get_string('blogdesc', 'artefact.blog'),
-            'description' => get_string('blogdescdesc', 'artefact.blog'),
-            'rules' => array(
-                'maxlength'   => 65536,
-                'required'    => false
-            ),
-        ),
-        'tags'        => array(
-            'type'        => 'tags',
-            'title'       => get_string('tags'),
-            'description' => get_string('tagsdescprofile'),
-            'help'        => true,
-        ),
-        'license' => license_form_el_basic(null),
-        'licensing_advanced' => license_form_el_advanced(null),
-        'submit' => array(
-            'type'  => 'submitcancel',
-            'value' => array(
-                get_string('createblog', 'artefact.blog'),
-                get_string('cancel', 'artefact.blog')
-            )
-        )
+        );
+$elements['description'] = array(
+	'type'        => 'wysiwyg',
+	'rows'        => 10,
+	'cols'        => 70,
+	'title'       => get_string('blogdesc', 'artefact.blog'),
+	'description' => get_string('blogdescdesc', 'artefact.blog'),
+	'rules' => array(
+		'maxlength'   => 65536,
+		'required'    => false
+	),
+);
+$elements['tags']        = array(
+	'type'        => 'tags',
+	'title'       => get_string('tags'),
+	'description' => get_string('tagsdescprofile'),
+	'help'        => true,
+);
+$elements['license'] = license_form_el_basic(null);
+$elements['licensing_advanced'] = license_form_el_advanced(null);
+$elements['submit'] = array(
+	'type'  => 'submitcancel',
+	'value' => array(
+		get_string('createblog', 'artefact.blog'),
+		get_string('cancel', 'artefact.blog')
+	)
+);
+
+$form = pieform(array(
+    'name' => 'newblog',
+    'method' => 'post',
+    'action' => '',
+    'plugintype' => 'artefact',
+    'pluginname' => 'blog',
+    'elements' => $elements,
     )
-));
+);
 
 $smarty =& smarty();
 $smarty->assign_by_ref('form', $form);

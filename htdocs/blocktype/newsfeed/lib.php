@@ -54,7 +54,7 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
         $result = '';
         $limit = isset($configdata['count']) ? (int) $configdata['count'] : 10;
 
-		$views = View::view_search(null, null, null, null, null, 0, true, '', array('portfolio'));
+		$views = View::view_search(null, null, null, null, null, 0, true, '', array('portfolio','grouphomepage'));
 		
 		$viewarray = array();
 //		var_dump($views->ids);
@@ -80,7 +80,7 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
             }*/
             //$artefactids = implode(', ', array_map('db_quote', $configdata['artefactids']));
             if (!$mostrecent = get_records_sql_array(
-            'SELECT a.title, ' . db_format_tsfield('a.ctime', 'ctime') . ', p.title AS parenttitle, a.id, a.parent, a.description, a.owner, va.view, a.allowcomments
+            'SELECT a.title, ' . db_format_tsfield('a.ctime', 'ctime') . ', p.title AS parenttitle, a.id, a.parent, a.description, a.owner,a.author, va.view, a.allowcomments
                 FROM {artefact} a
                 JOIN {artefact} p ON a.parent = p.id
                 JOIN {artefact_blog_blogpost} ab ON (ab.blogpost = a.id AND ab.published = 1)
@@ -95,7 +95,11 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
             }
             foreach ($mostrecent as &$data) {
                 $data->displaydate = format_date($data->ctime);
-				$data->user = get_user($data->owner);
+				if($data->owner){
+					$data->user = get_user($data->owner);
+				}else{
+					$data->user = get_user($data->author);
+				}
 				$postcontent = $data->description;
 				safe_require('artefact', 'file');
 				$postcontent = ArtefactTypeFolder::append_view_url($postcontent, $data->view);

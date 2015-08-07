@@ -71,6 +71,10 @@
 	max-height:20px;
 }
 
+.blogheader .rbuttons{
+	margin-top:-10px;
+}
+
 /* Insert Image Dialog */
 #img_src[disabled=""] {
 	background-color: #F0F0EE;

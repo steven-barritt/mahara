@@ -44,12 +44,8 @@ if (!$blogpost) {
 		$focuselement = 'blog';
 	}
 	else{
-		if (!get_record('artefact', 'id', $blog, 'owner', $USER->get('id'))) {
-			// Blog security is also checked closer to when blogs are added, this
-			// check ensures that malicious users do not even see the screen for
-			// adding a post to a blog that is not theirs
-			throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
-		}
+	    $blogobj = new ArtefactTypeBlog($blog);
+	    $blogobj->check_permission();
 	    $pagetitle = get_string('newblogpost', 'artefact.blog', get_field('artefact', 'title', 'id', $blog));
 		if($posttype == 0){
 			$focuselement = 'title';
@@ -523,6 +519,7 @@ function editpost_submit(Pieform $form, $values) {
     global $USER, $SESSION, $blogpost, $blog;
     db_begin();
     $postobj = new ArtefactTypeBlogPost($blogpost, null);
+    $blogobj = new ArtefactTypeBlog($blog);
     $postobj->set('title', $values['title']);
     $postobj->set('description', $values['description']);
 	if($values['blogtype'] == 0 || $values['blogtype'] == 2){
@@ -554,7 +551,11 @@ function editpost_submit(Pieform $form, $values) {
     $postobj->set('allowcomments', (int) $values['allowcomments']);
     if (!$blogpost) {
         $postobj->set('parent', $blog);
-        $postobj->set('owner', $USER->id);
+	    if($blogobj->get('group')){
+	    	$postobj->set('group',$blogobj->get('group'));
+	    }else{
+	        $postobj->set('owner', $USER->id);
+	    }
     }
     $postobj->commit();
     $blogpost = $postobj->get('id');
