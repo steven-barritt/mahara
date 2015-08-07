@@ -881,6 +881,7 @@ EOF;
             'description' => get_string('defaultscheduledescription', 'interaction.schedule', $eventdata['name']),
         ));
         $schedule->commit();
+        $defaultcolor = new stdClass();
         $defaultcolor->value = "#000000";
 		$parent = group_get_parent($eventdata['id']);
 		if($parent){
