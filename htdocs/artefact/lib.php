@@ -681,6 +681,9 @@ abstract class ArtefactType implements IArtefactType {
         // Delete non-containers grouped by artefacttype
         foreach ($leaves as $artefacttype => $ids) {
             $classname = generate_artefact_class_name($artefacttype);
+            
+            safe_require_plugin('artefact', get_field('artefact_installed_type', 'plugin', 'name', $artefacttype));
+
             call_static_method($classname, 'bulk_delete', $ids);
         }
 
@@ -690,6 +693,7 @@ abstract class ArtefactType implements IArtefactType {
             if (is_mysql()) {
                 set_field_select('artefact', 'parent', null, 'id IN (' . join(',', $ids) . ')', array());
             }
+            safe_require_plugin('artefact', get_field('artefact_installed_type', 'plugin', 'name', $artefacttype));
             call_static_method($classname, 'bulk_delete', $ids);
         }
 
