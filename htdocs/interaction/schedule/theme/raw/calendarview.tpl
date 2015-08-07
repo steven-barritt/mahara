@@ -4,9 +4,9 @@
 			<tr>
 			<td colspan="7">
 			<div class="btns2 cal_forward_back">
-					<a href="{$WWWROOT}interaction/schedule/{if $group}index.php?group={$groupid}&amp;{else}schedule.php?{/if}view=2&month={$month-1}&year={$year}" class="btn" title="{str tag=prevmonth section=interaction.schedule}">
+					<a href="{$WWWROOT}interaction/schedule/{if $groupid}index.php?group={$groupid}&amp;{else}schedule.php?{/if}view=2&month={$month-1}&year={$year}" class="btn" title="{str tag=prevmonth section=interaction.schedule}">
 					<</a>
-					<a href="{$WWWROOT}interaction/schedule/{if $group}index.php?group={$groupid}&amp;{else}schedule.php?{/if}view=2&month={$month+1}&year={$year}" class="btn" title="{str tag=prevmonth section=interaction.schedule}">
+					<a href="{$WWWROOT}interaction/schedule/{if $groupid}index.php?group={$groupid}&amp;{else}schedule.php?{/if}view=2&month={$month+1}&year={$year}" class="btn" title="{str tag=prevmonth section=interaction.schedule}">
 					></a>
 				</div>
 				<h2 class="month_title">{$weeksanddays[2][4].date|format_date:'strftimemonthyear'}</h2>			
