@@ -73,8 +73,11 @@ class PluginBlocktypeSchedule extends SystemBlocktype {
             require_once('group.php');
             $role = group_user_access($group->id);
         }
-
-		if ($role || $group->public) {
+		$public = false;
+		if($group){
+			$public = $group->public;
+		}
+		if ($role || $public) {
 			$schedules = get_schedule_list($group->id);
 			$events = get_schedule_events($schedules[0]);
 		}
