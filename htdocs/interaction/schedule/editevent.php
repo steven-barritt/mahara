@@ -27,7 +27,6 @@ $returnto = param_alpha('returnto', 'schedule');
 $view = param_integer('view',0);
 
 if ($eventid == 0) { // new topic
-    unset($eventid);
     $scheduleid = param_integer('schedule');
 }
 else { // edit topic
@@ -73,7 +72,7 @@ if (!group_within_edit_window($schedule->groupid)) {
     throw new AccessDeniedException(get_string('cantaddevent', 'interaction.schedule'));
 }
 
-if (!isset($eventid)) { // new topic
+if (!$eventid) { // new topic
     define('TITLE', $schedule->title . ' - ' . get_string('addevent','interaction.schedule'));
 }
 
@@ -159,6 +158,7 @@ $editform = array(
                     'firstDay'		=> 1
                     ),
 			'title'        => get_string('enddate', 'interaction.schedule'),
+			'changehandler' => null,
 			'defaultvalue' => isset($event->enddate) ? $event->enddate : $defaultendtime,
                 'rules' => array(
                     'required' => true,
@@ -190,14 +190,14 @@ $editform = array(
 			'type'         => 'select',
 			'title'        => get_string('numberoftimes', 'interaction.schedule'),
 			'options'      => $numberoptions,
-			'defaultvalue' => 0,
+			'defaultvalue' => 1,
 			'class'			=> 'hidden',
 			),
 		'howoften' => array(
 			'type'         => 'select',
 			'title'        => get_string('howoften', 'interaction.schedule'),
 			'options'      => array(1=>'Day', 2=>'Two Days',7=>'Week',31=>'Month'),
-			'defaultvalue' => 0,
+			'defaultvalue' => 7,
 			'class'			=> 'hidden',
 			),
         'submit'   => array(
