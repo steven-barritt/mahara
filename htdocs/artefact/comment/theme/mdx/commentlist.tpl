@@ -7,10 +7,10 @@
       <div class="commentleft">
       {if $item->author}
         <a href="{$item->author->profileurl}">
-            <img src="{profile_icon_url user=$item->author maxheight=40 maxwidth=40}" valign="middle" alt="{str tag=profileimagetext arg1=$item->author|display_default_name}">
+            <img src="{profile_icon_url user=$item->author maxheight=40 maxwidth=40}"  style="max-width:40px;max-height:40px;" valign="middle" alt="{str tag=profileimagetext arg1=$item->author|display_default_name}">
         </a>
       {else}
-            <img src="{profile_icon_url user=null maxheight=40 maxwidth=40}" valign="middle" alt="{str tag=profileimagetextanonymous}">
+            <img src="{profile_icon_url user=null maxheight=40 maxwidth=40}" style="max-width:40px;max-height:40px;" valign="middle" alt="{str tag=profileimagetextanonymous}">
       {/if}
       </div>
       <div class="commentrightwrap {if $item->published}published{else}unpublished{/if} {if $item->pubmessage}private{/if}">

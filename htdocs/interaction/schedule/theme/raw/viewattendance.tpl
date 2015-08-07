@@ -25,7 +25,7 @@
 	    <tr class="{cycle values='r0,r1'}">
 	    	<td>
             <a href="{profile_url($user.id)}">
-               <img src="{profile_icon_url user=$user.id maxwidth=40 maxheight=40}" alt="{str tag=profileimagetext arg1=$user.id|display_default_name}" title="{$user.id|display_default_name|escape}">
+               <img src="{profile_icon_url user=$user.id maxwidth=40 maxheight=40}"  style="max-width:40px;max-height:40px;" alt="{str tag=profileimagetext arg1=$user.id|display_default_name}" title="{$user.id|display_default_name|escape}">
             </a>
             </td>
 	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.firstname}</a></h3></td>
@@ -37,7 +37,7 @@
 	    </tr>    	
     	{/foreach}
   {else}
-    <tr class="{cycle values='r0,r1'}"><td colspan="{$totalcolcount}" class="message">{str tag=noviewssharedwithgroupyet section=group}</td></tr>
+    <tr class="{cycle values='r0,r1'}"><td colspan="40" class="message">{str tag=noevents section=interaction.schedule}</td></tr>
   {/if}
 	</table></div>
 {else}
@@ -49,7 +49,7 @@
 	<strong>{str tag="groupadminlist" section="interaction.schedule"}</strong>
 	{foreach from=$groupadmins item=groupadmin}
     <span class="inlinelist">
-        <a href="{profile_url($groupadmin)}" class="groupadmin"><img src="{profile_icon_url user=$groupadmin maxheight=20 maxwidth=20}" alt="{str tag=profileimagetext arg1=$groupadmin|display_default_name}"> {$groupadmin|display_name}</a>
+        <a href="{profile_url($groupadmin)}" class="groupadmin"><img src="{profile_icon_url user=$groupadmin maxheight=20 maxwidth=20}" style="max-width:20px;max-height:20px;" alt="{str tag=profileimagetext arg1=$groupadmin|display_default_name}"> {$groupadmin|display_name}</a>
     </span>
     {/foreach}
 </div>

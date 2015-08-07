@@ -72,8 +72,28 @@
 {/if}
                 </form>
             </div>
-				
+			<div class="templateviews"><h2>{str tag=templatepages section=view}</h2></div>
+			<ul id="groupviews" class="fullwidth">
+			{if $templates}
+				{foreach from=$templates item=view}
+					<li class=" {if $view.id == $currentviewid}selected{/if}">
+							<h5><a href="{$WWWROOT}view/groupviews.php?group={$group->id}&currentview={$view.id}">{$view.name}</a></h5>
+							{if $canedit}
+						<div class="rbuttonssml">
+						<a class="btn-big-edit btn" href="{$WWWROOT}view/blocks.php?id={$view.id}" title="{str(tag=editspecific arg1=$view.name)|escape:html|safe}">
+							<span class="accessible-hidden">{str tag=editspecific arg1=$view.name}</span>
+						</a>
+						</div>
+						{/if}
+					</li>
+				{/foreach}
+				<div class="center">{$pagination|safe}</div>
+			{else}
+				<li><h5>{str tag="noviewstosee" section="group"}</h5></li>
 			{/if}
+	
+			{/if}
+			
 		</div>
 		<div class="column-two-thirds">
 			{$viewcontent|safe}

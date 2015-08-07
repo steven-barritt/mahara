@@ -1,7 +1,7 @@
                 <ul>
                     <li>{$group->settingsdescription}</li>
                     <li><strong class="groupinfolabel">{str tag=groupadmins section=group}:</strong> {foreach name=admins from=$group->admins item=user}
-                    <img src="{profile_icon_url user=$user maxwidth=20 maxheight=20}" alt="{str tag=profileimagetext arg1=$user|display_default_name}">
+                    <img src="{profile_icon_url user=$user maxwidth=20 maxheight=20}" style="max-width:20px;max-height:20px;" alt="{str tag=profileimagetext arg1=$user|display_default_name}">
                     <a href="{profile_url($user)}">{$user|display_name}</a>{if !$.foreach.admins.last}, {/if}
                     {/foreach}</li>
                     {if $group->categorytitle}<li><strong>{str tag=groupcategory section=group}:</strong> {$group->categorytitle}</li>{/if}
