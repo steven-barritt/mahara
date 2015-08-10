@@ -76,11 +76,11 @@ class PluginArtefactBlog extends PluginArtefact {
                 'event'        => 'createuser',
                 'callfunction' => 'create_default_blog',
             ),
-            (object)array(
+/*            (object)array(
                 'plugin'       => 'blog',
                 'event'        => 'creategroup',
                 'callfunction' => 'create_default_group_blog',
-            ),
+            ),*/
         );
     }
 
@@ -116,13 +116,13 @@ class PluginArtefactBlog extends PluginArtefact {
         ));
         $blog->commit();
     }
-	public static function create_default_group_blog($event, $eventdata) {
+/*	public static function create_default_group_blog($event, $eventdata) {
         $blog = new ArtefactTypeBlog(0, (object) array(
             'title'       => get_string('defaultgroupblogtitle', 'artefact.blog'),
             'group'       => $eventdata['id'],
         ));
         $blog->commit();
-    }
+    }*/
 
 
     public static function get_artefact_type_content_types() {
