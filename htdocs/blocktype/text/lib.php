@@ -156,11 +156,16 @@ public function text_submit(Pieform $form, $values) {
         $configdata = $instance->get('configdata');
 		$view = $instance->get_view();
 		require_once('group.php');
-        if(isset($configdata['inlineediting']) && $configdata['inlineediting'] && $view->get('owner') == $userid && !$view->is_submitted()){				
-			return true;
-		}else{
-			return false;
+        if(isset($configdata['inlineediting']) && $configdata['inlineediting']){
+        	if($view->get('group')){
+				$role = group_user_access($view->get('group'));
+				return $role && group_role_can_edit_views($view->get('group'), $role);
+        	
+        	}elseif($view->get('owner') == $userid && !$view->is_submitted()){				
+				return true;
+			}
 		}
+		return false;
 	}
 
 

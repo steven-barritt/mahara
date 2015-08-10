@@ -25,7 +25,7 @@
 (function( ViewManager, $, undefined ) {    
 	function rewriteConfigureButtons() {
 		//var bottomPane = $('#bottom-pane').each();
-        $('#bottom-pane input.configurebutton').each(function() {
+        $('input.configurebutton').each(function() {
             rewriteConfigureButton($(this));
         });
     }
@@ -85,8 +85,8 @@
         var contentDiv = blockinstance.find('div.blockinstance-content');
 		var form = contentDiv.find('div.inline-form');
 		var mainContent = contentDiv.find('div.blockinstance-content-view');
-		mainContent.addClass('hidden');
-		form.removeClass('hidden');
+		mainContent.toggleClass('hidden');
+		form.toggleClass('hidden');
 	}
 
 

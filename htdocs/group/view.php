@@ -74,7 +74,7 @@ if ($group->public) {
     $headers[] = '<link rel="alternate" type="application/atom+xml" href="' . $feedlink . '">';
 }
 
-$javascript = array('paginator', 'author');
+$javascript = array('paginator', 'viewmenu', 'expandable', 'author', 'views-inline');
 $blocktype_js = $view->get_all_blocktype_javascript();
 $javascript = array_merge($javascript, $blocktype_js['jsfiles']);
 $inlinejs = "addLoadEvent( function() {\n" . join("\n", $blocktype_js['initjs']) . "\n});";
