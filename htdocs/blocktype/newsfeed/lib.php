@@ -44,41 +44,43 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
     public static function get_viewtypes() {
         return array('dashboard');
     }
+    
+    public static function get_instance_javascript() {
+        return array(
+            array(
+                'file'   => 'js/newsfeed.js',
+                'initjs' => "add_click_events();",
+            )
+        );
 
-    public static function render_instance(BlockInstance $instance, $editing=false) {
-        global $USER;
-		$usrid = $USER->get('id');
+    }
+    
+        /**
+     * This function renders a list of items as html
+     *
+     * @param array items
+     * @param string template
+     * @param array options
+     * @param array pagination
+     */
+    public function render_items(&$items, $template) {
+        $smarty = smarty_core();
+        $smarty->assign('posts', $items);
+        return $smarty->fetch($template);
+    }
+
+
+	public static function get_recent($limit=10,$offset=0){
 		require_once('view.php');
-		$configdata = $instance->get('configdata');
-
-        $result = '';
-        $limit = isset($configdata['count']) ? (int) $configdata['count'] : 10;
-
 		$views = View::view_search(null, null, null, null, null, 0, true, '', array('portfolio','grouphomepage'));
 		
 		$viewarray = array();
-//		var_dump($views->ids);
 		foreach ($views->ids as $view){
-	//		var_dump($view);
 			$viewarray[] = $view;
 		}
-//		var_dump($viewarray);
 		$mostrecent = NULL;
 		$viewsstr = implode(",",$viewarray);
-		if($viewsstr == ''){ /*we have no views available to us*/
-			$smarty = smarty_core();
-		}else{
-			$smarty = smarty_core();
-		//echo $viewsstr;
-        /*if (!empty($configdata['artefactids'])) {
-            $before = 'TRUE';
-            if ($instance->get_view()->is_submitted()) {
-                if ($submittedtime = $instance->get_view()->get('submittedtime')) {
-                    // Don't display posts added after the submitted date.
-                    $before = "a.ctime < '$submittedtime'";
-                }
-            }*/
-            //$artefactids = implode(', ', array_map('db_quote', $configdata['artefactids']));
+		if($viewsstr != ''){ /*we have views available to us*/
             if (!$mostrecent = get_records_sql_array(
             'SELECT a.title, ' . db_format_tsfield('a.ctime', 'ctime') . ', p.title AS parenttitle, a.id, a.parent, a.description, a.owner,a.author, va.view, a.allowcomments
                 FROM {artefact} a
@@ -89,7 +91,7 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
                 AND va.view IN (' . $viewsstr . ')
 				
 	            ORDER BY a.ctime DESC, a.id DESC
-                LIMIT ' . $limit,array())) {
+                LIMIT ' . $limit.' OFFSET '.$offset,array())) {
                 $mostrecent = array();
 				/*AND a.owner != ?  ,array($usrid) excludes your own posts but this doesn;t seem right somehow*/
             }
@@ -115,50 +117,27 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
 
             }
 		}
-			//var_dump($mostrecent);
-            // format the dates
+		return $mostrecent;
 
-			$smarty->assign('loggedin', $USER->is_logged_in());
-			$smarty->assign('view', $instance->get('view'));
-			$smarty->assign('posts', $mostrecent);
-			return $smarty->fetch('blocktype:newsfeed:newsfeed.tpl');
+	}
 
 
-/*
-            $smarty = smarty_core();
+    public static function render_instance(BlockInstance $instance, $editing=false) {
+        global $USER;
+		$usrid = $USER->get('id');
+		require_once('view.php');
+		$configdata = $instance->get('configdata');
 
+        $result = '';
+        $limit = isset($configdata['count']) ? (int) $configdata['count'] : 10;
+//		$mostrecent = self::get_recent($limit);
+//		$posthtml = self::render_items($mostrecent,'blocktype:newsfeed:newsfeeditems.tpl');
+		$posthtml = '';
+		$smarty = smarty_core();
+		$smarty->assign('posthtml', $posthtml);
+//		$smarty->assign('INLINEJAVASCRIPT', $javascript);
+		return $smarty->fetch('blocktype:newsfeed:newsfeed.tpl');
 
-
-            $smarty->assign('mostrecent', $mostrecent);
-            $smarty->assign('view', $instance->get('view'));
-            $smarty->assign('blockid', $instance->get('id'));
-            $smarty->assign('editing', $editing);
-            if ($editing) {
-                // Get id and title of configued blogs
-                $recentpostconfigdata = $instance->get('configdata');
-                $wherestm = ' WHERE id IN (' . join(',', array_fill(0, count($recentpostconfigdata['artefactids']), '?')) . ')';
-                if (!$selectedblogs = get_records_sql_array('SELECT id, title FROM {artefact}'. $wherestm, $recentpostconfigdata['artefactids'])) {
-                    $selectedblogs = array();
-                }
-                $smarty->assign('blogs', $selectedblogs);
-            }
-            $result = $smarty->fetch('blocktype:recentposts:recentposts.tpl');
-       // }
-
-        return $result;
-		
-		
-		
-        require_once('view.php');
-        $configdata = $instance->get('configdata');
-        $nviews = isset($configdata['limit']) ? intval($configdata['limit']) : 5;
-
-        $sort = array(array('column' => 'mtime', 'desc' => true));
-        $views = View::view_search(null, null, null, null, $nviews, 0, true, $sort, array('portfolio'));
-        $smarty = smarty_core();
-        $smarty->assign('loggedin', $USER->is_logged_in());
-        $smarty->assign('posts', $mostrecent);
-        return $smarty->fetch('blocktype:newsfeed:newsfeed.tpl');*/
     }
 
     public static function has_instance_config() {

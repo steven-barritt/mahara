@@ -32,3 +32,5 @@ $string['description1'] = 'Show all activity from friends and groups like facebo
 $string['viewstoshow'] = 'Maximum number of pages to show';
 $string['viewstoshowdescription'] = 'Between 1 and 100';
 $string['defaulttitledescription'] = 'A default title will be generated if you leave the title field blank';
+$string['showmore'] = 'Show More...';
+$string['loading'] = 'Loading More...';

@@ -1,6 +1,4 @@
 {if $posts}
-<div id="postlist" class="postlist">
-    <ul class="recentblogpost">
     {foreach from=$posts item=post}
         <li>
 
@@ -46,8 +44,4 @@
     <hr />
     
     {/foreach}
-    </ul>
-</div>
-{else}
-  {str tag=noviews section=view}
 {/if}
