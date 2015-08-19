@@ -1,0 +1,82 @@
+/**
+ * CSS rules for the mdxevaluation plugin
+ *
+ * @author     Catalyst IT Ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
+ * @copyright  For copyright information on Mahara, please see the README file distributed with this software.
+
+ * This file is distributed under the same terms as Mahara itself
+ */
+ 
+.mdxevaluation.unpublished{
+	color:#ddd;
+}
+.mdxevaluation td{
+	text-align:center;
+}
+.mdxevaluation td.first_col{
+	text-align:right;
+	color:#666;
+}
+.mdxselfmark{
+	border:solid 1px;
+	padding:5px;
+	display:inline;
+	font-size:1.5em;
+
+	line-height:1.5em;
+}
+.mdxevaluation{
+	width:100%;
+	max-width:400px;
+}
+.selfgrade{
+	font-size:1.3em;
+}
+
+div[id*="mdxevaluation"]{
+	width:350px;
+}
+
+tr[id*="selfmark_container"] .radio label{
+	margin-right:10px;
+}
+
+tr[id*="selfmark_container"] div.radio{
+	display:table-cell;
+	width:45px;
+}
+
+
+@media screen and (max-width: 780px) {
+
+	.mdxevaluation{
+		margin-bottom:5px;
+	}
+	.mdxselfmark{
+		border:solid 1px;
+		padding:5px;
+		display:inline;
+		font-size:1.2em;
+		line-height:1.2em;
+	}
+}
+/*this size screen still has two columns but they ar very narrow so shrink the text*/
+@media screen and (max-width: 680px) {
+    .mdxevaluation{
+		font-size:.8em;
+	}
+}
+/*after that it goes to one column so make the text bigger again;*/
+@media screen and (max-width: 600px) {
+    .mdxevaluation{
+		font-size:1em;
+	}
+}
+@media screen and (max-width: 360px) {
+    .mdxevaluation{
+		font-size:.9em;
+	}
+
+}
+
