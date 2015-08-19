@@ -431,3 +431,14 @@ td.attendancecol{
 }
 .attendancecol{
 }
+
+@media screen and (max-width: 360px) {
+    .attendanceColumnHeadVertical{
+		font-size:.8em;
+		padding:0;
+	}
+	#attendancelist td{
+		max-width:30px;
+	}
+
+}
