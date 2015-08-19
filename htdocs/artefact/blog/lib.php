@@ -228,6 +228,7 @@ class ArtefactTypeBlog extends ArtefactType {
      * @return array  A two key array, 'html' and 'javascript'.
      */
     public function render_self($options) {
+    	global $USER;
         if (!isset($options['limit'])) {
             $limit = self::pagination;
         }
@@ -283,6 +284,12 @@ class ArtefactTypeBlog extends ArtefactType {
         $smarty->assign('description', $this->get('description'));
         $smarty->assign('owner', $this->get('owner'));
         $smarty->assign('tags', $this->get('tags'));
+        $smarty->assign_by_ref('blog', $this);
+		if($this->get('group')){
+			$smarty->assign('isowner',group_user_can_edit_views($this->get('group')));
+		}else{
+			$smarty->assign('isowner',$USER->get('id') == $this->get('owner'));
+		}
 
         $smarty->assign_by_ref('posts', $posts);
 
@@ -870,6 +877,55 @@ class ArtefactTypeBlogPost extends ArtefactType {
 
         return $post;
     }
+    
+    
+    public static function extract_shortdescription($post){
+		//need to find the first bit of plain text so
+		//strip out any tags and just leave the text
+		// then cut the furst 150 characters to the nearest space
+		//then add read more link to take to full post
+		$notags = strip_tags($post);
+		$maxlen = strlen($notags);
+		if($maxlen > 400){
+			$maxlen = 400;
+			$notags = substr($notags,0,strpos($notags, ' ', $maxlen));
+			if($notags != ''){
+				$notags .= '...';
+			}
+		}
+		return $notags;
+	}
+
+
+	public static function extract_images($post){
+		//find the <img tags in the text
+		//for each <img tag get the src
+		//for each src find the file ID
+		//get the width and height of the image
+		// figure out if it is landscape or portrait
+		//save the img as an array with the file source and its orientation
+		//we could also add other stuff like alt text if necessary
+		libxml_use_internal_errors(true);
+		$dom = new DOMDocument();
+
+		$imgs = array();
+//		var_dump($post);
+		$dom->loadHTML($post);
+
+		foreach($dom->getElementsByTagName('img') as $node)
+		{
+			$alt = '';
+			if($node->attributes->getNamedItem("alt")){
+				$alt = $node->attributes->getNamedItem("alt")->nodeValue;
+			}
+			$imgs[] = array('src' => $node->attributes->getNamedItem("src")->nodeValue, 
+							'alt' => $alt, 
+							'class' => 'portrait');
+		}
+		libxml_clear_errors();
+		return $imgs;		
+	}
+
 
     /**
      * This function returns a list of posts in a given blog.
@@ -879,7 +935,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
      * @param integer
      * @param array
      */
-    public static function get_posts($id, $limit, $offset, $viewoptions=null) {
+    public static function get_posts($id, $limit, $offset, $viewoptions=null, $order='DESC', $shortpost=false) {
 
         $results = array(
             'limit'  => $limit,
@@ -967,6 +1023,13 @@ class ArtefactTypeBlogPost extends ArtefactType {
             if (!empty($viewoptions['viewid'])) {
                 safe_require('artefact', 'file');
                 $post->description = ArtefactTypeFolder::append_view_url($post->description, $viewoptions['viewid']);
+            }
+            $post->description = str_replace('<a', '<a target="_blank" ', $post->description);
+
+            if($shortpost){
+            	$post->shortdesc = self::extract_shortdescription($post->description);
+            	$post->images = self::extract_images($post->description);
+            	$post->imagecount = count($post->images);
             }
         }
 

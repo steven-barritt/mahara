@@ -1758,18 +1758,37 @@ font-size:1em;
 
 .postlist{
 width:100%;
-max-width:500px;
+}
+.grid-sizer{
+	width:33.3%;
 }
 .postlist .viewpost{
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
 	background-color:#F4F7FF;
-	padding:10px;
-	width:95%;
-	max-width:500px;
+	padding:0px;
+	width:32.5%;
+	margin-bottom:10px;
+	cursor:zoom-in;
+	cursor:-webkit-zoom-in;
+	cursor:-moz-zoom-in;
 
 }
+.viewpost .post_inner{
+	padding:10px;
+}
+
+.expand{
+	background:#F4F7FF;
+	color:#999;
+	font-weight:normal;
+}
+.expand:hover{
+	background:#F4F7FF;
+	color:#333;
+}
+
 
 #blogpost{
 	-webkit-border-radius: 10px;
@@ -1874,57 +1893,81 @@ overflow:auto;
 }
 
 .thumbrow_2{
-	display:inline-block;
+	display:block;
 }
 
-.thumbrow_1 div{
+.thumbrow_1 .thumb{
 	display:inline-block;
-	width:300px;
+	width:100%;
 	overflow:hidden;
-    max-height: 300px;
     text-align: center;  /* align the inline(-block) elements horizontally */
-	
+	margin-bottom:3px;
 }
 .thumbrow_1 img{
 width:100%;
 }
 
 
-.thumbrow_2 div{
+.thumbrow_2 .thumb{
+background-size: cover; 
+background-position: center center;;
 	display:inline-block;
-	width:150px;
+/*	width:170px;*/
 	overflow:hidden;
-    height: 150px;
+/*    height: 170px;*/
     text-align: center;  /* align the inline(-block) elements horizontally */
+	width:49%;
+  box-sizing: border-box;	
+	padding-top:49%;
+	height:auto;
 	
 }
-.thumbrow_3 div{
-	display:inline-block;
-	width:100px;
+.thumbrow_3 .thumb{
+background-size: cover; 
+background-position: center center;;
+display:inline-block;
+	position:relative;
+/*	width:112px;*/
 	overflow:hidden;
-    height: 100px;
+/*    height: 112px;*/
     text-align: center;  /* align the inline(-block) elements horizontally */
+  box-sizing: border-box;	
+	width: 32%;
+	padding-top:32%;
+	height:auto;
 	
+}
+.countthumb{
+	position:absolute;
+	background:#aaa;
+	top:0px;
+	left0px;
+	width:112px;
+	height:112px;
+	font-size:3em;
+	line-height:112px;
+	color:#000;
+	opacity:.6;
+	text-align:center;
+	vertical-align:middle;
 }
 
-.thumbrow_2 img.portrait{
-	max-width:100%;
-	margin-top:-25%;
+
+
+.countthumb a, 
+.countthumb a:hover, 
+.countthumb a:link, 
+.countthumb a:visited, 
+.countthumb a:active{
+	color:#000;
+	text-decoration:none;
 }
-.thumbrow_2 img.landscape{
-	max-width:1500px;
-	max-height:100%;
-	margin-left:-25%;
+
+.thumbrow_1 a, .thumbrow_2 a, .thumbrow_3 a{
+	display:block;
+	height:100%;
 }
-.thumbrow_3 img.portrait{
-	max-width:100%;
-	margin-top:-25%;
-}
-.thumbrow_3 img.landscape{
-	max-width:1500px;
-	max-height:100%;
-	margin-left:-25%;
-}
+
 
 .listing ul.groupuserstatus{
 	width:auto;
@@ -2567,47 +2610,14 @@ a.persona-button:before {
 }
 
 /*SB*/
-.mdxevaluation.unpublished{
-	color:#ddd;
-}
-.mdxevaluation td{
-	text-align:center;
-}
-.mdxevaluation td.first_col{
-	text-align:right;
-	color:#666;
-}
-.mdxselfmark{
-		border:solid 1px;
-		padding:5px;
-		display:inline;
-font-size:1.5em;
-
-line-height:1.5em;
-}
-.selfgrade{
-	font-size:1.3em;
-}
 
 
 .block_instance_blog{
 width:100%;
-max-height:800px;
+/*max-height:800px;*/
 overflow:auto;	
 }
 
-div[id*="mdxevaluation"]{
-	width:350px;
-}
-
-tr[id*="selfmark_container"] .radio label{
-	margin-right:10px;
-}
-
-tr[id*="selfmark_container"] div.radio{
-	display:table-cell;
-	width:45px;
-}
 
 #feedbacktable .commentrightwrap.private{
 	background-color:#f9f9f9;
@@ -2756,6 +2766,121 @@ tr.r1 td.absent{
 	background: #ce9797;
 }
 
+.featherlight {
+	display: none;
+
+	/* dimensions: spanning the background from edge to edge */
+	position:fixed;
+	top: 0; right: 0; bottom: 0; left: 0;
+	z-index: 2147483647; /* z-index needs to be >= elements on the site. */
+
+	/* position: centering content */
+	text-align: center;
+
+	/* insures that the ::before pseudo element doesn't force wrap with fixed width content; */
+	white-space: nowrap;
+
+	/* styling */
+	cursor: pointer;
+	background: #333;
+	/* IE8 "hack" for nested featherlights */
+	background: rgba(0, 0, 0, 0);
+}
+
+/* support for nested featherlights. Does not work in IE8 (use JS to fix) */
+.featherlight:last-of-type {
+	background: rgba(0, 0, 0, 0.8);
+}
+
+.featherlight:before {
+	/* position: trick to center content vertically */
+	content: '';
+	display: inline-block;
+	height: 80%;
+	vertical-align: middle;
+	margin-right: -0.25em;
+}
+
+.featherlight .featherlight-content {
+	/* make content container for positioned elements (close button) */
+	position: relative;
+
+	/* position: centering vertical and horizontal */
+	text-align: left;
+	vertical-align: middle;
+	display: inline-block;
+
+	/* dimensions: cut off images */
+	overflow: auto;
+	padding: 25px 25px 0;
+	border-bottom: 25px solid transparent;
+
+	/* dimensions: handling small or empty content */
+	min-width:  30%;
+	max-width:500px;
+	/* dimensions: handling large content */
+	margin-left: 5%;
+	margin-right: 5%;
+	max-height: 90%;
+
+	/* styling */
+	background: #F4F7FF;
+	cursor: auto;
+
+	/* reset white-space wrapping */
+	white-space: normal;
+}
+
+/* contains the content */
+.featherlight .featherlight-inner {
+	/* make sure its visible */
+	display: block;
+}
+
+.featherlight .featherlight-close-icon {
+	/* position: centering vertical and horizontal */
+	position: fixed;
+	z-index: 9999;
+	top: 0;
+	right: 0;
+
+	/* dimensions: 25px x 25px */
+	line-height: 35px;
+	width: 35px;
+
+	/* styling */
+	cursor: pointer;
+	text-align: center;
+	font: Arial, sans-serif;
+	background: #fff; /* Set the background in case it overlaps the content */
+	background: rgba(255, 255, 255, 0.3);
+	color: #000;
+	font-size:2em;
+}
+
+
+.featherlight .featherlight-image {
+	/* styling */
+	width: 100%;
+}
+.featherlight img {
+	/* styling */
+	max-width: 100%;
+}
+
+
+.featherlight-iframe .featherlight-content {
+	/* removed the border for image croping since iframe is edge to edge */
+	border-bottom: 0;
+	padding: 0;
+}
+
+.featherlight iframe {
+	/* styling */
+	border: none;
+}
+
+
 /******************** Responsive design ********************/
 /* for 1000px or less */
 @media screen and (max-width: 1000px) {
@@ -2787,6 +2912,7 @@ tr.r1 td.absent{
     }
     #left-column,
     #right-column {
+    	display:none;
         float: none;
         width: 100%;
         margin-right: 0;
@@ -2913,6 +3039,13 @@ tr.r1 td.absent{
     .home-info-box {
         height: 70px;
     }
+	.grid-sizer{
+		width:50%;
+	}
+	.postlist .viewpost{
+		width:49%;
+	}
+
 }
 
 /* for 660px or less */
@@ -2944,6 +3077,10 @@ tr.r1 td.absent{
 
 /* for 600px or less */
 @media screen and (max-width: 600px) {
+#column-container{
+	padding-left:3px;
+	padding-right:3px;
+}
     /* Form */
     .textarea .resizable-textarea,
     select#profileform_country,
@@ -3770,6 +3907,16 @@ tr.r1 td.absent{
     #results_sort {
         float: none;
     }
+    .grid-sizer{
+		width:100%;
+	}
+	.postlist .viewpost{
+		width:100%;
+	}
+	.viewpost .post_inner{
+		padding:5px;
+	}
+
 }
 
 /* for 480px or less */
@@ -3790,6 +3937,15 @@ tr.r1 td.absent{
     min-height: 0;  /* IE layout hack */
     padding: 10px 5px 20px 5px;
 }
+    .postlist .viewpost{
+    width:100%;
+    }
+    .featherlight .featherlight-content{
+    	padding:5px 5px 0;
+    }
+	.featherlight .featherlight-inner {
+		max-width:100%;
+	}
 
 }
 
@@ -3831,6 +3987,7 @@ tr.r1 td.absent{
     td.btns2 a:last-child {
         margin-bottom: 0;
     }
+
 }
 
 /* for 360px or less */
@@ -3842,4 +3999,5 @@ tr.r1 td.absent{
     #footer {
         min-width: 300px;
     }
+
 }

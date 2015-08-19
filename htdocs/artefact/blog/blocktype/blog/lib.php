@@ -37,6 +37,24 @@ class PluginBlocktypeBlog extends PluginBlocktype {
     public static function get_categories() {
         return array('blog');
     }
+    
+    public static function get_instance_javascript() {
+        return array(
+            array(
+                'file'   => '../../../../js/masonry.pkgd.min.js',
+            ),
+            array(
+                'file'   => '../../../../js/imagesloaded.pkgd.min.js',
+            ),
+            array(
+                'file'   => '../../../../js/featherlight.min.js',
+            ),
+            array(
+                'file'   => 'js/blog.js',
+            )
+        );
+
+    }
 
     public static function render_instance(BlockInstance $instance, $editing=false) {
         global $exporter, $USER;
@@ -57,7 +75,7 @@ class PluginBlocktypeBlog extends PluginBlocktype {
             }*/
 
             $limit = isset($configdata['count']) ? intval($configdata['count']) : 5;
-            $posts = ArtefactTypeBlogpost::get_posts($blog->get('id'), $limit, 0, $configdata);
+            $posts = ArtefactTypeBlogpost::get_posts($blog->get('id'), $limit, 0, $configdata,'DESC',true);
             $template = 'artefact:blog:viewposts.tpl';
             if ($exporter) {
                 $pagination = false;
@@ -72,7 +90,7 @@ class PluginBlocktypeBlog extends PluginBlocktype {
                     'jsonscript' => 'artefact/blog/posts.json.php',
                 );
             }
-            ArtefactTypeBlogpost::render_posts($posts, $template, $configdata, $pagination);
+            ArtefactTypeBlogpost::render_posts($posts, $template, $configdata, false);
 
             $smarty = smarty_core();
             if (isset($configdata['viewid'])) {
@@ -101,7 +119,7 @@ class PluginBlocktypeBlog extends PluginBlocktype {
 			}else{
 				$smarty->assign('isowner',$USER->get('id') == $blog->get('owner'));
 			}
-            $smarty->assign('posts', $posts);
+            //$smarty->assign('posts', $posts);
 
             $result = $smarty->fetch('artefact:blog:blog.tpl');
         }

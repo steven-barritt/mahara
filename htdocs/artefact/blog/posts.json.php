@@ -19,6 +19,7 @@ require_once(get_config('docroot') . 'blocktype/lib.php');
 require_once(get_config('docroot') . 'artefact/blog/blocktype/blog/lib.php');
 
 $offset = param_integer('offset', 0);
+$limit = param_integer('limit',10);
 
 if ($blockid = param_integer('block', null)) {
     $bi = new BlockInstance($blockid);
@@ -26,10 +27,13 @@ if ($blockid = param_integer('block', null)) {
         json_reply(true, get_string('accessdenied', 'error'));
     }
     $configdata = $bi->get('configdata');
-    $limit  = isset($configdata['count']) ? $configdata['count'] : 5;
+    if(!isset($limit)){
+	    $limit  = isset($configdata['count']) ? $configdata['count'] : 5;
+    }
     $configdata['countcomments'] = true;
     $configdata['viewid'] = $bi->get('view');
-    $posts = ArtefactTypeBlogpost::get_posts($configdata['artefactid'], $limit, $offset, $configdata);
+    $posts = ArtefactTypeBlogpost::get_posts($configdata['artefactid'], $limit, $offset, $configdata,'DESC',true);
+//    error_log(serialize($posts));
     $template = 'artefact:blog:viewposts.tpl';
     $baseurl = $bi->get_view()->get_url();
     $baseurl .= (strpos($baseurl, '?') === false ? '?' : '&') . 'block=' . $blockid;
@@ -39,7 +43,7 @@ if ($blockid = param_integer('block', null)) {
         'datatable' => 'postlist_' . $blockid,
         'jsonscript' => 'artefact/blog/posts.json.php',
     );
-    ArtefactTypeBlogpost::render_posts($posts, $template, $configdata, $pagination);
+    ArtefactTypeBlogpost::render_posts($posts, $template, $configdata, false);
 }
 else {
     // No block, we're just rendering the blog by itself.

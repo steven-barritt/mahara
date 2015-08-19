@@ -162,3 +162,7 @@ $string['shortcutgo'] = 'Go';
 $string['shortcutnewentry'] = 'New entry';
 $string['myblogs'] = 'My Workbooks';
 $string['groupblogs'] = 'Group Workbooks';
+
+$string['loading'] = 'Loading more entries...';
+$string['loaded'] = 'All %s entries loaded';
+
