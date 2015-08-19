@@ -21,7 +21,6 @@ $offset = param_integer('offset', 0);
 
 $mostrecent = PluginBlocktypeNewsFeed::get_recent($limit,$offset);
 $posthtml = PluginBlocktypeNewsFeed::render_items($mostrecent,'blocktype:newsfeed:newsfeeditems.tpl');
-error_log($posthtml);
 
 $data['error'] = false;
 $data['data'] = $posthtml;
