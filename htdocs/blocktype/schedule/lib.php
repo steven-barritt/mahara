@@ -79,7 +79,9 @@ class PluginBlocktypeSchedule extends SystemBlocktype {
 		}
 		if ($role || $public) {
 			$schedules = get_schedule_list($group->id);
-			$events = get_schedule_events($schedules[0]);
+			if($schedules){
+				$events = get_schedule_events($schedules[0]);
+			}
 		}
 		$limit = 14;
 		$configdata = $instance->get('configdata');

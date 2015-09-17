@@ -117,13 +117,13 @@ $smarty = smarty(array(), array(), array(),array());
 $smarty->assign('events', $events);
 $smarty->assign('view',$view);
 if($view == 2){
-	$weeksanddays = schedule_events_per_cal_day($events, $groupid,$month,$year);
+	$weeksanddays = schedule_events_per_cal_day($events, null,$month,$year);
 	$smarty->assign('weeksanddays',$weeksanddays);
 	$smarty->assign('month',$month);
 	$smarty->assign('year',$year);
 	$table = $smarty->fetch('interaction:schedule:calendarview.tpl');
 }elseif($view == 1){
-	$weeksanddays = schedule_events_per_day($events,$groupid, $mindate->getTimestamp());
+	$weeksanddays = schedule_events_per_day($events,null, $mindate->getTimestamp());
 	$smarty->assign('weeksanddays',$weeksanddays);
 	$table = $smarty->fetch('interaction:schedule:yearplannerview.tpl');
 }else{

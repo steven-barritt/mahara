@@ -661,6 +661,23 @@ define('DELETE_OBJECTIONABLE_TOPIC', 4);
 */
 class PluginInteractionSchedule extends PluginInteraction {
 
+	private static function get_nearestparent_color($group){
+		$parent = group_get_parent($group);
+		if($parent){
+			$schedules = get_schedule_list($parent);
+			if($schedules){
+				$parentconfig = get_records_assoc('interaction_schedule_instance_config', 'schedule', $schedules[0]->id, '', 'field,value');
+				if(isset($parentconfig['color'])){
+					return $parentconfig['color'];
+				}
+			}
+			else{
+				return self::get_nearestparent_color($parent);
+			}
+		}	
+	}
+
+
     public static function instance_config_form($group, $instance=null) {
         if (isset($instance)) {
             $instanceconfig = get_records_assoc('interaction_schedule_instance_config', 'schedule', $instance->get('id'), '', 'field,value');
@@ -668,14 +685,15 @@ class PluginInteractionSchedule extends PluginInteraction {
 //        var_dump($instanceconfig['attendance']->value);
 		//find group parent colour
 		if(!isset($instanceconfig['color'])){
-			$parent = group_get_parent($group->id);
+			$instanceconfig['color'] = self::get_nearestparent_color($group->id);
+/*			$parent = group_get_parent($group->id);
 			if($parent){
 				$schedules = get_schedule_list($parent);
 				if($schedules){
 					$parentconfig = get_records_assoc('interaction_schedule_instance_config', 'schedule', $schedules[0]->id, '', 'field,value');
 					$instanceconfig['color'] = $parentconfig['color'];
 				}
-			}
+			}*/
 		}
 		
         return array(

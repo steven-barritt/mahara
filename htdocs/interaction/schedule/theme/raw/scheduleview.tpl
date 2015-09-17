@@ -12,7 +12,7 @@
 			</td>
 				<td class="event_time">			
 					{$event->startdate|format_date:'strftimetime'}{if $event->enddate != $event->startdate} - {if $event->longerthanaday}
-						{$event->enddate|format_date:'strftimedaydatetime'}
+						{$event->enddate|format_date:'strftimedayvshorttime'}
 						{else}
 						{$event->enddate|format_date:'strftimetime'}
 						{/if}

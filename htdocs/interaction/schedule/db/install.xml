@@ -21,10 +21,8 @@
                 <FIELD NAME="schedule" TYPE="int" NOTNULL="true" />
                 <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="false" />
                 <FIELD NAME="description" TYPE="text" NOTNULL="true" />
-                <FIELD NAME="startdate" TYPE="date" NOTNULL="true" />
-                <FIELD NAME="starttime" TYPE="time" NOTNULL="false" />
-                <FIELD NAME="enddate" TYPE="date" NOTNULL="true" />
-                <FIELD NAME="endtime" TYPE="time" NOTNULL="false" />
+                <FIELD NAME="startdate" TYPE="datetime" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="enddate" TYPE="datetime" LENGTH="10" NOTNULL="true" />
                 <FIELD NAME="attendance" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" />
                 <FIELD NAME="location" TYPE="char" LENGTH="255" NOTNULL="false" />                
                 <FIELD NAME="ctime" TYPE="datetime" NOTNULL="true" />                
