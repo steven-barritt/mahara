@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
-        <TABLE NAME="interaction_schedule_instance_config">
+        <TABLE NAME="group_hierarchy">
             <FIELDS>
                 <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="true" />
                 <FIELD NAME="child" TYPE="int" LENGTH="10" NOTNULL="true" />
