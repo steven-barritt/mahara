@@ -37,6 +37,13 @@ if (!$membership && !$group->public) {
     throw new GroupAccessDeniedException(get_string('cantviewforums', 'interaction.schedul'));
 }
 
+global $USER;
+$role = group_user_access($group->id);
+if(!group_role_can_moderate_views($group->id, $role)){
+    throw new GroupAccessDeniedException(get_string('cantviewattendance', 'interaction.schedule'));
+}
+
+
 define('TITLE', $group->name . ' - ' . get_string('nameplural', 'interaction.schedule'));
 
 $attendance = param_integer('attendance',null);

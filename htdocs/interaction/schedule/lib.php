@@ -619,20 +619,36 @@ function schedule_get_event_attendance($eventid, $userid){
 }
 
 function schedule_update_attendance($eventid, $userid, $attendance, $excuse=null, $attachment=null){
-	db_begin();
-		delete_records_sql(
-			"DELETE FROM {interaction_schedule_attendance}
-			WHERE event = ? AND user = ?",
-			array($eventid,$userid)
-		);
-		insert_record('interaction_schedule_attendance', (object)array(
-			'event' => $eventid,
-			'user' => $userid,
-			'attendance' => $attendance,
-			'excuse' => $excuse,
-			'attachment' => $attachment,
-		));
-    db_commit();
+	//TODO: Some sort of security check in here. Anyone might be able to hack the json script and change their attendance.
+/*	global $USER, $group;
+	$role = group_user_access($group->id);
+	if(!group_role_can_moderate_views($group->id, $role)){
+		throw new GroupAccessDeniedException(get_string('cantviewattendance', 'interaction.schedule'));
+	}*/
+	
+	if ($data = get_record('interaction_schedule_event','id',$eventid)) {
+		if($schedule = get_record('interaction_instance','id',$data->schedule)){
+			global $USER, $group;
+			$role = group_user_access($schedule->group);
+			if(!group_role_can_moderate_views($schedule->group, $role)){
+				throw new GroupAccessDeniedException(get_string('cantviewattendance', 'interaction.schedule'));
+			}
+			db_begin();
+				delete_records_sql(
+					"DELETE FROM {interaction_schedule_attendance}
+					WHERE event = ? AND user = ?",
+					array($eventid,$userid)
+				);
+				insert_record('interaction_schedule_attendance', (object)array(
+					'event' => $eventid,
+					'user' => $userid,
+					'attendance' => $attendance,
+					'excuse' => $excuse,
+					'attachment' => $attachment,
+				));
+			db_commit();
+		}
+	}
 	
 }
 

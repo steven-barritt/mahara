@@ -55,7 +55,7 @@
 	<strong>{str tag="groupadminlist" section="interaction.schedule"}</strong>
 	{foreach from=$groupadmins item=groupadmin}
     <span class="inlinelist">
-        <a href="{profile_url($groupadmin)}" class="groupadmin"><img src="{profile_icon_url user=$groupadmin maxheight=20 maxwidth=20}" alt="{str tag=profileimagetext arg1=$groupadmin|display_default_name}"> {$groupadmin|display_name}</a>
+        <a href="{profile_url($groupadmin)}" class="groupadmin"><img src="{profile_icon_url user=$groupadmin maxheight=20 maxwidth=20}" alt="{str tag=profileimagetext arg1=$groupadmin|display_default_name}" style="max-width:20px"> {$groupadmin|display_name}</a>
     </span>
     {/foreach}
 </div>
