@@ -334,20 +334,6 @@ AND supertree.descendant = 'B';
 */
 }
 
-/*
-Designed to be trun only once to add heirarchies into the database
-it shoud be done with a clever sql statement but I don;t know how...
-*/
-function group_insertall_hierarchies(){
-	$groups = get_records_sql_array("
-				SELECT g.id, g.name, g.parent
-				FROM {group} g WHERE g.deleted = 0 ORDER BY g.parent
-				",array());
-
-	foreach($groups as $group){
-		group_add_hierarchy($group->parent,$group->id);
-	}
-}
 
 // Functions for creation/deletion of groups, and adding/removing users to groups
 
