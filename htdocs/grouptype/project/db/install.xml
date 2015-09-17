@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="lib/db" VERSION="20060926" COMMENT="XMLDB file for core Mahara tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <TABLE NAME="interaction_schedule_instance_config">
+            <FIELDS>
+                <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="child" TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="depth" TYPE="int" LENGTH="10" NOTNULL="true" />
+            </FIELDS>
+            <KEYS>
+	            <KEY NAME="heirarchypk" TYPE="primary" FIELDS="parent,child" />
+                <KEY NAME="group_parent" TYPE="foreign" FIELDS="parent" REFTABLE="group" REFFIELDS="id" />
+                <KEY NAME="group_parent" TYPE="foreign" FIELDS="child" REFTABLE="group" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+    </TABLES>
+</XMLDB>
