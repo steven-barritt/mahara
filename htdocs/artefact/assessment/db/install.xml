@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="lib/db" VERSION="20060926" COMMENT="XMLDB file for core Mahara tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <TABLE NAME="artefact_assessment_grade_type">
+            <FIELDS>
+	            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key"/>
+	            <FIELD NAME="title" TYPE="text" NOTNULL="false" />
+	            <FIELD NAME="description" TYPE="text" NOTNULL="false" />
+            </FIELDS>
+            <KEYS>
+	            <KEY NAME="gradetypepk" TYPE="primary" FIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_assessment_grade_level">
+            <FIELDS>
+	            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key"/>
+	            <FIELD NAME="grade_type" TYPE="int" LENGTH="10" NOTNULL="true"/>
+	            <FIELD NAME="title" TYPE="text" NOTNULL="false" />
+	            <FIELD NAME="description" TYPE="text" NOTNULL="false" />
+                <FIELD NAME="min_percent" TYPE="float" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="max_percent" TYPE="float" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="mean_percent" TYPE="float" NOTNULL="true" DEFAULT="0"/>
+            </FIELDS>
+            <KEYS>
+	            <KEY NAME="gradelevelpk" TYPE="primary" FIELDS="id" />
+                <KEY NAME="gradetypefk" TYPE="foreign" FIELDS="grade_type" REFTABLE="artefact_assessment_grade_type" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+
+        <TABLE NAME="artefact_assessment_scheme">
+            <FIELDS>
+	            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key"/>
+	            <FIELD NAME="institution" TYPE="int" LENGTH="10" NOTNULL="true"/>
+	            <FIELD NAME="title" TYPE="text" NOTNULL="false" />
+	            <FIELD NAME="description" TYPE="text" NOTNULL="false" />
+            </FIELDS>
+            <KEYS>
+	            <KEY NAME="assessmentschemepk" TYPE="primary" FIELDS="id" />
+                <KEY NAME="institutionfk" TYPE="foreign" FIELDS="institution" REFTABLE="institution" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_assessment_criteria_group">
+            <FIELDS>
+	            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key"/>
+	            <FIELD NAME="title" TYPE="text" NOTNULL="false" />
+	            <FIELD NAME="description" TYPE="text" NOTNULL="false" />
+            </FIELDS>
+            <KEYS>
+	            <KEY NAME="assessmentcriteragrouppk" TYPE="primary" FIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_assessment_criteria">
+            <FIELDS>
+	            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key"/>
+	            <FIELD NAME="scheme" TYPE="int" LENGTH="10" NOTNULL="true"/>
+	            <FIELD NAME="criteria_group" TYPE="int" LENGTH="10" NOTNULL="false"/>
+	            <FIELD NAME="grade_type" TYPE="int" LENGTH="10" NOTNULL="true"/>
+	            <FIELD NAME="title" TYPE="text" NOTNULL="false" />
+	            <FIELD NAME="description" TYPE="text" NOTNULL="false" />
+	            <FIELD NAME="order" TYPE="int" LENGTH="10" NOTNULL="false"/>
+            </FIELDS>
+            <KEYS>
+	            <KEY NAME="assessmentcriterapk" TYPE="primary" FIELDS="id" />
+                <KEY NAME="assessmentschemefk" TYPE="foreign" FIELDS="scheme" REFTABLE="artefact_assessment_scheme" REFFIELDS="id" />
+                <KEY NAME="assessmentgroupfk" TYPE="foreign" FIELDS="criteria_group" REFTABLE="artefact_assessment_criteria_group" REFFIELDS="id" />
+                <KEY NAME="gradetypefk" TYPE="foreign" FIELDS="grade_type" REFTABLE="artefact_assessment_grade_type" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="artefact_assessment_rubric_level">
+            <FIELDS>
+	            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary Key"/>
+	            <FIELD NAME="criteria" TYPE="int" LENGTH="10" NOTNULL="true"/>
+	            <FIELD NAME="title" TYPE="text" NOTNULL="false" />
+	            <FIELD NAME="description" TYPE="text" NOTNULL="false" />
+                <FIELD NAME="min_percent" TYPE="float"  NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="max_percent" TYPE="float"  NOTNULL="true" DEFAULT="0"/>
+            </FIELDS>
+            <KEYS>
+	            <KEY NAME="assessmentrubriclevelpk" TYPE="primary" FIELDS="id" />
+                <KEY NAME="assessmentcriteriafk" TYPE="foreign" FIELDS="criteria" REFTABLE="artefact_assessment_criteria" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+
+
+        
+        <TABLE NAME="artefact_assessment">
+            <FIELDS>
+                <FIELD NAME="assessment" TYPE="int" NOTNULL="true" />
+                <FIELD NAME="grade" TYPE="float" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="published" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="true" />
+                <FIELD NAME="type" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" UNSIGNED="true" />
+                <FIELD NAME="visibility" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" UNSIGNED="true"  />
+                <FIELD NAME="grade_type" TYPE="int" LENGTH="10" NOTNULL="false"/>
+                <FIELD NAME="assessment_scheme" TYPE="int" LENGTH="10" NOTNULL="false"/>
+            </FIELDS>
+            <KEYS>
+	            <KEY NAME="assessmentpk" TYPE="primary" FIELDS="assessment" />
+                <KEY NAME="assessmentfk" TYPE="foreign" FIELDS="assessment" REFTABLE="artefact" REFFIELDS="id" />
+                <KEY NAME="gradetypefk" TYPE="foreign" FIELDS="grade_type" REFTABLE="artefact_assessment_grade_type" REFFIELDS="id" />
+                <KEY NAME="assessmentschemefk" TYPE="foreign" FIELDS="assessment_scheme" REFTABLE="artefact_assessment_scheme" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+
+
+        <TABLE NAME="artefact_assessment_results">
+            <FIELDS>
+                <FIELD NAME="assessment"  TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="criteria"  TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="grade" TYPE="float" NOTNULL="true" DEFAULT="0" />
+            </FIELDS>
+            <KEYS>
+	            <KEY NAME="assessmentpk" TYPE="primary" FIELDS="assessment,criteria" />
+                <KEY NAME="assessmentfk" TYPE="foreign" FIELDS="assessment" REFTABLE="artefact" REFFIELDS="id" />
+                <KEY NAME="criteriafk" TYPE="foreign" FIELDS="criteria" REFTABLE="artefact_assessment_criteria" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
+
+    </TABLES>
+</XMLDB>

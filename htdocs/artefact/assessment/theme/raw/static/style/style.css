@@ -1,0 +1,141 @@
+/**
+ * CSS rules for the resume artefact plugin
+ *
+ * @author     Catalyst IT Ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL version 3 or later
+ * @copyright  For copyright information on Mahara, please see the README file distributed with this software.
+ */
+/*Stuff for evaluation needs to be removed this is for testing only*/
+.grade{
+	width:3.5%;
+	height:10px;
+	font-size:8px;
+	text-align:center;
+
+}
+
+.gr20{
+	background:#b45;
+}
+.gr19{
+	background:#c56;
+}
+.gr18{
+	background:#d66;
+}
+.gr17{
+	border-right:solid 1px #555;
+	background:#e76;
+}
+.gr16{
+	background:#fa6;
+}
+.gr15{
+	background:#fb6;
+}
+.gr14{
+	background:#fc6;
+}
+.gr13{
+	border-right:solid 1px #555;
+	background:#fd6;
+}
+.gr12{
+	background:#fe6;
+}
+.gr11{
+	background:#ff6;
+}
+.gr10{
+	background:#ef6;
+}
+.gr9{
+	border-right:solid 1px #555;
+	background:#df6;
+}
+.gr8{
+	background:#cf6;
+}
+.gr7{
+	background:#bf6;
+}
+.gr6{
+	background:#af6;
+}
+.gr5{
+	border-right:solid 1px #555;
+	background:#9f6;
+}
+.gr4{
+	background:#8f6;
+}
+.gr3{
+	background:#7f6;
+}
+.gr2{
+	background:#6f6;
+}
+.gr1{
+	background:#5f6;
+}
+
+.gradeheader{
+	border-right:solid 1px #555;
+
+text-align:center;
+font-size:.8em;
+}
+
+.gradeheader.last{
+border:none;
+}
+
+.assessment{
+	width:96%;
+	border-collapse: collapse;
+
+}
+.assessment td{
+padding:2px;
+}
+.assessment tr{
+border-bottom:solid 1px #aaa;
+}
+.assessment a{
+	display:block;
+	width:100%;
+	height:100%;
+
+}
+
+.criteria{
+	width:30%;
+	font-size:.8em;
+}
+.unselected{
+	opacity:.2;
+}
+.finalgrade .grade, .finalgrade .grade a, .finalgrade .grade a:hover, .finalgrade .grade a:active{
+	font-weight:bold;
+	color:#000;
+	text-decoration:none;
+	font-size:.8em;
+}
+@media screen and (max-width:400px){
+	.evaluation{
+		font-size:6px;
+	
+	}
+	.gradeheader{
+		font-size:9px;
+	}
+	.criteria{
+		font-size:9px;
+	}
+	.finalgrade .grade, .finalgrade .grade a, .finalgrade .grade a:hover, .finalgrade .grade a:active{
+	font-size:8px;
+	}
+}
+.selected{
+	opacity:1;
+}
