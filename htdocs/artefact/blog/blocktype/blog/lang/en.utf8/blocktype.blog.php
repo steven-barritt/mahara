@@ -32,3 +32,5 @@ $string['description'] = 'Display an entire workbook';
 
 $string['defaulttitledescription'] = 'If you leave this blank, the title of the workbook will be used';
 $string['postsperpage'] = 'Entries per page';
+$string['flowview'] = 'Display as pintrest type view';
+$string['flowviewdesc'] = 'This will disaply the blog as a pintrest style board using auto scroll loading.<br>It will divide the view into 3/2 or 1 column depending on the viewport width. <br>This should only be in a full size row at the bottom of the page';

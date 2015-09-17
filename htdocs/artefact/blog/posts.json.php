@@ -21,6 +21,7 @@ require_once(get_config('docroot') . 'artefact/blog/blocktype/blog/lib.php');
 $offset = param_integer('offset', 0);
 $limit = param_integer('limit',10);
 
+
 if ($blockid = param_integer('block', null)) {
     $bi = new BlockInstance($blockid);
     if (!can_view_view($bi->get('view'))) {
@@ -30,20 +31,27 @@ if ($blockid = param_integer('block', null)) {
     if(!isset($limit)){
 	    $limit  = isset($configdata['count']) ? $configdata['count'] : 5;
     }
+    $flowview = isset($configdata['flowview']) ? $configdata['flowview'] :false;
     $configdata['countcomments'] = true;
     $configdata['viewid'] = $bi->get('view');
-    $posts = ArtefactTypeBlogpost::get_posts($configdata['artefactid'], $limit, $offset, $configdata,'DESC',true);
+    $posts = ArtefactTypeBlogpost::get_posts($configdata['artefactid'], $limit, $offset, $configdata,'DESC',$flowview);
 //    error_log(serialize($posts));
     $template = 'artefact:blog:viewposts.tpl';
+	if($flowview){
+		$template = 'artefact:blog:viewpostsflow.tpl';
+	}
     $baseurl = $bi->get_view()->get_url();
     $baseurl .= (strpos($baseurl, '?') === false ? '?' : '&') . 'block=' . $blockid;
-    $pagination = array(
-        'baseurl' => $baseurl,
-        'id' => 'blogpost_pagination_' . $blockid,
-        'datatable' => 'postlist_' . $blockid,
-        'jsonscript' => 'artefact/blog/posts.json.php',
-    );
-    ArtefactTypeBlogpost::render_posts($posts, $template, $configdata, false);
+    $pagination = false;
+    if(!$flowview){
+		$pagination = array(
+			'baseurl' => $baseurl,
+			'id' => 'blogpost_pagination_' . $blockid,
+			'datatable' => 'postlist_' . $blockid,
+			'jsonscript' => 'artefact/blog/posts.json.php',
+		);
+	}
+    ArtefactTypeBlogpost::render_posts($posts, $template, $configdata, $pagination);
 }
 else {
     // No block, we're just rendering the blog by itself.

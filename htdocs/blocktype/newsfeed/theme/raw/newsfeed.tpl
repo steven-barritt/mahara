@@ -1,4 +1,4 @@
-<div id="postlist" class="postlist">
+<div id="postlist" class="postlist_flow">
     <ul class="recentblogpost" id="recentblogpost">
 		{$posthtml|safe}
     </ul>

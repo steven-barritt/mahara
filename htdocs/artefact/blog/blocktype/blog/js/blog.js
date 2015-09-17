@@ -12,7 +12,6 @@ function display_posts(post){
     var postlists = $j('[id^=postlist_]');
 	var dstr = postlists[0].id;
 	var block = dstr.split("_").pop();
-
     sendjsonrequest('../artefact/blog/posts.json.php',
         {'limit': 5, 'offset': offset,'block': block},
         'GET',
@@ -22,8 +21,10 @@ function display_posts(post){
 				$j("#postlist_"+block).append(elems);
 				$j("#postlist_"+block).imagesLoaded(function(){
 					$j("#postlist_"+block).masonry('appended',elems);
+					$j('#loading').hide();
+
 					//$j("#postlist_"+block).masonry('layout');
-					$j(".viewpost").each(function(){
+					$j(".viewpost_flow").each(function(){
 						$j(this).featherlight($j(this).find( ".longpost" ));
 						});
 /*					$j(".shortpost a").each(function(){
@@ -31,9 +32,9 @@ function display_posts(post){
 						});*/
 					$j(".expand").off().on('click',function(e) {
 						e.preventDefault();
-						$j(e.target).closest(".viewpost").find( ".shortpost" ).toggleClass("hidden");
-						$j(e.target).closest(".viewpost").find( ".longpost" ).toggleClass("hidden");
-						$j(e.target).closest(".viewpost").find( ".expand" ).toggleClass("hidden");
+						$j(e.target).closest(".viewpost_flow").find( ".shortpost" ).toggleClass("hidden");
+						$j(e.target).closest(".viewpost_flow").find( ".longpost" ).toggleClass("hidden");
+						$j(e.target).closest(".viewpost_flow").find( ".expand" ).toggleClass("hidden");
 						$j("#postlist_"+block).masonry('layout');
 						return false;  
 					});
@@ -52,8 +53,8 @@ $j(".viewpost a").off().on('click',function(e) {
 					$j(window).on('scroll', ScrollHandler);
 				});
 			}else{
-				$j('#loading').addClass('hidden');
-				$j('#loaded').removeClass('hidden');
+				$j('#loading').hide();
+				$j('#loaded').show();
 			}
         },
         function(){
@@ -75,6 +76,7 @@ return Math.max( D.body.scrollHeight, D.documentElement.scrollHeight, D.body.off
 
 function ScrollHandler(e) {
     //throttle event:
+	$j('#loading').show();
     clearTimeout(_throttleTimer);
     _throttleTimer = setTimeout(function () {
         if ($j(window).scrollTop() + $j(window).height() >= getDocHeight()-800) {
@@ -85,29 +87,19 @@ function ScrollHandler(e) {
 }
 
 
-$j(document).ready(function(){
-	$j(".viewpost a").click(function(e) {
-		e.preventDefault();
-    	alert('clicked');  
-    	return false;  
-	});
-});
-
-
-
-
 jQuery(window).load(function(){
-	jQuery('.postlist').masonry({
+	jQuery('.postlist_flow').masonry({
 		  // options
-		  itemSelector: '.viewpost',
+		  itemSelector: '.viewpost_flow',
 		  columnWidth: '.grid-sizer',
 		  percentPosition: true,
 		  gutter:0
 		  	});
 	display_posts();
-/*	clearTimeout(_throttleTimer);
-	_throttleTimer = setTimeout(function () {
-		$j(window).on('scroll', ScrollHandler);
-	});*/
 });
+
+
+
+
+
 

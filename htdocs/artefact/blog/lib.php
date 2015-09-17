@@ -884,7 +884,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
 		//strip out any tags and just leave the text
 		// then cut the furst 150 characters to the nearest space
 		//then add read more link to take to full post
-		$notags = strip_tags($post);
+		$notags = strip_tags($post,'<iframe>');
 		$maxlen = strlen($notags);
 		if($maxlen > 400){
 			$maxlen = 400;

@@ -11,17 +11,19 @@
 <div id="blogdescription">{$description|clean_html|safe}
 {if $tags}<p class="tags s"><label>{str tag=tags}:</label> {list_tags owner=$owner tags=$tags}</p>{/if}
 </div>
+{if $blog->count_published_posts() > 0}
 <div class="message">
 	{$blog->count_published_posts()} {str tag=posts section=artefact.blog}
 </div>
+{/if}
 <div class="block_instance_blog">
-	<div id="postlist{if $blockid}_{$blockid}{/if}" class="postlist">
+	<div id="postlist{if $blockid}_{$blockid}{/if}" class="postlist{if $flowview}_flow{/if}">
 		<div class="grid-sizer"></div>
 	  {$posts.tablerows|safe}
 	</div>
 </div>
-<div class="message" id="loading">{str tag=loading section=artefact.blog}</div>
-<div class="message hidden" id="loaded">{str tag=loaded section=artefact.blog arg1=$blog->count_published_posts()}</div>
+	<div class="message hidden" id="loading">{str tag=loading section=artefact.blog}</div>
+	<div class="message hidden" id="loaded">{str tag=loaded section=artefact.blog arg1=$blog->count_published_posts()}</div>
 
 {if $posts.pagination}
 	<div id="blogpost_page_container{if $blockid}_{$blockid}{/if}" class="hidden center">{$posts.pagination|safe}</div>

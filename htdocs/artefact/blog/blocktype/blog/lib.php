@@ -38,23 +38,32 @@ class PluginBlocktypeBlog extends PluginBlocktype {
         return array('blog');
     }
     
-    public static function get_instance_javascript() {
-        return array(
-            array(
-                'file'   => '../../../../js/masonry.pkgd.min.js',
-            ),
-            array(
-                'file'   => '../../../../js/imagesloaded.pkgd.min.js',
-            ),
-            array(
-                'file'   => '../../../../js/featherlight.min.js',
-            ),
-            array(
-                'file'   => 'js/blog.js',
-            )
-        );
+    public static function get_instance_javascript(BlockInstance $instance) {
+        $configdata = $instance->get('configdata');
+        $inlinejavascript = '';
+		$flowview = isset($configdata['flowview']) ? $configdata['flowview'] :false;
+		if($flowview){
+
+			return array(
+				array(
+					'file'   => '../../../../js/masonry.pkgd.min.js',
+				),
+				array(
+					'file'   => '../../../../js/imagesloaded.pkgd.min.js',
+				),
+				array(
+					'file'   => '../../../../js/featherlight.min.js',
+				),
+				array(
+					'file'   => 'js/blog.js',
+				)
+			);
+		}else{
+			return array();
+		}
 
     }
+    
 
     public static function render_instance(BlockInstance $instance, $editing=false) {
         global $exporter, $USER;
@@ -75,12 +84,17 @@ class PluginBlocktypeBlog extends PluginBlocktype {
             }*/
 
             $limit = isset($configdata['count']) ? intval($configdata['count']) : 5;
-            $posts = ArtefactTypeBlogpost::get_posts($blog->get('id'), $limit, 0, $configdata,'DESC',true);
+		    $flowview = isset($configdata['flowview']) ? $configdata['flowview'] :false;
+            $posts = ArtefactTypeBlogpost::get_posts($blog->get('id'), $limit, 0, $configdata,'DESC',$flowview);
             $template = 'artefact:blog:viewposts.tpl';
+            if($flowview){
+	            $template = 'artefact:blog:viewpostsflow.tpl';
+            }
+            $pagination = false;
             if ($exporter) {
                 $pagination = false;
             }
-            else {
+            elseif(!$flowview) {
                 $baseurl = $instance->get_view()->get_url();
                 $baseurl .= (strpos($baseurl, '?') === false ? '?' : '&') . 'block=' . $instance->get('id');
                 $pagination = array(
@@ -90,7 +104,7 @@ class PluginBlocktypeBlog extends PluginBlocktype {
                     'jsonscript' => 'artefact/blog/posts.json.php',
                 );
             }
-            ArtefactTypeBlogpost::render_posts($posts, $template, $configdata, false);
+            ArtefactTypeBlogpost::render_posts($posts, $template, $configdata, $pagination);
 
             $smarty = smarty_core();
             if (isset($configdata['viewid'])) {
@@ -105,7 +119,6 @@ class PluginBlocktypeBlog extends PluginBlocktype {
             else {
                 $smarty->assign('artefacttitle', hsc($blog->get('title')));
             }
-
             $smarty->assign('options', $configdata);
             $smarty->assign('description', $blog->get('description'));
             $smarty->assign('owner', $blog->get('owner'));
@@ -113,13 +126,16 @@ class PluginBlocktypeBlog extends PluginBlocktype {
             $smarty->assign('blockid', $instance->get('id'));
             $smarty->assign('editing', $editing);
             $smarty->assign('blogid', $blog->get('id'));
+            $smarty->assign('flowview',$flowview);
 			$smarty->assign_by_ref('blog', $blog);
 			if($blog->get('group')){
 				$smarty->assign('isowner',group_user_can_edit_views($blog->get('group')));
 			}else{
 				$smarty->assign('isowner',$USER->get('id') == $blog->get('owner'));
 			}
-            //$smarty->assign('posts', $posts);
+			if(!$flowview){
+	            $smarty->assign('posts', $posts);
+	        }
 
             $result = $smarty->fetch('artefact:blog:blog.tpl');
         }
@@ -157,6 +173,12 @@ class PluginBlocktypeBlog extends PluginBlocktype {
                 'title' => get_string('postsperpage', 'blocktype.blog/blog'),
                 'defaultvalue' => isset($configdata['count']) ? $configdata['count'] : 5,
                 'size' => 3,
+            );
+            $elements['flowview'] = array(
+                'type' => 'checkbox',
+                'title' => get_string('flowview', 'blocktype.blog/blog'),
+                'description' => get_string('flowviewdesc', 'blocktype.blog/blog'),
+                'defaultvalue' => isset($configdata['flowview']) ? $configdata['flowview'] : false,
             );
             $elements[] = PluginArtefactBlog::block_advanced_options_element($configdata, 'blog');
         }

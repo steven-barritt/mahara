@@ -1747,22 +1747,41 @@ font-size:1em;
 	width:100px;
 	height:100px;
 }
-.postlist .postdescription img{
+.postlist .postdescription img, .postlist_flow .postdescription img{
 	max-width:100%;
 	height:auto;
 }
-
 .postlist .published{
 	background-color:#F4F7FF;
 }
 
-.postlist{
+.postlist, .postlist_flow {
 width:100%;
+}
+
+.postlist{
+	max-height:800px;
+	overflow:scroll;
 }
 .grid-sizer{
 	width:33.3%;
 }
 .postlist .viewpost{
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	background-color:#F4F7FF;
+	padding:0px;
+	width:100%;
+	max-width:500px;
+	margin-bottom:10px;
+	cursor:zoom-in;
+	cursor:-webkit-zoom-in;
+	cursor:-moz-zoom-in;
+
+}
+
+.postlist_flow .viewpost_flow{
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
@@ -1775,7 +1794,9 @@ width:100%;
 	cursor:-moz-zoom-in;
 
 }
-.viewpost .post_inner{
+
+
+.viewpost .post_inner, .viewpost_flow .post_inner{
 	padding:10px;
 }
 
@@ -1967,6 +1988,9 @@ display:inline-block;
 	display:block;
 	height:100%;
 }
+
+
+
 
 
 .listing ul.groupuserstatus{
@@ -3042,7 +3066,7 @@ tr.r1 td.absent{
 	.grid-sizer{
 		width:50%;
 	}
-	.postlist .viewpost{
+	.postlist_flow .viewpost_flow{
 		width:49%;
 	}
 
@@ -3910,10 +3934,10 @@ tr.r1 td.absent{
     .grid-sizer{
 		width:100%;
 	}
-	.postlist .viewpost{
+	.postlist_flow .viewpost_flow{
 		width:100%;
 	}
-	.viewpost .post_inner{
+	.viewpost_flow .post_inner, .viewpost .post_inner{
 		padding:5px;
 	}
 
@@ -3937,7 +3961,7 @@ tr.r1 td.absent{
     min-height: 0;  /* IE layout hack */
     padding: 10px 5px 20px 5px;
 }
-    .postlist .viewpost{
+    .postlist_flow .viewpost_flow{
     width:100%;
     }
     .featherlight .featherlight-content{
