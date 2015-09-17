@@ -491,6 +491,9 @@ function schedule_get_user_group_attendance($userid,$groupid){
 			ORDER BY i.startdate, i.enddate',
             array($userid,$groupid)
         );
+        if(!$attendance){
+        	$attendance = array();
+        }
         
         $percentages = get_records_sql_array("SELECT 'present' as attendance, count(a.id) as total 
 			FROM 	{interaction_schedule_attendance} a
@@ -917,14 +920,7 @@ EOF;
         $schedule->commit();
         $defaultcolor = new stdClass();
         $defaultcolor->value = "#000000";
-		$parent = group_get_parent($eventdata['id']);
-		if($parent){
-			$schedules = get_schedule_list($parent);
-			if($schedules){
-				$parentconfig = get_records_assoc('interaction_schedule_instance_config', 'schedule', $schedules[0]->id, '', 'field,value');
-				$defaultcolor = $parentconfig['color'];
-			}
-		}
+        $defaultcolor = self::get_nearestparent_color($eventdata['id']);
 
         self::instance_config_save($schedule, array(
             'attendance' => 1,

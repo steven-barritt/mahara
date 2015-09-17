@@ -61,6 +61,9 @@ if(in_array($group->grouptype, array('project','assessment'))) {
 }else{
 	$attendanceevents = schedule_get_group_attendance_dates($groupid);
 }
+if(!$attendanceevents){
+	$attendanceevents = array();
+}
 
 //TODO: work out the longest title for an event and then make the column that high.
 $longesttitle = 0;
@@ -145,9 +148,9 @@ if($schedules){
 $smarty->assign('schedule',$schedules[0]);
 }
 $smarty->assign('attendnaceevents', $attendanceevents);
-if(in_array($group->grouptype, array('project','assessment'))) {
-	$smarty->display('interaction:schedule:viewattendance.tpl');
-}else{
+if(in_array($group->grouptype, array('year','module'))) {
 	$smarty->display('interaction:schedule:viewgroupattendance.tpl');
+}else{
+	$smarty->display('interaction:schedule:viewattendance.tpl');
 }
 
