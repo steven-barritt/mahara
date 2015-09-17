@@ -10,7 +10,7 @@
  */
 
 define('INTERNAL', 1);
-define('MENUITEM', 'groups/forums');
+define('MENUITEM', 'groups/forum');
 define('SECTION_PLUGINTYPE', 'interaction');
 define('SECTION_PLUGINNAME', 'forum');
 define('SECTION_PAGE', 'edittopic');

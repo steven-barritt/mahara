@@ -11,7 +11,7 @@
 
 define('INTERNAL', 1);
 define('PUBLIC', 1);
-define('MENUITEM', 'groups/forums');
+define('MENUITEM', 'groups/forum');
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 
 $forum = $topic = 0;

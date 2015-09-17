@@ -10,7 +10,6 @@
  */
 
 define('INTERNAL', 1);
-define('MENUITEM', 'groups');
 
 
 require(dirname(dirname(__FILE__)) . '/init.php');
@@ -38,6 +37,7 @@ $group = group_current_group();
 
 safe_require('interaction', $plugin);
 
+define('MENUITEM', 'groups/'.$plugin);
 define('DEFAULTTITLE', get_string('default'.$plugin.'title', 'interaction.' . $plugin, $group->name));
 
 

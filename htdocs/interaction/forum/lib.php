@@ -402,8 +402,8 @@ EOF;
         }
         $menu = array();
         if ($group->public || $role || ($hasobjectionable && $USER->get('admin'))) {
-            $menu['forums'] = array(// @todo: make forums an artefact plugin
-                'path' => 'groups/forums',
+            $menu['forum'] = array(// @todo: make forums an artefact plugin
+                'path' => 'groups/forum',
                 'url' => 'interaction/forum/index.php?group=' . $group->id,
                 'title' => get_string('nameplural', 'interaction.forum'),
                 'weight' => 40,
