@@ -116,6 +116,8 @@ overflow-x:scroll;
     padding: 5px;
     margin: 5px 0;
 }
+.schedulemods img{
+}
 .schedulemods a {
     margin-right: 5px;
 }
@@ -408,8 +410,8 @@ float:left;
 }
 
 .event_date{
+	color:rgb(17,85,204);
 	font-weight:bold;
-	
 }
 
 .linebreak{
