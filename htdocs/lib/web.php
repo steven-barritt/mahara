@@ -1030,7 +1030,7 @@ class Theme {
         else if ($name) {
             return $this->get_url('images/site-logo-' . $name . '.png');
         }
-        return $this->get_url('images/site-logo.png');
+        return $this->get_url('images/site-logo.svg');
     }
 
     public function facebook_logo() {
