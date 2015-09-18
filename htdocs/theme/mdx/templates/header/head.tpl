@@ -35,7 +35,7 @@
 {/foreach}
     <link rel="stylesheet" type="text/css" href="{theme_url filename='style/print.css'}?v={$RELEASE}" media="print">
     <script type="text/javascript" src="{$WWWROOT}js/css.js?v={$RELEASE}"></script>
-    <link rel="shortcut icon" href="{$WWWROOT}favicon.ico?v={$RELEASE}" type="image/vnd.microsoft.icon">
+    <link rel="shortcut icon" href="{$WWWROOT}favicon.png?v={$RELEASE}" type="image/png">
     <link rel="image_src" href="{$sitelogo}">
   <!-- Responsive design -->
         <script type="text/javascript" src="{$WWWROOT}js/rd-nav.js?v={$RELEASE}"></script>
