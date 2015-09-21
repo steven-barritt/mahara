@@ -59,7 +59,7 @@
 			</ul>
 			{if $canedit}
 				<a class="btn" href="{$WWWROOT}collection/edit.php?new=1&group={$group->id}">{str section=collection tag=newcollection}
-					<span class="accessible-hidden">{str tag=editspecific arg1=$view.name}</span>
+					<span class="accessible-hidden"></span>
 				</a>
             <div class="">
                 {$createviewform|safe}
