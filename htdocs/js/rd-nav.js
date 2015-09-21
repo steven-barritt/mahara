@@ -53,6 +53,12 @@ $j(document).ready(function(){
         }
         return false;
     });
+    //adds expand for right-nav user functions
+    $j("#right-nav .icon a").click(function(event) {
+        $j("#right-nav ul").toggleClass("expand");
+        return false;
+    });
+    
     // adds expand when click on menu title in responsive footer menu
     // Why does this exist?
     $j(".rd-nav-footer-title").click(function(event) {

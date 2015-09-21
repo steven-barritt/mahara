@@ -3,7 +3,7 @@
 {else}
   {include file="header.tpl"}
   <h1 class="user-icon-name">
-  <span class="usericon"><img src="{profile_icon_url user=$user maxwidth=150 maxheight=150}"  style="max-width:150px;max-height:150px;" alt="{str tag=profileimagetext arg1=$user|display_default_name}" /></span>
+  <span class="usericon"><img src="{profile_icon_url user=$user maxwidth=300 maxheight=300}"  style="max-width:150px;max-height:150px;" alt="{str tag=profileimagetext arg1=$user|display_default_name}" /></span>
   {if $pageheadinghtml}
     {$pageheadinghtml|safe}
   {/if}
