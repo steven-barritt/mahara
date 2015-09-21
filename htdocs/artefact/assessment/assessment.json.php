@@ -35,7 +35,6 @@ if(!$publish){
 
 	}
 }else{
-	error_log('publish');
 	if($assessment){
 		$assessment = new ArtefactTypeAssessment($assessment);
 		//TODO: Set criteria result should be doing our security check
@@ -43,11 +42,6 @@ if(!$publish){
 		$published = $assessment->get('published');
 		$data['error'] = false;
 		$data['data'] = $published;
-		if($published){
-			error_log($published);
-		}else{
-			error_log('not published');
-		}
 
 	}	
 }

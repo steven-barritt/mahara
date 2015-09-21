@@ -35,7 +35,6 @@ if ($blockid = param_integer('block', null)) {
     $configdata['countcomments'] = true;
     $configdata['viewid'] = $bi->get('view');
     $posts = ArtefactTypeBlogpost::get_posts($configdata['artefactid'], $limit, $offset, $configdata,'DESC',$flowview);
-//    error_log(serialize($posts));
     $template = 'artefact:blog:viewposts.tpl';
 	if($flowview){
 		$template = 'artefact:blog:viewpostsflow.tpl';

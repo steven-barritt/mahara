@@ -1,4 +1,3 @@
-
 {if $MAINNAV}
         <div id="main-nav" class="{if $ADMIN || $INSTITUTIONALADMIN || $STAFF || $INSTITUTIONALSTAFF}{if $DROPDOWNMENU}dropdown-adminnav {else}adminnav {/if}{/if}main-nav">
             <h3 class="rd-nav-title"><a href="#">{if $ADMIN || $INSTITUTIONALADMIN || $STAFF || $INSTITUTIONALSTAFF}{str tag=admin} {/if}{str tag=menu}<span class="rd-arrow"></span></a></h3>
