@@ -158,6 +158,9 @@ if ($viewtheme && $THEME->basename != $viewtheme) {
     $THEME = new Theme($viewtheme);
 }
 $headers = array('<link rel="stylesheet" type="text/css" href="' . get_config('wwwroot') . 'theme/views.css?v=' . get_config('release'). '">',);
+if (!empty($rendered['css'])) {
+	$headers[] = '<link rel="stylesheet" type="text/css" href="' . $rendered['css']. '">';
+}
 
 // Set up skin, if the page has one
 $owner    = $view->get('owner');
