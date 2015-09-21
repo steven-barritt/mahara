@@ -58,18 +58,21 @@ class PluginBlocktypeAttendance extends SystemBlocktype {
 	//this isn;t very nice
 	//likewise we then get the schedule for that group but at present there is assumed only one
 	//this again should be changed later to allow more than one schedule per group
-
+		$attendances = array();
 		$events = array();
 		if($instance->get_view()->get('type') == 'profile'){
 			
 			list($attendances,$percentages) = schedule_get_user_attendance($instance->get_view()->get('owner'));
 		}else{
 			$groups = self::get_groups($instance);
-		
-			$schedules = get_schedule_list($groups[0]->id);
-			$scheduleid = $schedules[0]->id;
-			$events = schedule_get_attendance_events($scheduleid);
-			$attendances = schedule_get_schedule_attendance($scheduleid,$instance->get_view()->get('owner'));
+			if(count($groups) > 0){
+				$schedules = get_schedule_list($groups[0]->id);
+				if($schedules){
+					$scheduleid = $schedules[0]->id;
+					$events = schedule_get_attendance_events($scheduleid);
+					$attendances = schedule_get_schedule_attendance($scheduleid,$instance->get_view()->get('owner'));
+				}
+			}
 		}
 
 		$columnheight = '120px'; //just big enough to show the date

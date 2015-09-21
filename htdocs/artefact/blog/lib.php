@@ -400,7 +400,7 @@ class ArtefactTypeBlog extends ArtefactType {
         $artefact = new ArtefactTypeBlog();
         $artefact->set('title', $values['title']);
         $artefact->set('description', $values['description']);
-        if($values['group']){
+        if(isset($values['group'])){
 	        $artefact->set('group', $values['group']);
         }else{
 	        $artefact->set('owner', $user->get('id'));

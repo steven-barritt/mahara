@@ -97,7 +97,8 @@ if (isset($currentviewid)) {
     $currentview = new View($currentviewid);
 }else{
 	if(count($views) > 0){
-		$currentviewid = reset($views)['id'];
+		$bob = reset($views);
+		$currentviewid = $bob['id'];
 	}else if(count($collections) > 0){
 		$first = reset($collections);
 		$first = reset($first['views']);
@@ -117,6 +118,8 @@ $headers = '';
 $javascript = '';
 $extrastylesheets = '';
 $skin='';
+$currentcollectionid = null;
+$viewcontent= null;
 if(isset($currentview)){
 	if (!can_view_view($currentview)) {
 		throw new AccessDeniedException(get_string('accessdenied', 'error'));
