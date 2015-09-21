@@ -7,76 +7,272 @@
  */
 /*Stuff for evaluation needs to be removed this is for testing only*/
 .grade{
-	width:3.5%;
+	width:3.3%;
 	height:10px;
 	font-size:8px;
 	text-align:center;
 
 }
 
-.gr20{
-	background:#b45;
+.gradeh{
+	width:3.3%;
+	height:10px;
+	font-size:8px;
+	text-align:center;
+
 }
-.gr19{
-	background:#c56;
+.gradeh, .gradeh a, .gradeh a:hover, .gradeh a:active{
+	font-weight:bold;
+	color:#666;
+	text-decoration:none;
 }
-.gr18{
-	background:#d66;
+.overallgrade{
+	width:3.3%;
+	height:10px;
+	font-size:8px;
+	text-align:center;
+
 }
-.gr17{
+.unselected{
+/*	opacity:.2;*/
+}
+
+.grFail, .grPass, .grGood, .grVGood, .grExc, .gr17 , .gr13 , .gr9 , .gr5 {
 	border-right:solid 1px #555;
-	background:#e76;
 }
-.gr16{
-	background:#fa6;
+
+/*.grNA{
+	background:#aaa;
 }
-.gr15{
-	background:#fb6;
+*/
+.grNA.unselected{
+	background: rgb(255,255,255);
+	background: rgba(170,170,170,0.2);
 }
-.gr14{
-	background:#fc6;
+.grNA.selected, .grNA.unselected .hovering{
+	background: rgb(170,170,170);
 }
-.gr13{
-	border-right:solid 1px #555;
-	background:#fd6;
+
+.gr20.unselected, .grFail.unselected{
+	background: rgb(255,255,255);
+	background:rgba(187,68,85,0.2);
 }
-.gr12{
-	background:#fe6;
+.gr20.selected, .gr20.unselected .hovering, .grFail.selected, .grFail.unselected .hovering{
+	background:rgb(187,68,85);
 }
-.gr11{
-	background:#ff6;
+
+.gr19.unselected{
+	background: rgb(255,255,255);
+	background:rgba(204,85,102,0.2);
 }
-.gr10{
+.gr19.selected, .gr19.unselected .hovering{
+	background:rgb(204,85,102);
+}
+
+.gr18.unselected{
+	background: rgb(255,255,255);
+	background:rgba(221,102,102,0.2);
+}
+.gr18.selected, .gr18.unselected .hovering{
+	background:rgb(221,102,102);
+}
+
+.gr17.unselected{
+	background: rgb(255,255,255);
+	background:rgba(238,119,102,0.2);
+}
+.gr17.selected, .gr17.unselected .hovering{
+	background:rgb(238,119,102);
+}
+
+.gr16.unselected, .grPass.unselected{
+	background: rgb(255,255,255);
+	background:rgba(255,170,102,0.2);
+}
+.gr16.selected, .gr16.unselected .hovering, .grPass.selected, .grPass.unselected .hovering{
+	background:rgb(255,170,102);
+}
+
+.gr15.unselected{
+	background: rgb(255,255,255);
+	background:rgba(255,187,102,0.2);
+}
+.gr15.selected, .gr15.unselected .hovering{
+	background:rgb(255,187,102);
+}
+
+.gr14.unselected{
+	background: rgb(255,255,255);
+	background:rgba(255,204,102,0.2);
+}
+.gr14.selected, .gr14.unselected .hovering{
+	background:rgb(255,204,102);
+}
+
+.gr13.unselected{
+	background: rgb(255,255,255);
+	background:rgba(255,221,102,0.2);
+}
+.gr13.selected, .gr13.unselected .hovering{
+	background:rgb(255,221,102);
+}
+
+.gr12.unselected, .grGood.unselected{
+	background: rgb(255,255,255);
+	background:rgba(255,238,102,0.2);
+}
+.gr12.selected, .gr12.unselected .hovering, .grGood.selected, .grGood.unselected .hovering{
+	background:rgb(255,238,102);
+}
+
+.gr11.unselected{
+	background: rgb(255,255,255);
+	background:rgba(255,255,102,0.2);
+}
+.gr11.selected, .gr11.unselected .hovering{
+	background:rgb(255,255,102);
+}
+
+.gr10.unselected{
+	background: rgb(255,255,255);
+	background:rgba(238,255,102,0.2);
+}
+.gr10.selected, .gr10.unselected .hovering{
 	background:#ef6;
 }
-.gr9{
-	border-right:solid 1px #555;
-	background:#df6;
+
+.gr9.unselected{
+	background: rgb(255,255,255);
+	background:rgba(238,255,102,0.2);
 }
-.gr8{
-	background:#cf6;
+.gr9.selected, .gr9.unselected .hovering{
+	background:rgb(238,255,102);
 }
-.gr7{
-	background:#bf6;
+
+.gr8.unselected, .grVGood.unselected{
+	background: rgb(255,255,255);
+	background:rgba(204,255,102,0.2);
 }
-.gr6{
-	background:#af6;
+.gr8.selected, .gr8.unselected .hovering, .grVGood.selected, .grVGood.unselected .hovering{
+	background:rgb(204,255,102);
 }
-.gr5{
-	border-right:solid 1px #555;
-	background:#9f6;
+
+.gr7.unselected{
+	background: rgb(255,255,255);
+	background:rgba(187,255,102,0.2);
 }
-.gr4{
+.gr7.selected, .gr7.unselected .hovering{
+	background:rgb(187,255,102);
+}
+
+.gr6.unselected{
+	background: rgb(255,255,255);
+	background:rgba(170,255,102,0.2);
+}
+.gr6.selected, .gr6.unselected .hovering{
+	background:rgb(170,255,102);
+}
+
+.gr5.unselected{
+	background: rgb(255,255,255);
+	background:rgba(153,255,102,0.2);
+}
+.gr5.selected, .gr5.unselected .hovering{
+	background:rgb(153,255,102);
+}
+
+.gr4.unselected, .grExc.unselected{
+	background: rgb(255,255,255);
+	background:rgba(136,255,102,0.2);
+}
+.gr4.selected, .gr4.unselected .hovering, .grExc.selected, .grExc.unselected .hovering{
 	background:#8f6;
 }
-.gr3{
-	background:#7f6;
+
+.gr3.unselected{
+	background: rgb(255,255,255);
+	background:rgba(136,255,102,0.2);
 }
-.gr2{
-	background:#6f6;
+.gr3.selected, .gr3.unselected .hovering{
+	background:rgb(136,255,102);
 }
-.gr1{
-	background:#5f6;
+
+.gr2.unselected{
+	background: rgb(255,255,255);
+	background:rgba(102,255,102,0.2);
+}
+.gr2.selected, .gr2.unselected .hovering{
+	background:rgb(102,255,102);
+}
+
+.gr1.unselected{
+	background: rgb(255,255,255);
+	background:rgba(85,255,102,0.2);
+}
+
+.gr1.selected, .gr1.unselected .hovering{
+	background:rgb(85,255,102);
+}
+
+
+.grPass{
+	background:#fa6;
+
+	border-right:solid 1px #555;
+}
+.grGood{
+	background:#fe6;
+
+	border-right:solid 1px #555;
+}
+.grVGood{
+	background:#cf6;
+
+	border-right:solid 1px #555;
+}
+.grExc{
+	background:#8f6;
+	border-right:solid 1px #555;
+}
+
+.editing-buttons{
+	margin-bottom:10px;
+}
+.editing-buttons .btn{
+	padding:5px !important;
+}
+
+
+/*published / unpublished stuff */
+
+.publishedmsg {
+	width:100%;
+	line-height:27px;
+}
+.publishedmsg .btn{
+	padding:3px !important;
+}
+.pubishedmsg .msg{
+	margin-right:20px;
+}
+.publishedmsg .msg.published{
+	background:#efe;
+}
+.publishedmsg .msg.unpublished{
+	background:#fee;
+}
+.publishedmsg .publishbtns{
+	float:right;
+	margin-top:-27px;
+}
+
+.editingmsg{
+	display:block;
+	width:100%;
+	text-align:center;
+	background:rgba(187,68,85,0.2);
+	padding-top:5px;
+	padding-bottom:5px;
 }
 
 .gradeheader{
@@ -91,31 +287,52 @@ border:none;
 }
 
 .assessment{
-	width:96%;
-	border-collapse: collapse;
+	width:99%;
+	border-collapse: separate;
+	border-spacing:0px;
 
 }
+
+.blockinstance-content.editing .criteria{
+/*	background:#f3f3f3;*/
+}
+.blockinstance-content.editing .criteria_group{
+/*	background:#ddd;*/
+}
+
 .assessment td{
-padding:2px;
+	padding:0px;
 }
 .assessment tr{
 border-bottom:solid 1px #aaa;
 }
 .assessment a{
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+	padding:0px;
 	display:block;
 	width:100%;
 	height:100%;
-
+	cursor: help;
 }
 
-.criteria{
+.assessment .criteria{
+	padding:2px;
 	width:30%;
 	font-size:.8em;
 }
-.unselected{
-	opacity:.2;
+.assessment .criteria_group{
+padding:3px;
+	font-weight:bold;
+	border-bottom:1px solid #aaa;
+	padding-top:8px;
 }
-.finalgrade .grade, .finalgrade .grade a, .finalgrade .grade a:hover, .finalgrade .grade a:active{
+
+
+.overallgrade, .overallgrade a, .overallgrade a:hover, .overallgrade a:active{
+padding:2px;
+
 	font-weight:bold;
 	color:#000;
 	text-decoration:none;
@@ -132,7 +349,7 @@ border-bottom:solid 1px #aaa;
 	.criteria{
 		font-size:9px;
 	}
-	.finalgrade .grade, .finalgrade .grade a, .finalgrade .grade a:hover, .finalgrade .grade a:active{
+	.overallgrade, .overallgrade a, .overallgrade a:hover, .overallgrade a:active{
 	font-size:8px;
 	}
 }
