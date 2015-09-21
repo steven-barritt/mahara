@@ -677,7 +677,11 @@ class PluginInteractionSchedule extends PluginInteraction {
 			else{
 				return self::get_nearestparent_color($parent);
 			}
-		}	
+		}else{
+	        $defaultcolor = new stdClass();
+    	    $defaultcolor->value = "#000000";
+			return $defaultcolor;
+		}
 	}
 
 
@@ -824,17 +828,45 @@ EOF;
         );
         
     }
+    
+    private static function user_events_for_today(){
+		$mindate = new DateTime(Date('Y-m-d'));
+		$diff = DateInterval::createFromDateString('1 days');
+		$maxdate = new DateTime($mindate->format('Y-m-d'));
+		$maxdate->add($diff);
+
+		$events = schedule_get_user_events($mindate,$maxdate);
+    	return $events ? count($events):0;
+    }
 
     public static function menu_items() {
+    	$scheduleditems = self::user_events_for_today();
+    	global $THEME;
         return array(
             'schedule' => array(
                 'path' => 'schedule',
                 'url' => 'interaction/schedule/schedule.php',
+	            'icon' => $THEME->get_url('images/btn_calendar.svg'),
                 'title' => get_string('name', 'interaction.schedule'),
+				'count' => $scheduleditems,
+				'countclass' => 'unreadmessagecount',
                 'weight' => 45,
             ),
         );
     }
+    
+    /*
+        'inbox' => array(
+            'path' => 'inbox',
+            'url' => 'account/activity/index.php',
+            'icon' => $THEME->get_url($unread ? 'images/newmail.png' : 'images/message.png'),
+            'alt' => get_string('inbox'),
+            'count' => $unread,
+            'countclass' => 'unreadmessagecount',
+            'title' => get_string('inbox'),
+            'weight' => 20,
+        ),
+    */
 
     public static function group_menu_items($group) {
         global $USER;
@@ -918,8 +950,6 @@ EOF;
             'description' => get_string('defaultscheduledescription', 'interaction.schedule', $eventdata['name']),
         ));
         $schedule->commit();
-        $defaultcolor = new stdClass();
-        $defaultcolor->value = "#000000";
         $defaultcolor = self::get_nearestparent_color($eventdata['id']);
 
         self::instance_config_save($schedule, array(
