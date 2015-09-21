@@ -63,7 +63,7 @@ class ArtefactTypeAssessment extends ArtefactType {
 	const SELF_ASSESSMENT = 1;
 	const PEER_ASSESSMENT = 2;
 	public static $assessment_types = array(self::TUTOR_ASSESSMENT => 'Tutor',self::SELF_ASSESSMENT => 'Self', self::PEER_ASSESSMENT => 'Peer');
-    protected $published = true;
+    protected $published = false;
 	protected $grade;
 	protected $type = self::TUTOR_ASSESSMENT;
 	protected $visibility = true;
@@ -91,6 +91,25 @@ class ArtefactTypeAssessment extends ArtefactType {
     public function set($field, $value) {
         if (property_exists($this, $field)) {
         	//exceptions to the rule we set the value with the id so need to make it an object
+        	if($field == 'type'){
+        		switch($value){
+        			case self::TUTOR_ASSESSMENT :
+        				$this->dirty = true;
+	        			$this->type = self::TUTOR_ASSESSMENT;
+	        			$this->published = false;
+        				break;
+        			case self::SELF_ASSESSMENT :
+        				$this->dirty = true;
+	        			$this->type = self::SELF_ASSESSMENT;
+	        			$this->published = true;
+        				break;
+        			case self::PEER_ASSESSMENT :
+        				$this->dirty = true;
+	        			$this->type = self::PEER_ASSESSMENT;
+	        			$this->published = true;
+        				break;
+        		}
+        	}
         	if($field == 'grade_type'){
         		if(is_int($value)){
         			if(!isset($this->grade_type) || $this->grade_type->id != $value){
@@ -243,11 +262,14 @@ class ArtefactTypeAssessment extends ArtefactType {
 	}
 
     public function render_self($options) {
+    	global $THEME;
 		$smarty = smarty_core();
 		$smarty->assign('criteria',$this->assessment_scheme->criteria);
 		$smarty->assign('assessment',$this);
         $smarty->assign('artefacttitle', hsc($this->title));
-        return array('html' => $smarty->fetch('artefact:assessment:viewassessment.tpl'), 'javascript' => '');
+        $css = $THEME->get_url('style/style.css', false, 'artefact/assessment');
+        error_log($css);
+        return array('html' => $smarty->fetch('artefact:assessment:view.tpl'), 'javascript' => '', 'css' => $css);
 		
     }
 
@@ -358,12 +380,10 @@ class ArtefactTypeAssessment extends ArtefactType {
 	}
 
 	public function change_published_state($newstate = null){
-		error_log(' change publish');
 		//pass it the state to change it to
 		if(isset($newstate)){
 			$this->published = (bool)$newstate;
 		}else{
-			error_log(' change publish2');
 			//toggle the current state
 			$this->set('published',!$this->published);
 			//TODO: logic to notify about state change
@@ -439,11 +459,7 @@ class GradeType{
 	public function map_rubric_to_levels($rubric){
 		$precision = 0.01;//this is because these levels are floats
 		foreach($this->grade_levels as &$level){
-			//error_log($level->title);
 			foreach($rubric as $rublevel){
-				//error_log($rublevel->title);
-				//error_log($level->mean_percent - $rublevel->min_percent);
-				//error_log($level->mean_percent -  $rublevel->max_percent);
 				if( ($level->mean_percent - $rublevel->min_percent) >= $precision and ($level->mean_percent -  $rublevel->max_percent) <= $precision )
 				{
 				  $level->rubric = $rublevel;
@@ -451,7 +467,6 @@ class GradeType{
 				}
 			}
 		}
-		//error_log(serialize($this->grade_levels));
 	}
 	
 	//pass it the id of the gradetype_level and get the mean percent
@@ -536,6 +551,12 @@ class AssessmentScheme{
 	//function returns a list of schemes for select objects
 	public static function get_assessment_scheme_options($institutions){
 		$schemes = array();
+		if($records = get_records_select_array('artefact_assessment_scheme','','','title')){
+			foreach($records as $data){
+				$schemes[$data->id] =  $data->title;
+			}
+		}
+/*institution stuff has been disabled for now needs to be done at some point
 		if(is_array($institutions) && count($institutions) > 0){
 			$inst_string = "(".implode(",",$institutions).")";		
 			if($records = get_records_select_array('artefact_assessment_scheme','institution in',array($inst_string),'title')){
@@ -550,7 +571,7 @@ class AssessmentScheme{
 					$schemes[$data->id] =  $data->title;
 				}
 			}
-		}
+		}*/
 		return $schemes;				
 	}
 
