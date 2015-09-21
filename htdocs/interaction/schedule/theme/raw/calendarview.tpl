@@ -31,7 +31,7 @@
 				<div class="daynumber">{if $weeksanddays[$i][$j].date|format_date:'strftimenmonth' != $currmonth}{$weeksanddays[$i][$j].date|format_date:'strftimedatevshort'}{else}{$weeksanddays[$i][$j].date|format_date:'strftimenday'}{/if}</div>
 				<ul>
 					{foreach $weeksanddays[$i][$j].events as event}
-					<li><a style="color:{$event->color}" href="{$WWWROOT}interaction/schedule/{if $admin}editevent{else}view{/if}.php?id={$event->id}&view={$view}" title="{$event->scheduletitle}&#13;{str tag=where section=interaction.schedule}{$event->location}&#13;{$event->startdate|format_date:'strftimedatevshort'}">{$event->title}</a></li>	
+					<li><a style="color:{$event->color}" href="{$WWWROOT}interaction/schedule/{if $admin}editevent{else}view{/if}.php?id={$event->id}&view={$view}" title="{$event->startdate|format_date:'strftimetime'}&#13;{$event->scheduletitle}&#13;{str tag=where section=interaction.schedule}{$event->location}&#13;{$event->startdate|format_date:'strftimedatevshort'}">{$event->title}</a></li>	
 					{/foreach}
 				</ul>
 				</div>
