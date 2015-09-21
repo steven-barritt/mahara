@@ -65,7 +65,7 @@ function pieform_element_calendar(Pieform $form, $element) {/*{{{*/
         $result .= 'input.datepicker({';
     }
     $result .= ' onSelect: function(date) {';
-    if($element['changehandler']){
+    if(isset($element['changehandler'])){
 		$result .= $element['changehandler'].';';
     }
     $result .= '         if (typeof formchangemanager !== \'undefined\') {
