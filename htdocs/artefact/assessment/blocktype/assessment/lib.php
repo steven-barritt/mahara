@@ -121,6 +121,7 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
 
     public static function instance_config_form($instance) {
 		global $USER;
+		$insts = array();
 		$institutions = $USER->get('institutions');
         $configdata = $instance->get('configdata');
         if (!empty($configdata['artefactid'])) {
@@ -157,7 +158,7 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
                 ),
             'artefactid' => array(
             		'type'	=> 'hidden',
-            		'value' => $configdata['artefactid'],
+            		'value' => isset($configdata['artefactid']) ? $configdata['artefactid']:null,
             		)
 		);
 		return $returnarr;
@@ -173,7 +174,7 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
             $data[$f] = $view->get($f);
         }
 
-        if (empty($values['artefactid']) || $values['makecopy']) {
+        if (empty($values['artefactid']) || (isset($values['makecopy']) && $values['makecopy'])) {
             $aretefacttitle = $view->get('title').' - '.get_string('title2', 'blocktype.assessment/assessment',ArtefactTypeAssessment::$assessment_types[$values['evaltype']]);
             $artefact = new ArtefactTypeAssessment(0, $data);
             if (empty($values['title'])) {
@@ -189,7 +190,6 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
             
         }
         else {
-        	error_log('artefact '.$values['artefactid']);
             $artefact = new ArtefactTypeAssessment((int)$values['artefactid']);
 
             if (!$USER->can_publish_artefact($artefact)) {
@@ -284,7 +284,7 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
 
 
     public static function default_copy_type() {
-        return 'shallow';
+        return 'full';
     }
 
     public static function get_instance_title(BlockInstance $instance) {
