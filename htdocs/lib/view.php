@@ -3215,9 +3215,14 @@ class View {
         else if ($owner instanceof User) {
             $user = $owner;
         }
-        else if (intval($owner) != 0 || $owner == "0") {
-            $user = new User();
+        else if (intval($owner) != 0) {
+			$user = new User();
             $user->find_by_id(intval($owner));
+        }else if($owner == "0"){
+			//special case if the owner is the system then allow the current user to select the artefacts
+			//this allows the system pages to have artefacts on them that belog to however can edit them
+            global $USER;
+            $user = $USER;
         }
         else {
             throw new SystemException("Invalid argument type " . gettype($owner) . " passed to View::get_artefactchooser_artefacts");
@@ -3407,7 +3412,6 @@ class View {
             'SELECT ' . $cols . $from . ' WHERE ' . $select . $sortorder, $selectph, $offset, $limit
         );
         $totalartefacts = count_records_sql('SELECT COUNT(*) ' . $from . ' WHERE ' . $select, $countph);
-
         return array($artefacts, $totalartefacts);
     }
 
@@ -3991,8 +3995,6 @@ class View {
 
         $accesssql = array();
 
-		//var_dump($accesstypes);
-		//bob::bob();
         foreach ($accesstypes as $t) {
             if ($t == 'public') {
                 $accesssql[] = "v.id IN ( -- public access
@@ -4390,13 +4392,9 @@ class View {
         $ph = array($groupid, $userid, $groupid,$submittedgroup);
 
         $count = count_records_sql('SELECT COUNT(DISTINCT(v.id)) ' . $from, $ph);
-//        var_dump($groupid);
-//        var_dump($user);
-//        var_dump($ph);
         $sql = '
             SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid,'. db_format_tsfield('v.submittedtime', 'submittedtime') . $from . '
             ORDER BY u.firstname, v.title, v.id';
-//        var_dump($sql);
         $viewdata = get_records_sql_assoc('
             SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid,'. db_format_tsfield('v.submittedtime', 'submittedtime') . $from . '
             ORDER BY u.firstname, v.title, v.id',
@@ -4434,14 +4432,6 @@ class View {
         $ph = array($groupid, $groupid,$user);
 
         $count = count_records_sql('SELECT COUNT(DISTINCT(v.id)) ' . $from, $ph);
-//        var_dump($groupid);
-//        var_dump($user);
-//        var_dump($ph);
- /*       $sql = '
-            SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid,'. db_format_tsfield('v.submittedtime', 'submittedtime') . $from . '
-            ORDER BY u.firstname, v.title, v.id';
-            */
-//        var_dump($sql);
         $viewdata = get_records_sql_assoc('
             SELECT DISTINCT v.id,v.title,v.startdate,v.stopdate,v.description,v.group,v.owner,v.ownerformat,v.institution,v.urlid,'. db_format_tsfield('v.submittedtime', 'submittedtime') . $from . '
             ORDER BY u.firstname, v.title, v.id',
