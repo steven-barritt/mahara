@@ -166,6 +166,7 @@ class PluginBlocktypeBlog extends PluginBlocktype {
         //
         // Note: the owner check will have to change when we do group/site
         // blogs
+        //special case for pages that are owned by the system
         if (empty($configdata['artefactid']) || $blog->get('owner') == $USER->get('id') || $blog->get('group') || $blog->get('institution') || $blog->get('owner') == 0) {
             $elements[] = self::artefactchooser_element((isset($configdata['artefactid'])) ? $configdata['artefactid'] : null);
             $elements['count'] = array(
