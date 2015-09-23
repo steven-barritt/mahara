@@ -51,7 +51,7 @@ $currentviewid = param_integer('currentview',null);
 	list($collections,$views) = View::get_views_and_collections(null, $group->id,null);
 	$templates = array();
 	foreach($views as $key => $view){
-		if($view['copynewuser'] == 1){
+		if($view['copynewuser']){
 			$templates[] = $view;
 			unset($views[$key]);
 		}

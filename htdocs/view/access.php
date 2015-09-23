@@ -176,7 +176,7 @@ $js = '';
             'type'         => 'checkbox',
             'title'        => get_string('copyfornewusers', 'view'),
             'description'  => get_string('copyfornewusersdescription1', 'view'),
-            'defaultvalue' => $view->get('copynewuser'),
+            'defaultvalue' => $view->get('copynewuser') == 1,
         );
         $form['elements']['more']['elements']['copyfornewgroups'] = array(
             'type'         => 'html',
@@ -185,6 +185,12 @@ $js = '';
         $form['elements']['more']['elements']['copyfornewgroupsdescription1'] = array(
             'type'         => 'html',
             'value'        => '<div class="description">' . get_string('copyfornewgroupsdescription1', 'view') . '</div>',
+        );
+        $form['elements']['more']['elements']['copynewgroupuser'] = array(
+            'type'         => 'checkbox',
+            'title'        => get_string('copyfornewgroupmembers', 'view'),
+            'description'  => get_string('copyfornewgroupsdescription1', 'view'),
+            'defaultvalue' => $view->get('copynewuser') == 2 ,
         );
         $createfor = $view->get_autocreate_grouptypes();
         foreach (group_get_grouptype_options() as $grouptype => $grouptypedesc) {
@@ -514,6 +520,9 @@ function editaccess_submit(Pieform $form, $values) {
 //    if ($institution) {
         if (isset($values['copynewuser'])) {
             $viewconfig['copynewuser'] = (int) $values['copynewuser'];
+        }
+        if(isset($values['copynewgroupuser'])){
+        	$viewconfig['copynewuser'] = $values['copynewgroupuser'] ? 2 : $viewconfig['copynewuser'];
         }
         if ($institution == 'mahara') {
             $createfor = array();
