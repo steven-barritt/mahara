@@ -14,6 +14,9 @@
 	max-width:100px;
 }
 
+#top-wrapper.rd-navmenu.relative{
+	position:relative;
+}
 .sitemessage{
 	padding:10px;
 }
@@ -1691,8 +1694,8 @@ width: 0;
 /******************** Responsive navigation ********************/
 /* reset responsive navigation */
 #top-wrapper.rd-navmenu{
-	position:fixed;
-	top:0;
+/*	position:fixed;
+	top:0;*/
 	width:100%;
 	z-index:4000;
 	
@@ -3160,7 +3163,7 @@ tr.r1 td.absent{
 /* for 780px or less */
 @media screen and (max-width: 767px) {
 	#mainmiddlewrap{
-		margin-top:60px;
+/*		margin-top:60px;*/
 	}
 	
     /* Portfolio > Shared by me > Edit access */
@@ -3346,7 +3349,7 @@ tr.r1 td.absent{
 		display:none;
 	}
 	.dashboard .bt-postit{
-		display:none;
+/*		display:none;*/
 	}
 
     /* Form */
