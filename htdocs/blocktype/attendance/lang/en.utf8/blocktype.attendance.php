@@ -32,6 +32,6 @@ $string['notrecorded'] = 'Not Recorded';
 $string['percentage'] = 'Percentage attendance :';
 $string['present'] = 'Present';
 $string['late'] = 'Late';
-$string['absent'] = 'absent';
+$string['absent'] = 'Absent';
 $string['excused'] = 'Excused';
 $string['attendanceregister'] = 'Attendance Record:';

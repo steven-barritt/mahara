@@ -7,13 +7,13 @@
 				<td>{str tag=wednesday section=interaction.schedule}</td>
 				<td>{str tag=thursday section=interaction.schedule}</td>
 				<td>{str tag=friday section=interaction.schedule}</td>
-				<td class="noprint">{str tag=saturday section=interaction.schedule}</td>
-				<td class="noprint">{str tag=sunday section=interaction.schedule}</td>
+				<td class="noprint weekend">{str tag=saturday section=interaction.schedule}</td>
+				<td class="noprint weekend">{str tag=sunday section=interaction.schedule}</td>
 			</tr>
 		</thead>
 		{for i 1 52}
 			<tr>
-				<td>Week: {$i}<br>{$weeksanddays[$i][1].date|format_date:'strftimedatevshort'}</td>
+				<td><span class="weekno">Week: {$i}<br>{$weeksanddays[$i][1].date|format_date:'strftimedatevshort'}</span></td>
 				{for j 1 5}
 				<td class="weekday">
 				<div  class="yearplanday">

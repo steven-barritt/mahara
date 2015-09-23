@@ -25,10 +25,26 @@ function responsiveNav(navTarget, wrapper) {
         // test if nav item combined width is greater than window width, add class if it is and vice versa
         if (windowWidth < breakpoint || wrapperWidth < navWidth) {
             wrapper.addClass('rd-navmenu');
+			var topwrapperheight = $j('#top-wrapper').height();
+			var windowHeight = $j(window).height();
+			var navheight = windowHeight - topwrapperheight-3;
+			if(topwrapperheight > 90){
+				navheight += 53;
+			}
+			$j('#nav').css({"max-height": navheight + 'px' });
+			$j('#mainmiddlewrap').css({"margin-top": topwrapperheight + 'px'});
+			if(windowWidth <= 600 || wrapperWidth <= 600){
+				$j('#mainmiddlewrap.dashboard').css({"margin-top": topwrapperheight-50 + 'px'});
+			}
         }
         else if (windowWidth >= breakpoint || wrapperWidth >= navWidth) {
             wrapper.removeClass('rd-navmenu');
+			$j('#mainmiddlewrap').css({"margin-top": 0 + 'px'});
+			$j('#mainmiddlewrap.dashboard').css({"margin-top": 0 + 'px'});
         }
+        //add max height to nav dropdown;
+        
+
     });
 }
 $j(document).ready(function(){
@@ -58,7 +74,6 @@ $j(document).ready(function(){
         $j("#right-nav ul").toggleClass("expand");
         return false;
     });
-    
     // adds expand when click on menu title in responsive footer menu
     // Why does this exist?
     $j(".rd-nav-footer-title").click(function(event) {

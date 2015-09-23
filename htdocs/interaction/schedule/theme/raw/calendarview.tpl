@@ -18,8 +18,8 @@
 				<td>{str tag=wednesday section=interaction.schedule}</td>
 				<td>{str tag=thursday section=interaction.schedule}</td>
 				<td>{str tag=friday section=interaction.schedule}</td>
-				<td class="noprint">{str tag=saturday section=interaction.schedule}</td>
-				<td class="noprint">{str tag=sunday section=interaction.schedule}</td>
+				<td class="noprint weekend">{str tag=saturday section=interaction.schedule}</td>
+				<td class="noprint weekend">{str tag=sunday section=interaction.schedule}</td>
 			</tr>
 		</thead>
 		{for i 1 6}

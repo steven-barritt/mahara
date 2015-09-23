@@ -54,13 +54,13 @@
 }
 
 #schedulelist td.event_date{
-	width:15%;
+	width:25%;
 }
 #schedulelist td.event_time{
-	width:15%;
+	width:25%;
 }
 #schedulelist td.event_details{
-	width:70%;
+	width:50%;
 }
 .event_details td p{
 	padding:0;
@@ -89,7 +89,10 @@ display: block;
 -webkit-border-radius: 3px;
 -moz-border-radius: 3px;
 border-radius: 3px;
-width:98%;
+width:100%
+-webkit-box-sizing:border-box;;
+-moz-box-sizing:border-box;;
+box-sizing:border-box;;
 overflow-x:scroll;
 }
 #viewschedule .rbuttons {
@@ -495,6 +498,36 @@ border-collapse: separate;
 	background-color:#e1e1e1;
 
 }
+/* for 480px or less */
+@media screen and (max-width: 480px) {
+	#schedulelist td.event_date{
+		width:100%;
+		display:inline-block;
+		float:left;
+	}
+	#schedulelist td.event_time{
+		width:100%;
+		display:inline-block;
+		float:left;
+	}
+	#schedulelist td.event_details{
+		display:inline-block;
+		float:left;
+		width:100%;
+	}
+	.weekend{
+		display:none;
+	}
+}
+@media screen and (max-width: 360px) {
+	#viewschedule{
+		padding:5px 0 5px 0;
+	}
+	.weekend, .weekno{
+		display:none;
+	}
+}
+
 @media print{
 	#main-column-container h1{
 		display:none;

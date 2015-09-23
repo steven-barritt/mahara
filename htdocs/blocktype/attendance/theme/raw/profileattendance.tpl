@@ -31,19 +31,21 @@
 				{/if}
 		</tr>
 	</table>
-		<div class="attendancekey">
-			<div class="one-quater">
-				<span class="present">&nbsp;</span><span>{str tag=present section=blocktype.attendance}: {$percentages[0]->percentage}%</span>
-			</div>
-			<div class="one-quater">
-				<span class="late">&nbsp;</span><span>{str tag=late section=blocktype.attendance}: {$percentages[1]->percentage}%</span>
-			</div>
-			<div class="one-quater">
-				<span class="absent">&nbsp;</span><span>{str tag=absent section=blocktype.attendance}: {$percentages[2]->percentage}%</span>
-			</div>
-			<div class="one-quater">
-				<span class="excused">&nbsp;</span><span>{str tag=excused section=blocktype.attendance}: {$percentages[3]->percentage}%</span>			
-			</div>
-		</div>
+		<table class="attendancekey">
+			<tr>
+			<td class="one-quater">
+				<span class="present">{$percentages[0]->percentage}</span><span>{str tag=present section=blocktype.attendance}</span>
+			</td>
+			<td class="one-quater">
+				<span class="late">{$percentages[1]->percentage}</span><span>{str tag=late section=blocktype.attendance}</span>
+			</td>
+			<td class="one-quater">
+				<span class="absent">{$percentages[2]->percentage}</span><span>{str tag=absent section=blocktype.attendance}</span>
+			</td>
+			<td class="one-quater">
+				<span class="excused">{$percentages[3]->percentage}</span><span>{str tag=excused section=blocktype.attendance}</span>			
+			</td>
+			</tr>
+		</table>
 	</div>
 </div>

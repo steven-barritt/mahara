@@ -108,12 +108,12 @@ $string['activetopicsdescription'] = 'Recently updated topics in your groups.';
 
 $string['timeleftnotice'] = 'You have %s minutes left to finish editing.';
 
-$string['monday'] = 'Monday';
-$string['tuesday'] = 'Tuesday';
-$string['wednesday'] = 'Wednesday';
-$string['thursday'] = 'Thursday';
-$string['friday'] = 'Friday';
-$string['saturday'] = 'Saturday';
-$string['sunday'] = 'Sunday';
+$string['monday'] = 'Mon';
+$string['tuesday'] = 'Tue';
+$string['wednesday'] = 'Wed';
+$string['thursday'] = 'Thu';
+$string['friday'] = 'Fri';
+$string['saturday'] = 'Sat';
+$string['sunday'] = 'Sun';
 
 

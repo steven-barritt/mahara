@@ -385,42 +385,31 @@ td.attendancecol{
 
 .one-quater{
 	display:inline-block;
-	width:24%;
+	word-wrap:normal;
+	width:22%;
+	padding:0px;
+	font-size:.8em;
 }
-
-.attendancekey .present{
-	margin:10px;
+.attendancekey .present, .attendancekey .late, .attendancekey .absent, .attendancekey .excused{
+	margin-right:2px;
 	display:inline-block;
-	width:15px;
+	width:18px;
 	height:15px;
 	border:solid 1px #aaa;
+}
+.attendancekey .present{
 	background: #b8dea7;
 
 }
 .attendancekey .late{
-	margin:10px;
-	display:inline-block;
-	width:15px;
-	height:15px;
-	border:solid 1px #aaa;
 	background: #dedb8c;
 
 }
 .attendancekey .absent{
-	margin:10px;
-	display:inline-block;
-	width:15px;
-	height:15px;
-	border:solid 1px #aaa;
 	background: #dea7a7;
 
 }
 .attendancekey .excused{
-	margin:10px;
-	display:inline-block;
-	width:15px;
-	height:15px;
-	border:solid 1px #aaa;
 	background: #9cd2ee;
 
 }

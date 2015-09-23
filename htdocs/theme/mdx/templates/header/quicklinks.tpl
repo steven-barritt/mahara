@@ -1,4 +1,5 @@
-<div id="bt-quicklinks" class="bt-quicklinks">
+{if $LOGGEDIN && $dashboardview}
+<div id="quicklinks" class="quicklinks">
 <table class="fullwidth">
 <tr>
 <td>
@@ -16,3 +17,5 @@
 </tr>
 </table>
 </div>
+{/if}
+

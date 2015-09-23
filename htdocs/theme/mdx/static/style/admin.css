@@ -905,4 +905,13 @@ table.iframesources td {
 table.iframesources td img {
     vertical-align: middle;
 }
+@media screen and (max-width: 768px) {
+	#useraccountsettingsleft {
+		width:100%;
+	}
+	#useraccountsettingsright {
+		width:100%;
+	}
+
+}
 /* Extensions > Clean URLs */

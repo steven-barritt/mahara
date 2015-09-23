@@ -5,23 +5,29 @@
 {include file="header/head.tpl"}
 <body class="no-js">
 {if $ADDITIONALHTMLTOPOFBODY}{$ADDITIONALHTMLTOPOFBODY|safe}{/if}
+<div id="container" {if $LOGGEDIN && $dashboardview}class="dashboard"{/if}>
+
+    <div class="center"><a class="skiplink" href="#mainmiddle">{str tag=skipmenu}</a></div>
+    <div id="loading-box"></div>
+    {if $LOGGEDIN && $dashboardview}
+<div id="quicklinkpad"></div>
+{/if}
+    <div id="top-wrapper">
 {if $USERMASQUERADING || !$PRODUCTIONMODE || $SITECLOSED || $SITETOP}<div class="sitemessages">{/if}
     {if $USERMASQUERADING}<div class="sitemessage"><img src="{theme_url filename='images/failure.png'}" alt="">{$masqueradedetails} {$becomeyouagain|safe}</div>{/if}
     {if !$PRODUCTIONMODE}<div class="sitemessage center">{str tag=notproductionsite section=error}</div>{/if}
     {if $SITECLOSED}<div class="sitemessage center">{if $SITECLOSED == 'logindisabled'}{str tag=siteclosedlogindisabled section=mahara arg1="`$WWWROOT`admin/upgrade.php"}{else}{str tag=siteclosed}{/if}</div>{/if}
     {if $SITETOP}<div id="switchwrap">{$SITETOP|safe}</div>{/if}
 {if $USERMASQUERADING || !$PRODUCTIONMODE || $SITECLOSED || $SITETOP}</div>{/if}
-<div id="container">
-    <div class="center"><a class="skiplink" href="#mainmiddle">{str tag=skipmenu}</a></div>
-    <div id="loading-box"></div>
-    <div id="top-wrapper">
+    
         <div id="header"><h1 id="site-logo"><a href="{$WWWROOT}"><img src="{$sitelogo}" alt="{$sitename}"></a></h1>
 {include file="header/topright.tpl"}
         </div>
 {include file="header/navigation.tpl"}
+{include file="header/quicklinks.tpl"}
         <div class="cb"></div>
     </div>
-    <div id="mainmiddlewrap">
+    <div id="mainmiddlewrap" {if $LOGGEDIN && $dashboardview}class="dashboard"{/if} >
         <div id="mainmiddle">
             <div id="{if $SIDEBARS}{if $SIDEBLOCKS.right}main-wrapper-narrow-right{else}main-wrapper-narrow-left{/if}{else}main-wrapper{/if}">
                     <div id="main-column" class="main-column{if $SIDEBARS} main-column-narrow{/if}{if $selected == 'content'} editcontent{/if}">

@@ -97,9 +97,13 @@
 #bloglist .btns2 a{
 	margin:0px;
 }
+#bloglist .btns2 a{
+	margin:0px;
+}
 
 #bloglist span.newentry{
-	min-width:180px;
+	margin-left:0;
+	min-width:130px;
 }
 #bloglist .btns2{
 	position:
@@ -180,5 +184,12 @@
 
     .postlist .viewpost_flow{
     width:100%;
+    }
+    #bloglist td{
+    	width:100%;
+    	float:left;
+    }
+    #bloglist .right{
+    	text-align:left;
     }
 }
