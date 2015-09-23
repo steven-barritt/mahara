@@ -72,53 +72,49 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
 
 	public static function get_recent($limit=10,$offset=0){
 		require_once('view.php');
-		$views = View::view_search(null, null, null, null, null, 0, true, '', array('portfolio','grouphomepage'));
-		
-		$viewarray = array();
-		foreach ($views->ids as $view){
-			$viewarray[] = $view;
+		global $USER;
+		if (!$mostrecent = get_records_sql_array(
+		'SELECT a.title, ' . db_format_tsfield('a.ctime', 'ctime') . ', p.title AS parenttitle, a.id, a.parent, a.description, a.owner,a.author, va.view, a.allowcomments
+			FROM {artefact} a
+			JOIN {artefact} p ON a.parent = p.id
+			JOIN {artefact_blog_blogpost} ab ON (ab.blogpost = a.id AND ab.published = 1)
+			JOIN {view_artefact} va ON (p.id = va.artefact)
+			WHERE a.artefacttype = \'blogpost\'
+			AND va.view IN (SELECT va.view
+							FROM {view_access} va
+								JOIN {group_member} m ON va.group = m.group AND (va.role = m.role OR va.role IS NULL)
+							WHERE
+								m.member = ?
+								AND (va.startdate IS NULL OR va.startdate < current_timestamp)
+								AND (va.stopdate IS NULL OR va.stopdate > current_timestamp))
+			
+			ORDER BY a.ctime DESC, a.id DESC
+			LIMIT ' . $limit.' OFFSET '.$offset,array($USER->get('id')))) {
+			$mostrecent = array();
+			/*AND a.owner != ?  ,array($usrid) excludes your own posts but this doesn;t seem right somehow*/
 		}
-		$mostrecent = NULL;
-		$viewsstr = implode(",",$viewarray);
-		if($viewsstr != ''){ /*we have views available to us*/
-            if (!$mostrecent = get_records_sql_array(
-            'SELECT a.title, ' . db_format_tsfield('a.ctime', 'ctime') . ', p.title AS parenttitle, a.id, a.parent, a.description, a.owner,a.author, va.view, a.allowcomments
-                FROM {artefact} a
-                JOIN {artefact} p ON a.parent = p.id
-                JOIN {artefact_blog_blogpost} ab ON (ab.blogpost = a.id AND ab.published = 1)
-				JOIN {view_artefact} va ON (p.id = va.artefact)
-                WHERE a.artefacttype = \'blogpost\'
-                AND va.view IN (' . $viewsstr . ')
-				
-	            ORDER BY a.ctime DESC, a.id DESC
-                LIMIT ' . $limit.' OFFSET '.$offset,array())) {
-                $mostrecent = array();
-				/*AND a.owner != ?  ,array($usrid) excludes your own posts but this doesn;t seem right somehow*/
-            }
-            foreach ($mostrecent as &$data) {
-                $data->displaydate = format_date($data->ctime);
-				if($data->owner){
-					$data->user = get_user($data->owner);
-				}else{
-					$data->user = get_user($data->author);
-				}
-				$postcontent = $data->description;
-				safe_require('artefact', 'file');
-				$postcontent = ArtefactTypeFolder::append_view_url($postcontent, $data->view);
-				$data->description = $postcontent;
-				if ($data->allowcomments) {
-					safe_require('artefact', 'comment');
-					$empty = array();
-					$ids = array($data->id);
-					$commentcount = ArtefactTypeComment::count_comments($empty, $ids);
-	                $data->commentcount = $commentcount ? $commentcount[(int)$data->id]->comments : 0;
-	            }
-		        $data->artefacturl = get_config('wwwroot') . 'artefact/artefact.php?artefact=' . $data->id.'&view='.$data->view;
+		foreach ($mostrecent as &$data) {
+			$data->displaydate = format_date($data->ctime);
+			if($data->owner){
+				$data->user = get_user($data->owner);
+			}else{
+				$data->user = get_user($data->author);
+			}
+			$postcontent = $data->description;
+			safe_require('artefact', 'file');
+			$postcontent = ArtefactTypeFolder::append_view_url($postcontent, $data->view);
+			$data->description = $postcontent;
+			if ($data->allowcomments) {
+				safe_require('artefact', 'comment');
+				$empty = array();
+				$ids = array($data->id);
+				$commentcount = ArtefactTypeComment::count_comments($empty, $ids);
+				$data->commentcount = $commentcount ? $commentcount[(int)$data->id]->comments : 0;
+			}
+			$data->artefacturl = get_config('wwwroot') . 'artefact/artefact.php?artefact=' . $data->id.'&view='.$data->view;
 
-            }
 		}
 		return $mostrecent;
-
 	}
 
 
