@@ -1552,11 +1552,12 @@ function group_get_parent($groupid) {
 }
 
 function group_get_children($groupid,$grouptype=null) {
-    $children = get_records_sql_array(
+//this function was never finished there is anpther called get_subgroups_array
+/*    $children = get_records_sql_array(
     	'SELECT gh.child, gh.depth  FROM {group_hierarchy} gh
     	join {group} g on gh.child = g.id 
         WHERE gh.parent = ? AND g.grouptype = ', array($groupid));
-        
+  */      
     if(isset($parent)){
 	    return $parent[0]->parent;
 	}else{
@@ -1697,7 +1698,7 @@ function get_group_list($type = null, $category = null){
     return $groups;
 }
 
-function get_group_subgroups_array($group, $type = null){
+function get_group_subgroups_array($group, $type = null,$depth = 0){
 	$groups = array();
 	if($type != null){
 		$groups = get_records_sql_array("
@@ -1708,13 +1709,23 @@ function get_group_subgroups_array($group, $type = null){
 				array($group,$type)
 			);
 	}else{
-		$groups = get_records_sql_array("
-				SELECT g.id, g.name,g.grouptype, gh.depth 
-				FROM {group} g 
-				JOIN {group_hierarchy} gh ON gh.child = g.id
-				WHERE gh.parent = ? AND g.deleted = 0 AND gh.depth > 0 ORDER BY gh.depth, g.name",
-				array($group)
-			);
+		if($depth != 0){
+			$groups = get_records_sql_array("
+					SELECT g.id, g.name,g.grouptype, gh.depth 
+					FROM {group} g 
+					JOIN {group_hierarchy} gh ON gh.child = g.id
+					WHERE gh.parent = ? AND g.deleted = 0 AND gh.depth = ? ORDER BY gh.depth, g.name",
+					array($group,$depth)
+				);
+		}else{
+			$groups = get_records_sql_array("
+					SELECT g.id, g.name,g.grouptype, gh.depth 
+					FROM {group} g 
+					JOIN {group_hierarchy} gh ON gh.child = g.id
+					WHERE gh.parent = ? AND g.deleted = 0 AND gh.depth > 0 ORDER BY gh.depth, g.name",
+					array($group)
+				);
+		}
     }
 
 

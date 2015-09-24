@@ -71,6 +71,7 @@ $string['editwindowbetween'] = 'Between %s and %s';
 $string['editwindowfrom'] = 'From %s';
 $string['editwindowuntil'] = 'Until %s';
 $string['groupadmins'] = 'Group administrators';
+$string['grouptutors'] = 'Group tutors';
 $string['editroles'] = 'Create and edit pages';
 $string['editrolesdescription'] = 'Roles with permission to create and edit group pages.';
 $string['allexceptmember'] = 'Everyone except ordinary members';
