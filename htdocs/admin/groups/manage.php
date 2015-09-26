@@ -16,6 +16,7 @@ require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 
 require_once('pieforms/pieform.php');
 require_once('group.php');
+safe_require('interaction', 'schedule');
 
 $group = get_record_select('group', 'id = ? AND deleted = 0', array(param_integer('id')));
 
@@ -90,6 +91,11 @@ $groupadminsform = pieform(array(
             'type' => 'text',
             'title' => get_string('archivegroupprefix', 'admin'),
             'defaultvalue' => '',
+        ),
+        'resetsubgroupcolours' => array(
+            'type' => 'checkbox',
+            'title' => get_string('resetsubgroupcolours', 'admin'),
+            'defaultvalue' => false,
         ),
         'submit' => array(
             'type' => 'submit',
@@ -180,7 +186,7 @@ function create_a_new_group($old,$newparent,$prefix){
 }
 
 function groupadminsform_submit(Pieform $form, $values) {
-    global $SESSION, $group, $admins;
+    global $SESSION, $group, $admins, $tutors;
 
     $newadmins = array_diff($values['admins'], $admins);
     $demoted = array_diff($admins, $values['admins']);
@@ -194,7 +200,33 @@ function groupadminsform_submit(Pieform $form, $values) {
     	//this will copy a group - rename it and then go through and copy all subgroups
     	create_a_new_group($group->id,group_get_parent($group->id),$values['archiveprefix']);//TODO:only go this far
     }
-    
+    if(isset($values['resetsubgroupcolours']) && $values['resetsubgroupcolours']){
+		$schedules = get_schedule_list($group->id);
+		$config = array();
+		if($schedules){
+			$config = get_records_assoc('interaction_schedule_instance_config', 'schedule', $schedules[0]->id, '', 'field,value');
+		}
+    	if($subgroups = get_group_subgroups_array($group->id)){
+    		$subs = array();
+    		foreach($subgroups as $subgroup){
+    			$subs[] = $subgroup->id;
+    		}
+    		if($schedules = get_records_sql_array("SELECT i.id
+					from {interaction_instance} i
+					join {interaction_schedule_instance_config} cg on cg.schedule = i.id
+					where i.group in (" . join(',', $subs) . ")
+					AND cg.field = 'color'"
+    			,array())){
+					$subs = array();    			
+					foreach($schedules as $schedule){
+						$subs[] = $schedule->id;
+					}
+					execute_sql("update {interaction_schedule_instance_config} cg 
+						set cg.value = ? where cg.schedule in (" . join(',', $subs) . ")",array($config['color']->value));
+    			}
+    		}
+	}
+
     if ($demoted) {
         $demoted = join(',', array_map('intval', $demoted));
         execute_sql("
@@ -214,7 +246,7 @@ function groupadminsform_submit(Pieform $form, $values) {
             group_add_user($group->id, $id, 'admin');
         }
     }
-    if ($demotedtutors) {
+    if (isset($demotedtutors) && $demotedtutors) {
         $demotedtutors = join(',', array_map('intval', $demotedtutors));
         execute_sql("
             UPDATE {group_member}
