@@ -11,7 +11,7 @@
 		<span class="owner">
 		<div class="friendcell">
 			<a href="{profile_url($view.user)}">
-			   <img src="{profile_icon_url user=$view.user maxwidth=60 maxheight=60}"  style="max-width:40px;max-height:40px;" alt="{str tag=profileimagetext arg1=$view.user|display_default_name}" title="{$view.user|display_default_name|escape}">
+			   <img src="{profile_icon_url user=$view.user maxwidth=100 maxheight=100}"  style="max-width:40px;max-height:40px;" alt="{str tag=profileimagetext arg1=$view.user|display_default_name}" title="{$view.user|display_default_name|escape}">
 			</a>
 		</div>
 		</span>
