@@ -152,7 +152,7 @@ function schedule_get_all_groupevents($groupid,$mindate=null,$maxdate=null){
 			$sql .=" AND e.enddate <= '".db_format_timestamp($maxdate)."'";
 		}
 			
-		$sql .=	" ORDER BY e.startdate, horder, e.enddate";
+		$sql .=	" ORDER BY e.startdate, horder, e.enddate, e.title";
         $events = get_records_sql_array($sql,$options);
 /*
 SELECT DISTINCT gh.child as group_id from `group_hierarchy` gh join `group_member` gm on gh.child = gm.group where gh.parent = 3 and gm.member = 14
@@ -370,7 +370,7 @@ function get_schedule_events($schedule){
 	LEFT JOIN {interaction_schedule_instance_config} sc on e.schedule = sc.schedule AND sc.field = 'color' 
 	JOIN {interaction_instance} s on e.schedule = s.id
 	WHERE e.schedule = ? AND e.deleted = 0
-	ORDER BY e.startdate, e.enddate",
+	ORDER BY e.startdate, e.enddate, e.title",
             array($schedule->id)
         );
  	 
@@ -386,7 +386,7 @@ function schedule_get_attendance_events($schedule){
             'SELECT e.schedule, e.title, e.id, e.description,e.startdate as bob, '. db_format_tsfield('e.startdate','startdate'). ', '. db_format_tsfield('e.enddate','enddate').', e.location, e.attendance
 	FROM {interaction_schedule_event} e
 	WHERE e.schedule = ? AND e.attendance AND e.deleted = 0
-	ORDER BY e.startdate, e.enddate',
+	ORDER BY e.startdate, e.enddate, e.title',
             array($schedule)
         );
  	 
@@ -418,7 +418,7 @@ function schedule_get_group_attendance_events($groupid){
 	FROM {interaction_schedule_event} e
 	JOIN {interaction_instance} i on e.schedule = i.id
 	WHERE e.attendance AND e.deleted = 0 AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
-	ORDER BY e.startdate, e.enddate',
+	ORDER BY e.startdate, e.enddate, e.title',
             array($groupid)
         );
  	 
@@ -443,7 +443,7 @@ function schedule_get_group_attendance($groupid, $userid){
 			on att.event = e.id 
 			WHERE e.deleted = 0 AND e.attendance
 			AND i.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
-			ORDER BY e.startdate, e.enddate',
+			ORDER BY e.startdate, e.enddate, e.title',
             array($userid,$groupid)
         );
  	 
@@ -464,7 +464,7 @@ function schedule_get_schedule_attendance($scheduleid, $userid){
 			a.user = ?) as att
 
 			on att.event = i.id WHERE i.schedule = ? AND i.deleted = 0 AND i.attendance
-			ORDER BY i.startdate, i.enddate',
+			ORDER BY i.startdate, i.enddate, i.title',
             array($userid,$scheduleid)
         );
  	 
@@ -488,7 +488,7 @@ function schedule_get_user_group_attendance($userid,$groupid){
 			on att.event = i.id
                         JOIN {interaction_instance} ii on i.schedule = ii.id                        
                         WHERE  i.deleted = 0 AND i.attendance  AND ii.group IN (SELECT child FROM {group_hierarchy} WHERE parent = ?)
-			ORDER BY i.startdate, i.enddate',
+			ORDER BY i.startdate, i.enddate, i.title',
             array($userid,$groupid)
         );
         if(!$attendance){
@@ -559,7 +559,7 @@ function schedule_get_user_attendance($userid){
                         JOIN {group_member} gm on ii.group = gm.group AND gm.member = ? 
                         
                         WHERE  i.deleted = 0 AND i.attendance
-			ORDER BY i.startdate, i.enddate',
+			ORDER BY i.startdate, i.enddate, i.title',
             array($userid,$userid)
         );
         
