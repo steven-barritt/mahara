@@ -111,6 +111,12 @@ $form = array(
             'description' => get_string('updateusersdescription', 'admin'),
             'defaultvalue' => false,
         ),
+        'limitedediting' => array(
+            'type' => 'checkbox',
+            'title' => get_string('limitedediting', 'admin'),
+            'description' => get_string('limitededitingdescription', 'admin'),
+            'defaultvalue' => false,
+        ),
         'accountprefs' => array(
             'type' => 'fieldset',
             'legend' => get_string('accountoptionsdesc', 'account'),
@@ -500,6 +506,7 @@ function uploadcsv_submit(Pieform $form, $values) {
 
         if (!$values['updateusers'] || !isset($UPDATES[$user->username])) {
             $user->passwordchange = (int)$values['forcepasswordchange'];
+            $user->limitedediting = (int)$values['limitedediting'];
 
             $user->id = create_user($user, $profilefields, $institution, $authrecord, $remoteuser, $values, true);
 
