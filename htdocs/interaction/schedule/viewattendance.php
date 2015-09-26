@@ -56,10 +56,10 @@ $groupmembers = group_get_member_ids_inc_subgroups($groupid, array('member'));
 //TODO: we will also need to implement that in the functions that retrieve the schedules and events
 
 $attendanceevents = array();
-if(in_array($group->grouptype, array('project','assessment'))) {
-	$attendanceevents = schedule_get_group_attendance_events($groupid);
-}else{
+if(in_array($group->grouptype, array('year','module'))) {
 	$attendanceevents = schedule_get_group_attendance_dates($groupid);
+}else{
+	$attendanceevents = schedule_get_group_attendance_events($groupid);
 }
 if(!$attendanceevents){
 	$attendanceevents = array();
