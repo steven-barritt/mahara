@@ -30,6 +30,27 @@ body#micro {
     outline:none;
 }
 
+.indent0{
+	padding-left:0px;
+}
+.indent1{
+	padding-left:10px;
+}
+.indent2{
+	padding-left:20px;
+}
+.indent3{
+	padding-left:25px;
+}
+.indent4{
+	padding-left:30px;
+}
+.indent5{
+	padding-left:35px;
+}
+#groups ul li{
+	list-style:none;
+}
 /******************** General text ********************/
 a,
 a:visited,
@@ -3097,7 +3118,43 @@ tr.r1 td.absent{
 	visibility:hidden;
 
 }
+	#bt-quicklinks {
+		display:inline-block;
+		width:100%;
+	/*	    float: left;
+		width: 50%;
+		margin-top: -50px;
+		margin-left: 25%;
+		margin-right: 25%;*/
+	/*	position:relative;
+		min-width:250px;
+		z-index:1;
+		margin-top:40px;*/
+	}
+	#bt-quicklinks table{
+		margin-left:10px;
+		margin:auto;
+			max-width:300px
+			/*
+			ment.style {
+		float: left;
+		width: 250px;
+		margin-top: -50px;
+		margin-left: 110px;*/
+	}
+	#bt-quicklinks td{
+		margin:auto;
+		text-align:center;
+		padding:2px 2px;
+	}
 
+	#bt-quicklinks img{
+		max-width:70px;
+	}
+	#bt-quicklinkpad{
+		visibility:hidden;
+		height:50px;
+	}
 
 /******************** Responsive design ********************/
 /* for 1000px or less */
