@@ -9,7 +9,7 @@
 {if !$schedule}
 <a href="{$WWWROOT}interaction/edit.php?group={$groupid}&amp;plugin=schedule&amp;returnto=index&view={$view}" class="btn newschedule">{str tag="newschedule" section=interaction.schedule}</a>
 {else}
-<a href="{$WWWROOT}interaction/schedule/editevent.php?schedule={$schedule->id}&view={$view}" class="btn newschedule">{str tag="newevent" section=interaction.schedule}</a>
+<a href="{$WWWROOT}interaction/schedule/editevent.php?schedule={$schedule->id}&view={$view}&month={$month}&year={$year}&returnto={$groupid}" class="btn newschedule">{str tag="newevent" section=interaction.schedule}</a>
 <a href="{$WWWROOT}interaction/edit.php?id={$schedule->id}&amp;group={$groupid}&amp;plugin=schedule&amp;returnto=index&view={$view}" class="btn newschedule">{str tag="schedulesettings" section=interaction.schedule}</a>
 {/if}
 </div>

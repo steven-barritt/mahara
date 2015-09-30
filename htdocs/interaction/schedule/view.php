@@ -23,7 +23,7 @@ require_once('pieforms/pieform.php');
 
 $userid = $USER->get('id');
 $eventid = param_integer('event', null);
-$returnto = param_alpha('returnto', 'schedule');
+$returnto = param_integer('returnto', 0);
 
 if (isset($eventid)) {
     $event = get_record_sql(

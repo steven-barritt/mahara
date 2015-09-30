@@ -27,11 +27,14 @@
 			<tr>
 				{for j 1 7}
 				<td class="{if $j >5 }weekend{else}weekday{/if}{if $weeksanddays[$i][$j].date|format_date:'strftimenmonth' != $weeksanddays[2][4].date|format_date:'strftimenmonth'} greyed{/if}">
-				<div  class="yearplanday">
+				<div  class="yearplanday{if $admin} editable{/if}">
+					{if $admin}
+					<a href="{$WWWROOT}interaction/schedule/editevent.php?schedule={$schedule->id}&view={$view}&returnto={$groupid}&day={$weeksanddays[$i][$j].date|format_date:'strftimenday'}&month={$weeksanddays[$i][$j].date|format_date:'strftimenmonth'}&year={$weeksanddays[$i][$j].date|format_date:'strftimenyear'}"></a>
+					{/if}
 				<div class="daynumber">{if $weeksanddays[$i][$j].date|format_date:'strftimenmonth' != $currmonth}{$weeksanddays[$i][$j].date|format_date:'strftimedatevshort'}{else}{$weeksanddays[$i][$j].date|format_date:'strftimenday'}{/if}</div>
 				<ul>
 					{foreach $weeksanddays[$i][$j].events as event}
-					<li><a style="color:{$event->color}" href="{$WWWROOT}interaction/schedule/{if $admin}editevent{else}view{/if}.php?id={$event->id}&view={$view}" title="{$event->startdate|format_date:'strftimetime'}&#13;{$event->scheduletitle}&#13;{str tag=where section=interaction.schedule}{$event->location}&#13;{$event->startdate|format_date:'strftimedatevshort'}">{$event->title}</a></li>	
+					<li><a style="color:{$event->color}" href="{$WWWROOT}interaction/schedule/{if $admin}editevent.php?id={else}view.php?event={/if}{$event->id}&view={$view}&returnto={$groupid}&month={$month}&year={$year}" title="{$event->startdate|format_date:'strftimetime'}&#13;{$event->scheduletitle}&#13;{str tag=where section=interaction.schedule}{$event->location}&#13;{$event->startdate|format_date:'strftimedatevshort'}">{$event->title}</a></li>	
 					{/foreach}
 				</ul>
 				</div>

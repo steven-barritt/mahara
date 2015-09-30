@@ -22,8 +22,20 @@ require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'interaction/lib.php');
 
 $eventid = param_integer('id');
-$returnto = param_alpha('returnto', 'schedule');
 $view = param_integer('view',0);
+$month = param_integer('month',0);
+$year = param_integer('year',0);
+
+$returnto = param_integer('returnto', 0);
+if ($returnto) {
+	$return = '/interaction/schedule/index.php?group=' . $returnto.'&view='.$view;
+	if($month && $year){
+		$return .= '&month='.$month.'&year='.$year;
+	}
+}
+else {
+	$return = '/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view;
+}
 
 $event = get_record_sql(
 	'SELECT e.schedule, e.title, e.id AS eventid, e.description,'. db_format_tsfield('e.startdate','startdate'). ', '. db_format_tsfield('e.enddate','enddate').', e.location, e.attendance
@@ -72,7 +84,7 @@ $form = pieform(array(
         'submit' => array(
             'type'  => 'submitcancel',
             'value' => array(get_string('yes'), get_string('no')),
-            'goto'  => get_config('wwwroot') . ($returnto == 'view' ? 'interaction/schedule/view.php?id=' . $event->eventid : 'interaction/schedule/index.php?id=' . $scheduleid),
+            'goto'  => get_config('wwwroot') . $return,
         ),
         'schedule' => array(
             'type' => 'hidden',
@@ -88,13 +100,27 @@ $form = pieform(array(
 function deleteevent_submit(Pieform $form, $values) {
     global $SESSION, $USER, $eventid, $schedule;
     // mark event as deleted
+	$view = param_integer('view',0);
+	$month = param_integer('month',0);
+	$year = param_integer('year',0);
+
+	$returnto = param_integer('returnto', 0);
+	if ($returnto) {
+		$return = '/interaction/schedule/index.php?group=' . $returnto.'&view='.$view;
+		if($month && $year){
+			$return .= '&month='.$month.'&year='.$year;
+		}
+	}
+	else {
+		$return = '/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view;
+	}
     update_record(
         'interaction_schedule_event',
         array('deleted' => 1),
         array('id' => $eventid)
     );
     $SESSION->add_ok_msg(get_string('deletetopicsuccess', 'interaction.forum'));
-    redirect('/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$values['view']);
+	redirect($return);
 }
 
 $smarty = smarty();

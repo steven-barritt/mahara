@@ -23,8 +23,21 @@ require_once('pieforms/pieform.php');
 
 $userid = $USER->get('id');
 $eventid = param_integer('id', 0);
-$returnto = param_alpha('returnto', 'schedule');
 $view = param_integer('view',0);
+$month = param_integer('month',0);
+$year = param_integer('year',0);
+$day = param_integer('day',0);
+
+$returnto = param_integer('returnto', 0);
+if ($returnto) {
+	$return = '/interaction/schedule/index.php?group=' . $returnto.'&view='.$view;
+	if($month && $year){
+		$return .= '&month='.$month.'&year='.$year;
+	}
+}
+else {
+	$return = '/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view;
+}
 
 if ($eventid == 0) { // new topic
     $scheduleid = param_integer('schedule');
@@ -100,7 +113,11 @@ then it doesn't notify, otherwise it should notify users of changes being made. 
 
 //date_default_timezone_set('Europe/London');
 //TODO: get these numbers from config somewhere
-$defaultstart = date_create();
+if($day){
+	$defaultstart = new DateTime($day."-".$month."-".$year);
+}else{
+	$defaultstart = date_create();
+}
 $defaultstart->setTime(10,00);
 $defaultstarttime = $defaultstart->getTimestamp();
 $defaultend = $defaultstart->add(new DateInterval('PT3H'));
@@ -111,11 +128,22 @@ for ($i = 1; $i <= 52; $i++) {
 	$numberoptions[$i] = $i;
 }
 
+$scheduleoptions = schedule_get_subgroup_schedules($schedule->groupid);
+
 $editform = array(
     'name'     => isset($event) ? 'editevent' : 'addevent',
     'method'   => 'post',
     'autofocus' => isset($event) ? 'desc' : 'title',
     'elements' => array(
+        'schedule' => array(
+            'type'         => 'select',
+            'options'         => $scheduleoptions,
+            'title'        => get_string('schedule', 'interaction.schedule'),
+            'defaultvalue' => isset($scheduleid) ? $scheduleid : null,
+            'rules'        => array(
+                'required' => true,
+            )
+        ),
         'title' => array(
             'type'         => 'text',
             'title'        => get_string('title', 'interaction.schedule'),
@@ -206,7 +234,7 @@ $editform = array(
                 isset($topic) ? get_string('save') : get_string('post','interaction.schedule'),
                 get_string('cancel')
             ),
-            'goto'      => get_config('wwwroot') . 'interaction/schedule/index.php?group='.$schedule->groupid.'&view='.$view
+            'goto'      => get_config('wwwroot') . $return
         ),
         'event' => array(
             'type' => 'hidden',
@@ -235,11 +263,26 @@ function editevent_validate(Pieform $form, $values) {
 function addevent_submit(Pieform $form, $values) {
     global $USER, $SESSION, $schedule;
     $scheduleid = param_integer('schedule');
+    $view = param_integer('view',0);
+	$month = param_integer('month',0);
+	$year = param_integer('year',0);
+
+	$returnto = param_integer('returnto', 0);
+	if ($returnto) {
+		$return = '/interaction/schedule/index.php?group=' . $returnto.'&view='.$view;
+		if($month && $year){
+			$return .= '&month='.$month.'&year='.$year;
+		}
+	}
+	else {
+		$return = '/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view;
+	}
+
     db_begin();
     $eventid = insert_record(
         'interaction_schedule_event',
 		array(
-			'schedule' => $schedule->id,
+			'schedule' => $values['schedule'],
 			'title' => $values['title'],
 			'description' => $values['description'],
 			'startdate' => db_format_timestamp($values['startdate']),
@@ -280,7 +323,7 @@ function addevent_submit(Pieform $form, $values) {
 			$eventid = insert_record(
 				'interaction_schedule_event',
 				array(
-					'schedule' => $schedule->id,
+					'schedule' => $values['schedule'],
 					'title' => $values['title'],
 					'description' => $values['description'],
 					'startdate' => db_format_timestamp($newstartdate),
@@ -294,7 +337,7 @@ function addevent_submit(Pieform $form, $values) {
     }
     db_commit();
     $SESSION->add_ok_msg(get_string('addeventsuccess', 'interaction.schedule'));
-    redirect('/interaction/schedule/index.php?group='.$schedule->groupid.'&view='.$values['view']);
+    redirect($return);
 }
 
 function editevent_submit(Pieform $form, $values) {
@@ -303,14 +346,27 @@ function editevent_submit(Pieform $form, $values) {
 // Maybe there should be a check box to say notify when you are editing?
     global $SESSION, $USER, $event, $schedule;
     $eventid = param_integer('id');
-    $returnto = param_alpha('returnto', 'schedule');
-    $view = param_integer('view', 0);
+	$view = param_integer('view',0);
+	$month = param_integer('month',0);
+	$year = param_integer('year',0);
+
+	$returnto = param_integer('returnto', 0);
+	if ($returnto) {
+		$return = '/interaction/schedule/index.php?group=' . $returnto.'&view='.$view;
+		if($month && $year){
+			$return .= '&month='.$month.'&year='.$year;
+		}
+	}
+	else {
+		$return = '/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view;
+	}
     db_begin();
     // check the post content actually changed
     // otherwise topic could have been set as sticky/closed
 	update_record(
 		'interaction_schedule_event',
 		array(
+			'schedule' => $values['schedule'],
 			'title' => $values['title'],
 			'description' => $values['description'],
 			'startdate' => db_format_timestamp($values['startdate']),
@@ -322,12 +378,13 @@ function editevent_submit(Pieform $form, $values) {
 	);
     db_commit();
     $SESSION->add_ok_msg(get_string('editeventsuccess', 'interaction.schedule'));
-    if ($returnto == 'schedule') {
-        redirect('/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view);
+    redirect($return);
+/*    if ($returnto) {
+        redirect('/interaction/schedule/index.php?group=' . $returnto.'&view='.$view);
     }
     else {
         redirect('/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view);
-    }
+    }*/
 }
 
 $javascript = <<<EOF
@@ -366,6 +423,10 @@ $smarty->assign('INLINEJAVASCRIPT', $javascript);
 $smarty->assign('heading', $schedule->groupname);
 $smarty->assign('subheading', TITLE);
 $smarty->assign('eventid', $eventid);
+$smarty->assign('groupid', $schedule->groupid);
+$smarty->assign('returnto', $returnto);
 $smarty->assign('view', $view);
+$smarty->assign('month', $month);
+$smarty->assign('year', $year);
 $smarty->assign('editform', $editform);
 $smarty->display('interaction:schedule:editevent.tpl');

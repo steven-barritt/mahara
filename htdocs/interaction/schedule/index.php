@@ -101,6 +101,13 @@ addLoadEvent(function () {
     			toggleElementClass("hidden",details);
         });
     });
+    forEach(getElementsByTagAndClassName('div', 'editable'), function(link) {
+		connect(link, 'ondblclick', function(e) {
+    			e.preventDefault();
+    			var alink = getFirstElementByTagAndClassName('a',null,this);
+    			window.location.href = getNodeAttribute(alink,'href');
+        });
+    });
 });
 
 EOF;
@@ -120,10 +127,12 @@ if($view == 2){
 	$smarty->assign('year',$year);
 	$table = $smarty->fetch('interaction:schedule:calendarview.tpl');
 }elseif($view == 1){
+	$smarty->assign('groupid', $groupid);
 	$weeksanddays = schedule_events_per_day($events,$groupid);
 	$smarty->assign('weeksanddays',$weeksanddays);
 	$table = $smarty->fetch('interaction:schedule:yearplannerview.tpl');
 }else{
+	$smarty->assign('groupid', $groupid);
 	$table = $smarty->fetch('interaction:schedule:scheduleview.tpl');
 }
 
@@ -139,6 +148,8 @@ $smarty->assign('groupid', $groupid);
 $smarty->assign('INLINEJAVASCRIPT', $javascript);
 $smarty->assign('heading', $group->name);
 $smarty->assign('view',$view);
+$smarty->assign('month',$month);
+$smarty->assign('year',$year);
 $smarty->assign('admin', group_user_can_assess_submitted_views($groupid,null));
 $smarty->assign('groupadmins', group_get_admins(array($groupid)));
 if($schedules){

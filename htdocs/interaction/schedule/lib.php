@@ -655,6 +655,26 @@ function schedule_update_attendance($eventid, $userid, $attendance, $excuse=null
 	
 }
 
+function schedule_get_subgroup_schedules($groupid){
+	global $USER;
+	$returnarr = array();
+	$sql = "select ii.id, g.name as title from {interaction_instance} ii
+			join {group_member} gm on gm.group = ii.group
+			join {group} g on g.id = ii.group
+			where ii.plugin = 'schedule' and gm.member = ? and gm.role in ('admin','tutor','ta')
+			and g.deleted = 0 order by title";
+/*	$sql = "select ii.id, ii.title from {interaction_instance} ii
+			join {group_hierarchy} gh on ii.group = gh.child
+			where gh.parent = ? and ii.plugin = 'schedule'";*/
+	if($result = get_records_sql_array($sql,array($USER->get('id')))){
+		foreach($result as $r){
+			$returnarr[$r->id] = $r->title;
+		}
+	}
+	return $returnarr;
+
+}
+
 
 // Contstants for objectionable content reporting events.
 /*define('REPORT_OBJECTIONABLE', 1);

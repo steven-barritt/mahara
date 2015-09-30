@@ -51,10 +51,10 @@
 				</td>
 			<td class="right btns2">
 			{if $admin}
-				<a href="{$WWWROOT}interaction/schedule/editevent.php?id={$event->id}&amp;schedule={$schedule->id}&amp;returnto=index" class="icon btn-big-edit" title="{str tag=edit}">
+				<a href="{$WWWROOT}interaction/schedule/editevent.php?id={$event->id}&amp;schedule={$schedule->id}&amp;returnto={$groupid}" class="icon btn-big-edit" title="{str tag=edit}">
 					{str tag=editspecific arg1=$event->title}
 				</a>
-				<a href="{$WWWROOT}interaction/schedule/deleteevent.php?id={$event->id}&amp;returnto=index" class="icon btn-big-del" title="{str tag=delete}">
+				<a href="{$WWWROOT}interaction/schedule/deleteevent.php?id={$event->id}&amp;returnto={$groupid}" class="icon btn-big-del" title="{str tag=delete}">
 					{str tag=deletespecific arg1=$event->title}
 				</a>
 			{/if}

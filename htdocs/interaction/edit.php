@@ -42,7 +42,7 @@ define('DEFAULTTITLE', get_string('default'.$plugin.'title', 'interaction.' . $p
 
 
 $membership = group_user_access($groupid);
-if ($membership != 'admin') {
+if (!($membership == 'admin' || $membership == 'tutor')) {
     throw new AccessDeniedException(get_string('notallowedtoeditinteractions', 'group'));
 }
 
