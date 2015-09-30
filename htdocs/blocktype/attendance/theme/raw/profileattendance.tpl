@@ -1,4 +1,5 @@
 <div id="viewattendance">
+{if $cansee}
 	<h4>{str tag=attendanceregister section=blocktype.attendance}</h4>
 	<table id="profileattendancelist" class="fullwidth nohead">
 
@@ -48,4 +49,5 @@
 			</tr>
 		</table>
 	</div>
+	{/if}
 </div>

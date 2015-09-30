@@ -58,11 +58,19 @@ class PluginBlocktypeAttendance extends SystemBlocktype {
 	//this isn;t very nice
 	//likewise we then get the schedule for that group but at present there is assumed only one
 	//this again should be changed later to allow more than one schedule per group
+		global $USER;
 		$attendances = array();
 		$events = array();
+		$cansee = true;
 		if($instance->get_view()->get('type') == 'profile'){
+			if($instance->get_view()->get('owner') == $USER->get('id') || $USER->is_staff_for_user($instance->get_view()->get('owner'))){
+				list($attendances,$percentages) = schedule_get_user_attendance($instance->get_view()->get('owner'));
+			}else{
+				$cansee = false;
+			}
+			//check user privaliges to see if they can see this...
+			//only admin, staff, institution staff, and the user can see this. if it is a profile version
 			
-			list($attendances,$percentages) = schedule_get_user_attendance($instance->get_view()->get('owner'));
 		}else{
 			$groups = self::get_groups($instance);
 			if(count($groups) > 0){
@@ -86,6 +94,7 @@ class PluginBlocktypeAttendance extends SystemBlocktype {
 			$factor = intval($total / $potentialrows)+1;
 		}
 		$smarty = smarty_core();
+		$smarty->assign('cansee',$cansee);
 		$smarty->assign('factor',$factor);
 		$smarty->assign('events',$events);
 		$smarty->assign('columnheight',$columnheight);
