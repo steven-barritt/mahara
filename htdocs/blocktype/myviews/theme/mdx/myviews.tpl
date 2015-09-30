@@ -15,7 +15,7 @@
                   <div class="tags"><strong>{str tag=tags}:</strong> {list_tags owner=$item.owner tags=$item.tags}</div>
                 {/if}
 				 {if $item.artefacts}
-					<div class="bloginfo"> <a href="{$item.artefacts[0]['bloglink']}">{str tag=workbook section=blocktype.groupviews}</a> - {str tag=posts section=blocktype.groupviews arg1=$item.artefacts[0]["postcount"]} - {str tag=latestpost section=blocktype.groupviews} {$item.artefacts[0]["latestpost"]}</div>
+					<div class="bloginfo"> <a href="{$item.artefacts[0]['bloglink']}">{str tag=workbook section=blocktype.groupviews}</a>{if $item.artefacts[0]["postcount"] != null} - {str tag=posts section=blocktype.groupviews arg1=$item.artefacts[0]["postcount"]} - {str tag=latestpost section=blocktype.groupviews} {$item.artefacts[0]["latestpost"]}{else} - {str tag=posts section=blocktype.groupviews arg1=0}{/if}</div>
 				 {else}
 					<div class="bloginfo">&nbsp;</div>
 				 {/if}
