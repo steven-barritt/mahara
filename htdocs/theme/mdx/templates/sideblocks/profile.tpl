@@ -20,7 +20,7 @@
             <li id="groups"><a href="{$WWWROOT}group/mygroups.php">{str tag="mygroups"}:</a>
                 <ul>
 {foreach from=$sbdata.groups item=group}
-                    <li><a href="{group_homepage_url($group)}">{$group->name}</a>{if $group->role == 'admin'} ({str tag=Admin section=group}){/if}</li>
+                    <li class="indent{$group->depth}"><a href="{group_homepage_url($group)}">{$group->name}</a>{if $group->role == 'admin'} ({str tag=Admin section=group}){/if}</li>
 {/foreach}
                 </ul>
                 <span class="tiny">{$sbdata.grouplimitstr}</span>

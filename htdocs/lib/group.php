@@ -2267,18 +2267,38 @@ function group_get_user_groups($userid=null, $roles=null, $sort=null, $limit=nul
 
     if (!$fromcache || !isset($usergroups[$userid])) {
 
-        $groups = get_records_sql_array("
-            SELECT g.id, g.name, gm.role, g.jointype, g.request, g.grouptype, gtr.see_submitted_views, g.category,
-                g.hidemembers, g.invitefriends, g.urlid, gm.ctime, gm1.role AS loggedinrole
-            FROM {group} g
-                JOIN {group_member} gm ON gm.group = g.id
-                JOIN {grouptype_roles} gtr ON g.grouptype = gtr.grouptype AND gm.role = gtr.role
-                LEFT OUTER JOIN {group_member} gm1 ON gm1.group = gm.group AND gm1.member = ?
-            WHERE gm.member = ?
-                AND g.deleted = 0
-            ORDER BY g.name, gm.role = 'admin' DESC, gm.role, g.id",
+			$groups = get_records_sql_array("select gr.id, gr.name, gm.role, gr.jointype, gr.request, gr.grouptype, gtr.see_submitted_views, gr.category, gr.hidemembers, gr.invitefriends, gr.urlid, gm.ctime, gm1.role AS loggedinrole,
+			(select group_concat(g.name order by ghp.depth desc separator '->') as path
+			from {group_hierarchy} ghc
+			join {group_hierarchy} ghp on (ghc.child = ghp.child)
+			join {group} g on (g.id = ghp.parent)
+			join {group} g2 on (g2.id = ghc.child)
+			where ghc.parent = gr.id and ghc.child = ghc.parent
+			group by ghc.child) as path,
+			(select MAX(gh2.depth) from {group_hierarchy} gh2
+			where gh2.child = gr.id) as depth
+			from {group} gr
+			JOIN {group_member} gm ON gm.group = gr.id
+			JOIN {grouptype_roles} gtr ON gr.grouptype = gtr.grouptype AND gm.role = gtr.role
+			LEFT OUTER JOIN {group_member} gm1 ON gm1.group = gm.group AND gm1.member = ?
+			WHERE gm.member = ?
+			AND gr.deleted = 0
+			order by path",
             array($loggedinid, $userid)
         );
+/*
+        $groups = get_records_sql_array("
+				SELECT g.id, g.name, gm.role, g.jointype, g.request, g.grouptype, gtr.see_submitted_views, g.category,
+					g.hidemembers, g.invitefriends, g.urlid, gm.ctime, gm1.role AS loggedinrole
+				FROM {group} g
+					JOIN {group_member} gm ON gm.group = g.id
+					JOIN {grouptype_roles} gtr ON g.grouptype = gtr.grouptype AND gm.role = gtr.role
+					LEFT OUTER JOIN {group_member} gm1 ON gm1.group = gm.group AND gm1.member = ?
+				WHERE gm.member = ?
+					AND g.deleted = 0
+				ORDER BY g.name, gm.role = 'admin' DESC, gm.role, g.id",
+            array($loggedinid, $userid)
+        );*/
         $usergroups[$userid] = $groups ? $groups : array();
     }
 
