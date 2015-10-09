@@ -1215,7 +1215,7 @@ class User {
             if (!isset($this->grouproles[$group])) {
                 return false;
             }
-            if (($v->get('type') == 'grouphomepage' || $v->get('locked')) && $this->grouproles[$group] != 'admin') {
+            if (($v->get('type') == 'grouphomepage' || $v->get('locked')) && !($this->grouproles[$group] == 'admin' || $this->grouproles[$group] == 'tutor')) {
                 return false;
             }
             require_once('group.php');
