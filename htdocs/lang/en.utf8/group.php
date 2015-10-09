@@ -25,8 +25,8 @@ $string['addedtogroupsubject'] = 'You were added to a course';
 $string['addedtogroupmessage'] = '%s has added you to a course, \'%s\'. Click on the link below to see the course.';
 $string['adduserfailed'] = 'Failed to add the user';
 $string['useradded'] = 'User added';
-$string['editgroup'] = 'Edit course';
-$string['editgrouppage'] = 'Edit Home Page';
+$string['editgroup'] = 'Course';
+$string['editgrouppage'] = 'Home Page';
 $string['savegroup'] = 'Save course';
 $string['groupsaved'] = 'Course saved successfully';
 $string['invalidgroup'] = 'The course does not exist';
@@ -182,7 +182,7 @@ $string['grouprequestmessagereason'] = "%s would like to join your group %s. The
 $string['cantdeletegroup'] = 'You cannot delete this group.';
 $string['groupconfirmdelete'] = "This will delete all pages, files and forums contained within the group. Are you sure you wish to fully delete this group and all its content?";
 $string['deletegroup'] = 'Group deleted successfully';
-$string['deletegroup1'] = 'Delete group';
+$string['deletegroup1'] = 'Delete Course';
 $string['allmygroups'] = 'All my groups';
 $string['groupsimin']  = 'Groups I\'m in';
 $string['groupsiown']  = 'Groups I own';
@@ -364,7 +364,7 @@ $string['Joined'] = 'Joined';
 
 $string['invitemembersdescription'] = 'You can invite users to join this group through their profile pages or <a href="%s">send multiple invitations at once</a>.';
 $string['membersdescription:controlled'] = 'This is a controlled membership group. You can add users directly through their profile pages or <a href="%s">add many users at once</a>.';
-$string['sendgroupmessage'] = 'Send all members a message';
+$string['sendgroupmessage'] = 'Message';
 
 // View submission
 $string['submit'] = 'Submit';
