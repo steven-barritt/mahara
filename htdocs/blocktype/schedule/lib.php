@@ -80,7 +80,7 @@ class PluginBlocktypeSchedule extends SystemBlocktype {
 		if ($role || $public) {
 			$schedules = get_schedule_list($group->id);
 			if($schedules){
-				$events = get_schedule_events($schedules[0]);
+				$events = schedule_get_all_groupevents($group->id,null,null,true);
 			}
 		}
 		$limit = 14;
@@ -129,6 +129,7 @@ class PluginBlocktypeSchedule extends SystemBlocktype {
 		$smarty->assign('limittext', $limittext);
 		$smarty->assign('group', $group);
 		$smarty->assign('events', $events);
+		$smarty->assign('schedule', $schedules[0]);
 		if ($instance->get_view()->get('type') == 'grouphomepage') {
 			return $smarty->fetch('blocktype:schedule:groupschedule.tpl');
 		}

@@ -101,7 +101,7 @@ function schedule_get_user_events($mindate,$maxdate){
 
 }
 
-function schedule_get_all_groupevents($groupid,$mindate=null,$maxdate=null){
+function schedule_get_all_groupevents($groupid,$mindate=null,$maxdate=null,$subgroupsonly=false){
 	global $USER;
 	$events = array();
 	$options = array();
@@ -127,23 +127,31 @@ function schedule_get_all_groupevents($groupid,$mindate=null,$maxdate=null){
 			AND s.group in ";
 		//if the user is a member of staff then show all events in all groups and sub groups
 		if($USER->is_institutional_staff()){
+			$options = array($groupid);
 			$sql .="	
 				(
-					SELECT DISTINCT gh.child as group_id from {group_hierarchy} gh where gh.parent = ?
+					SELECT DISTINCT gh.child as group_id from {group_hierarchy} gh where gh.parent = ?";
+			if(!$subgroupsonly){
+				$sql .="	
 						UNION
-					SELECT DISTINCT gh.parent as group_id from {group_hierarchy} gh where gh.child = ?
-				) ";
-				$options = array($groupid, $groupid);
+					SELECT DISTINCT gh.parent as group_id from {group_hierarchy} gh where gh.child = ?";
+				$options[] = $groupid;
+			}
+			$sql .=") ";
 		}else{
 		//otherwise only show sub grop events for groups the user is in. but still show all events for groups going up the hierarchy
+			$options = array($groupid,$USER->get('id'));
 			$sql .="	
 				(
 					SELECT DISTINCT gh.child as group_id from {group_hierarchy} gh 
-					JOIN {group_member} gm on gh.child = gm.group where gh.parent = ? AND gm.member = ?
+					JOIN {group_member} gm on gh.child = gm.group where gh.parent = ? AND gm.member = ? ";
+			if(!$subgroupsonly){
+				$sql .="	
 						UNION
-					SELECT DISTINCT gh.parent as group_id from {group_hierarchy} gh where gh.child = ?
-				) ";
-				$options = array($groupid,$USER->get('id'),$groupid);
+					SELECT DISTINCT gh.parent as group_id from {group_hierarchy} gh where gh.child = ?";
+				$options[] = $groupid;
+			}
+			$sql .=") ";
 		}
 		if($mindate){
 			$sql .=" AND e.startdate >= '".db_format_timestamp($mindate)."'";
@@ -304,46 +312,48 @@ function schedule_events_per_cal_day($events,$groupid, $month,$year){
 			$weeksanddays[$i][$j] = array('date'=>$date,'events'=>array());
 		}
 	}
-	foreach($events as $event){
-		$week = intval(date('W',intval($event->startdate)));
-//		var_dump('<br>'.$week);
-		//calculate relative week we populate weeks 1 - 6 January
-		if($startweek >=52){
-			//so the year starts in week 52 or 53 so all events in week one need to be in the second slot onwards
-			if($week < 52){
-				$week = $week - 1 + 2;
+	if($events){
+		foreach($events as $event){
+			$week = intval(date('W',intval($event->startdate)));
+	//		var_dump('<br>'.$week);
+			//calculate relative week we populate weeks 1 - 6 January
+			if($startweek >=52){
+				//so the year starts in week 52 or 53 so all events in week one need to be in the second slot onwards
+				if($week < 52){
+					$week = $week - 1 + 2;
+				}else{
+					//if it is in the last week the put it in the first week
+					$week = $week - $startweek + 1;
+				}
 			}else{
-				//if it is in the last week the put it in the first week
-				$week = $week - $startweek + 1;
+					$week = $week - $startweek + 1;
+	/*			if($week >= 52){
+					$week = 1;
+				}else{
+					$week = $week - $startweek + 1;
+				}*/
+				if($week < 0){
+					$week = 6;
+				}
 			}
-		}else{
-				$week = $week - $startweek + 1;
-/*			if($week >= 52){
-				$week = 1;
-			}else{
-				$week = $week - $startweek + 1;
-			}*/
-			if($week < 0){
-				$week = 6;
+			$day = intval(date('N',intval($event->startdate)));
+			$weeksanddays[$week][$day]['events'][] = $event;
+			if($event->longerthanaday){
+				$startdate = new DateTime(date('Y-m-d',intval($event->startdate)));
+				$enddate = new DateTime(date('Y-m-d',intval($event->enddate)));
+				$dDiff = $startdate->diff($enddate);
+				$noofdays = $dDiff->days;
+				$j = 0;
+				for($i = 1; $i <= $noofdays; $i++){
+					$day++;
+					if($day > 7){
+						$day = 1;
+						$week++;
+					}
+					$weeksanddays[$week][$day]['events'][] = $event;
+				}
+			
 			}
-		}
-		$day = intval(date('N',intval($event->startdate)));
-		$weeksanddays[$week][$day]['events'][] = $event;
-		if($event->longerthanaday){
-			$startdate = new DateTime(date('Y-m-d',intval($event->startdate)));
-			$enddate = new DateTime(date('Y-m-d',intval($event->enddate)));
-			$dDiff = $startdate->diff($enddate);
-  			$noofdays = $dDiff->days;
-  			$j = 0;
-  			for($i = 1; $i <= $noofdays; $i++){
-  				$day++;
-  				if($day > 7){
-  					$day = 1;
-  					$week++;
-  				}
-				$weeksanddays[$week][$day]['events'][] = $event;
-  			}
-  			
 		}
 	}
 	return $weeksanddays;
