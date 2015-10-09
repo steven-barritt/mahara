@@ -1997,12 +1997,12 @@ width:100%;
 }
 
 .expand{
-	background:#F4F7FF;
+	background:none;
 	color:#999;
 	font-weight:normal;
 }
 .expand:hover{
-	background:#F4F7FF;
+	background:none;
 	color:#333;
 }
 
@@ -2402,6 +2402,7 @@ ul.searchtab li span.inactive {
 	padding:2px 12px;
 	border:1px solid #ffffff;
 	border:1px solid rgba(0,0,0,0);
+	text-align:center;
 
 }
 ul.in-page-tabs li a.current-tab,
@@ -2428,7 +2429,6 @@ ul.in-page-tabs li button.current-tab {
 	padding:2px 12px;
 /*	min-width:54px;*/
 	outline:none;
-	text-align:center;
 	transition:all .218s;
 	-moz-border-radius:5px;
 	-moz-transition:all .218s;
@@ -2446,7 +2446,6 @@ ul.in-page-tabs li button.current-tab {
     border-bottom: 0;*/
 }
 ul.in-page-tabs li a:hover,
-ul.in-page-tabs li a:focus,
 ul.in-page-tabs li input:focus,
 ul.in-page-tabs li button:focus {
 	background:#f5f5f5;
@@ -2532,7 +2531,7 @@ border-radius: 3px;
 .rd-navmenu .rd-tab-title a:hover,
 .rd-navmenu .rd-tab-title a:focus {
     text-decoration: none;
-    color: #267BBD;
+/*    color: #267BBD;*/
 }
 #mainmiddle .rd-navmenu .rd-tab {
     display: block;
@@ -2565,37 +2564,64 @@ border-radius: 3px;
 .rd-navmenu ul.in-page-tabs li a:visited,
 .rd-navmenu ul.in-page-tabs li a:active,
 .rd-navmenu ul.in-page-tabs li input.linkbtn {
-    background: #e0e8ee;
-    color: #1c5c8f;
+/*    background: #efefef;*/
+/*    color: #1c5c8f;
     border-left: 0;
     border-top: 1px solid #FFFFFF;
     border-right: 0;
-    border-bottom: 1px solid #d1d1d1;
+    border-bottom: 1px solid #d1d1d1;*/
+    text-align:left;
     display: block;
+	background:#f5f5f5;
+	background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),to(#f1f1f1));
+	background-image:-webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image:-moz-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image:-ms-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image:-o-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image:linear-gradient(top,#f5f5f5,#f1f1f1);
+	border:1px solid #dcdcdc;
+	border:1px solid rgba(0,0,0,0.1);
+	border-radius:0px;
+    padding:15px 12px;
+	color:#444;
 }
 .rd-navmenu ul.in-page-tabs li a.current-tab,
 .rd-navmenu ul.in-page-tabs li a.current-tab:link,
 .rd-navmenu ul.in-page-tabs li a.current-tab:visited,
 .rd-navmenu ul.in-page-tabs li a.current-tab:active,
 .rd-navmenu ul.in-page-tabs li input.current-tab {
-    background: #95a8b7;
-    color: #FFFFFF;
+/*    background: #95a8b7;*/
+/*    color: #FFFFFF;
     border-left: 0;
     border-top: 1px solid #d0dee9;
     border-right: 0;
     border-bottom: 1px solid #6a8091;
+    text-align:left;*/
+    display: block;
+	background:#f5f5f5;
+	background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),to(#f1f1f1));
+	background-image:-webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image:-moz-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image:-ms-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image:-o-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image:linear-gradient(top,#f5f5f5,#f1f1f1);
+	border:1px solid #dcdcdc;
+	border:1px solid rgba(0,0,0,0.1);
+	border-radius:0px;
+    padding:15px 12px;
+	color:#444;
 }
 .rd-navmenu ul.in-page-tabs li a:hover,
 .rd-navmenu ul.in-page-tabs li a:focus,
 .rd-navmenu ul.in-page-tabs li input.linkbtn:hover,
 .rd-navmenu ul.in-page-tabs li input.linkbtn:focus {
-    background: #cbd7e0;
+/*    background: #efefef;*/
 }
 .rd-navmenu ul.in-page-tabs li a.current-tab:hover,
 .rd-navmenu ul.in-page-tabs li a.current-tab:focus,
 .rd-navmenu ul.in-page-tabs li input.current-tab:hover,
 .rd-navmenu ul.in-page-tabs li input.current-tab:focus {
-    background: #95a8b7;
+/*    background: #efefef;*/
 }
 
 /* js fallback for page tabs */
@@ -3359,6 +3385,12 @@ tr.r1 td.absent{
 
 /* for 600px or less */
 @media screen and (max-width: 600px) {
+.studentnumber{
+	display:none;
+}
+#attendancelist {
+	font-size:.7em;
+}
 	#column-container{
 		padding-left:3px;
 		padding-right:3px;

@@ -338,3 +338,28 @@ ul.actionlist,
 #viewmenu {
     display: none;
 }
+.takeattendance .attendancecol{
+	display:none;
+}
+.schedulemods{
+	display:none;
+}
+.studentnumber::after{
+	content:"";
+	display:block;
+	width:25%;
+	height:20px;
+	border:solid 1px #000;
+}
+.usericon{
+	display:none;
+}
+.studentnumber{
+	display:none;
+}
+.takeattendance .attendanceColumnHeadVertical{
+	display:none;	
+}
+#attendancelist .takeattendance {
+font-size:1em;
+}
