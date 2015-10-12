@@ -3,16 +3,17 @@
 {if $event}
 	<h1>{str tag=takeattendance section=interaction.schedule}</h1>
 <div id="schedulebtns">
+	<a href="{$WWWROOT}interaction/schedule/takeattendance.php?event={$event->id}&amp;group={$groupid}&amp;returnto={$returnto}&amp;fillall=true" class="btn">{str tag="fillall" section=interaction.schedule}</a>
 	<a href="{$WWWROOT}interaction/schedule/{$returnto}.php?schedule={$event->schedule}&amp;group={$groupid}&amp;returnto=index" class="btn">{str tag="done" section=interaction.schedule}</a>
 	</div>
 	<h2>{$event->title} - {$event->startdate|format_date:'strftimetimedayyearshort'}</h2>
-	<div id="viewschedule"><table id="attendancelist" class="fullwidth nohead">
+	<div id="viewschedule"><table id="attendancelist" class="fullwidth nohead takeattendance">
 
 		<tr>
-			<th class="attendanceColumnHead">Mugshot</th>
+			<th class="attendanceColumnHead usericon">Mugshot</th>
 			<th class="attendanceColumnHead">First Name</th>
 			<th class="attendanceColumnHead">Last Name</th>
-			<th class="attendanceColumnHead">Student Number</th>
+			<th class="attendanceColumnHead studentnumber">Student Number</th>
 			<th class="attendanceColumnHead"></th>
 			
 		</tr>
@@ -20,14 +21,14 @@
   {if $userdata}
     	{foreach from=$userdata item=user}
 	    <tr class="{cycle values='r0,r1'}" id="row{$user.id}">
-	    	<td>
+	    	<td class="usericon">
             <a href="{profile_url($user.id)}">
                <img src="{profile_icon_url user=$user.id maxwidth=40 maxheight=40}" style="max-width:40px;max-height:40px;" alt="{str tag=profileimagetext arg1=$user.id|display_default_name}" title="{$user.id|display_default_name|escape}">
             </a>
             </td>
 	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.firstname}</a></h3></td>
 	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.lastname}</a></h3></td>
-	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.studentnumber}</a></h3></td>
+	    	<td class="sv studentnumber"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.studentnumber}</a></h3></td>
 	    	<td class="attendancecol {if $user.attendance->attendance == 1}present{/if}" id="present_{$user.id}">
 				<a href="{$WWWROOT}interaction/schedule/takeattendance.php?event={$event->id}&amp;group={$groupid}&amp;userid={$user.id}&amp;attendance=1&amp;returnto={$returnto}#row{$user.id}" class="attendancelink"><img class="{if $user.attendance->attendance != 1}greyedout{/if}" src="{theme_url filename='images/present.png' plugin='interaction/schedule'}"/></a>
 	    	</td>

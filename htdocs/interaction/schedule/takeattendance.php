@@ -30,6 +30,7 @@ $eventid = param_integer('event');
 $sort = param_variable('sort', 'firstname');
 $direction = param_variable('direction', 'asc');
 $returnto = param_variable('returnto', 'index');
+$fillall = param_boolean('fillall', false);
 
 $membership = group_user_access($groupid);
 
@@ -49,9 +50,11 @@ define('TITLE', $group->name . ' - ' . get_string('nameplural', 'interaction.sch
 $attendance = param_integer('attendance',null);
 $userid = param_integer('userid',null);
 
+
 if($attendance && $userid){
 	schedule_update_attendance($eventid,$userid,$attendance);
 }
+
 
 
 //if there is only one event which there should be for now then go straight to it.
@@ -60,6 +63,15 @@ if($event){
 	$event = $event[0];
 }
 $groupmembers = group_get_member_ids($groupid, array('member'));
+
+if($fillall){
+	foreach($groupmembers as $member){
+		if(!$attendance = schedule_get_event_attendance($eventid,$member)){
+			schedule_update_attendance($eventid,$member,1);
+		}
+	}
+}
+
 //TODO: in here we need to do the same as with the report get all subgroup members if necessary
 //TODO: we will also need to implement that in the functions that retrieve the schedules and events
 //$attendanceevents = schedule_get_attendance_events($scheduleid);

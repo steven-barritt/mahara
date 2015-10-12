@@ -81,6 +81,7 @@ $string['where'] = 'Where:';
 $string['attendancetaken'] = 'Attendance: ';
 $string['recorded'] = 'Recorded';
 $string['notrecorded'] = 'Not Recorded';
+$string['fillall'] = 'Mark all Present';
 
 
 $string['today'] = 'Today';
