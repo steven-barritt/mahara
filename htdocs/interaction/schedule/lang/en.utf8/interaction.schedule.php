@@ -83,6 +83,14 @@ $string['recorded'] = 'Recorded';
 $string['notrecorded'] = 'Not Recorded';
 $string['fillall'] = 'Mark all Present';
 
+$string['createtimes'] = 'Create Timed groups';
+$string['starttime'] = 'Start Time';
+$string['duration'] = 'Session Duration';
+$string['noofgroups'] = 'No Of Groups';
+$string['nooftutors'] = 'No Of Tutors';
+$string['repeatdescription'] = 'You can tick ythis box to organise the members of the group into timed sessions. This will be done by the number of groups specified and the number of tutors. It will simply append this to description when you post so you can always just edit it.';
+
+
 
 $string['today'] = 'Today';
 $string['viewattendance'] = 'View Attendance';

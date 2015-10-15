@@ -264,6 +264,29 @@ $addtogroupform = pieform(array(
     ),
 ));
 
+$invitetogroupform = pieform(array(
+    'name'     => 'invitetogroup',
+    'class'    => 'bulkactionform invitetogroup',
+    'renderer' => 'oneline',
+    'elements' => array(
+        'users' => $userelement,
+        'title'        => array(
+            'type'         => 'html',
+            'class'        => 'bulkaction-title',
+            'value'        => get_string('invitetogroup', 'admin') . ': ',
+        ),
+        'group' => array(
+            'type'        => 'select',
+            'options'	 => $grpoptions,
+        ),
+        'delete' => array(
+            'type'        => 'submit',
+            'confirm'     => get_string('confirminvitetogroup', 'admin'),
+            'value'       => get_string('invitetogroup', 'admin'),
+        ),
+    ),
+));
+
 
 
 $setlimitededitingform = pieform(array(
@@ -321,6 +344,7 @@ $smarty->assign('archivepagesform', $archivepagesform);
 $smarty->assign('setlimitededitingform', $setlimitededitingform);
 $smarty->assign('resetdashboardform', $resetdashboardform);
 $smarty->assign('addtogroupform', $addtogroupform);
+$smarty->assign('invitetogroupform', $invitetogroupform);
 $smarty->assign('deleteform', $deleteform);
 $smarty->assign('probationform', $probationform);
 $smarty->display('admin/users/bulk.tpl');
@@ -543,6 +567,24 @@ function addtogroup_submit(Pieform $form, $values) {
     db_commit();
 
     $SESSION->add_ok_msg(get_string('bulkresetdashboarduserssuccess', 'admin', count($users)));
+    redirect('/admin/users/search.php');
+}
+
+function invitetogroup_submit(Pieform $form, $values) {
+    global $users, $editable, $SESSION, $USER;
+	$group = get_record_select('group', 'id = ? AND deleted = 0', array($values['group']), '*, ' . db_format_tsfield('ctime'));
+	if (!$group) {
+		throw new GroupNotFoundException(get_string('groupnotfound', 'group', GROUP));
+	}
+	    
+	db_begin();
+    foreach ($users as $user) {
+    	
+        group_invite_user($group, $user->id, $USER->get('id'), 'member', true);
+    }
+    db_commit();
+
+    $SESSION->add_ok_msg(get_string('invitationssent', 'group', count($values['users'])));
     redirect('/admin/users/search.php');
 }
 

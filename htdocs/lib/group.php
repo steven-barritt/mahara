@@ -2391,6 +2391,16 @@ function group_get_member_ids_inc_subgroups($group, $roles=null, $includedeleted
     );
 }
 
+function group_get_member_names($group, $roles=null, $includedeleted=false) {
+    $rolesql = is_null($roles) ? '' : (' AND gm.role IN (' . join(',', array_map('db_quote', $roles)) . ')');
+    return get_column_sql("
+        SELECT concat(u.firstname,' ',u.lastname) as name
+        FROM {group_member} gm INNER JOIN {group} g ON gm.group = g.id
+        JOIN {usr} u on gm.member = u.id
+        WHERE g.id = ? " . ($includedeleted ? '' : ' AND g.deleted = 0') . $rolesql.' order by RAND()',
+        array($group)
+    );
+}
 
 
 //SB just tells me if a user is in the group
