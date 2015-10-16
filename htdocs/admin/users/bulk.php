@@ -579,8 +579,9 @@ function invitetogroup_submit(Pieform $form, $values) {
 	    
 	db_begin();
     foreach ($users as $user) {
-    	
-        group_invite_user($group, $user->id, $USER->get('id'), 'member', true);
+  		if(!group_is_member($user->id,$values['group'])){	
+	        group_invite_user($group, $user->id, $USER->get('id'), 'member', true);
+	    }
     }
     db_commit();
 
