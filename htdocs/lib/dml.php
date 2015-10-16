@@ -1100,12 +1100,14 @@ function ensure_record_exists($table, $whereobject, $dataobject, $primarykey=fal
     $toreturn = false;
 
     foreach ($columns as $key => $value) {
-        if (is_null($value)) {
-            $where[] = db_quote_identifier($key) . ' IS NULL ';
-            continue;
+    	if($key != 'ctime'){
+			if (is_null($value)) {
+				$where[] = db_quote_identifier($key) . ' IS NULL ';
+				continue;
+			}
+			$where[] = db_quote_identifier($key) . ' = ? ';
+			$values[] = $value;
         }
-        $where[] = db_quote_identifier($key) . ' = ? ';
-        $values[] = $value;
     }
 
     $where = implode(' AND ', $where);

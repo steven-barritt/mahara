@@ -444,6 +444,15 @@ form#addtogroup {
     border-radius: 5px;
     display: inline-block;
 }
+form#invitetogroup {
+    margin: 0 5px 10px 0;
+    padding: 5px 5px 5px 10px;
+    background: #EEEEEE;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    display: inline-block;
+}
 form#resetprofile {
     margin: 0 5px 10px 0;
     padding: 5px 5px 5px 10px;

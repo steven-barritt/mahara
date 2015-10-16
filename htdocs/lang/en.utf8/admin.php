@@ -1089,6 +1089,8 @@ $string['confirmsetlimitedediting'] = 'Are you sure you want to set limited edit
 $string['addtogroup'] = 'Add to Group';
 $string['confirmaddtogroup'] = 'Are you sure you want to add these users to this group.';
 $string['addtogroupcopyviews'] = 'Copy Views';
+$string['invitetogroup'] = 'Invite to Group';
+$string['confirminvitetogroup'] = 'Are you sure you want to Invite these users to this group.';
 
 // general stuff
 $string['notificationssaved'] = 'Notification settings saved';

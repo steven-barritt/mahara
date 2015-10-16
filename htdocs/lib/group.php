@@ -1143,7 +1143,7 @@ function group_invite_user($group, $userid, $userfrom, $role='member', $delay=nu
     $data->member= $user->id;
     $data->ctime = db_format_timestamp(time());
     $data->role = $role;
-    ensure_record_exists('group_member_invite', $data, $data);
+	ensure_record_exists('group_member_invite', $data, $data);
     $lang = get_user_language($user->id);
     require_once('activity.php');
     $activitydata = array(

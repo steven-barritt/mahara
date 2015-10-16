@@ -10,6 +10,7 @@
   {$resetdashboardform|safe}
   {$archivepagesform|safe}
   {$addtogroupform|safe}
+  {$invitetogroupform|safe}
   {$setlimitededitingform|safe}
   {$deleteform|safe}
 </div>
