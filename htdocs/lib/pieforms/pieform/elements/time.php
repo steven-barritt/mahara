@@ -163,8 +163,6 @@ EOF;
 function pieform_element_time_get_value(Pieform $form, $element) {/*{{{*/
     $name = $element['name'];
     $global = ($form->get_property('method') == 'get') ? $_GET : $_POST;
-    error_log($global[$name . '_minute']);
-    error_log($global[$name . '_hour']);
     if ($form->is_submitted() && isset($global[$name . '_minute']) && isset($global[$name . '_hour'])) {
 		$temp = ''.time();
     	$today = date_create("@$temp");

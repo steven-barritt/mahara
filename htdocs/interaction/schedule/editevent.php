@@ -308,6 +308,60 @@ function addevent_submit(Pieform $form, $values) {
 	else {
 		$return = '/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view;
 	}
+		if($values['createtimes']){
+		
+		$tempdate = $values['startdate'];
+		$starttime = date_create("@$tempdate");
+
+		$tempdate = $values['duration'];
+		$durationstart = date_create("@$tempdate");
+		$durationend = date_create("@$tempdate");
+		$durationstart->setTime(00,00);
+		$duration = $durationstart->diff($durationend);
+		
+		//Get the members names as an array
+		if($members = group_get_member_names($schedule->groupid,array('member'))){
+			$totalmembers = count($members);
+			if(!($numberofgroups = isset($values['numberofgroups']) ? $values['numberofgroups'] : 1)){
+				$numberofgroups = $totalmembers;
+			}
+			//divide the number of members by number of groups to get the average per group
+			$pergroup = floor($totalmembers/$numberofgroups);
+			$remainder = $totalmembers%$numberofgroups;
+			$numberoftutors = $values['numberoftutors'];
+			//round this up
+			$numberofslots = round($numberofgroups/$numberoftutors,0);
+			$currpos = 0;
+			$groupno = 0;
+			//for 1 to number of groups / number of tutors
+			for($i = 0; $i < $numberofslots; $i++){
+				$endstr .= '<p>Time : '.format_date($starttime->getTimestamp(),'strftimetime').'</p>';
+				//for 1 to number of tutors
+				for($j = 1; $j <= $numberoftutors; $j++){
+					$groupno++;
+					//add the time to string
+					if($numberofgroups > 1){
+						$endstr .= '<p>Group '.$groupno.' </p><p>';
+					}else{
+						$endstr .= '<p>';
+					}
+					//for currentpos to average per group
+					for($k = 1; ($k <= $pergroup + ($remainder > 0 ? 1:0) && $currpos < $totalmembers ); $k++){ 
+						//add the members name
+						$endstr .= $members[$currpos].'; <br>';
+						//increase currentpos
+						$currpos++;
+					}
+					$remainder--;
+				}
+				//increase time by duration
+				$starttime->add($duration);
+				$endstr .='</p>';
+			}
+		}
+				
+	}
+
 
     db_begin();
     $eventid = insert_record(
@@ -395,25 +449,15 @@ function editevent_submit(Pieform $form, $values) {
 	$endstr = '';
 
 	if($values['createtimes']){
-		error_log($values['starttime']);
-		error_log($values['duration']);
-		error_log($values['startdate']);
 		
 		$tempdate = $values['startdate'];
 		$starttime = date_create("@$tempdate");
-//		$newstartdate->setTimezone($timez);
 
 		$tempdate = $values['duration'];
 		$durationstart = date_create("@$tempdate");
 		$durationend = date_create("@$tempdate");
 		$durationstart->setTime(00,00);
-		error_log($durationstart->getTimestamp());
-//		$durationstart->setTime(00,30);
-//		error_log($durationstart->getTimestamp());
-//		error_log($durationend->getTimestamp());
-//		$durationstart->setTimezone($timez);
 		$duration = $durationstart->diff($durationend);
-//    	$diff = new DateInterval('P1D');
 		
 		//Get the members names as an array
 		if($members = group_get_member_names($schedule->groupid,array('member'))){
@@ -421,12 +465,9 @@ function editevent_submit(Pieform $form, $values) {
 			if(!($numberofgroups = isset($values['numberofgroups']) ? $values['numberofgroups'] : 1)){
 				$numberofgroups = $totalmembers;
 			}
-//			error_log($totalmembers);
 			//divide the number of members by number of groups to get the average per group
-			$pergroup = round($totalmembers/$numberofgroups,0);
+			$pergroup = floor($totalmembers/$numberofgroups);
 			$remainder = $totalmembers%$numberofgroups;
-//			error_log($remainder);
-//			error_log($pergroup);
 			$numberoftutors = $values['numberoftutors'];
 			//round this up
 			$numberofslots = round($numberofgroups/$numberoftutors,0);
