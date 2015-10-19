@@ -17,6 +17,7 @@ class ImageResizer {
     private $width;
     private $height;
     private $imageresized;
+    private $exif;
 
     function __construct($filename, $mimetype){
         $this->image = $this->open_image($filename, $mimetype);
@@ -30,6 +31,7 @@ class ImageResizer {
         if (!$this->set_memory_for_image($file)) {
             return;
         }
+		$this->exif = exif_read_data($file);
         switch ($mimetype) {
             case 'image/jpg':
             case 'image/jpeg':
@@ -72,6 +74,26 @@ class ImageResizer {
            imagecopyresampled($this->imageresized, $this->image, 0, 0, 0, 0, $optimalwidth, $optimalheight, $this->width, $this->height);
         }
 
+    /*
+    need to respect xif data to rotate images from iphones etc
+	*/		
+		if (!empty($this->exif['Orientation'])) {
+			switch ($this->exif['Orientation']) {
+				case 3:
+					$this->imageresized = imagerotate($this->imageresized, 180, 0);
+					break;
+
+				case 6:
+					$this->imageresized = imagerotate($this->imageresized, -90, 0);
+					break;
+
+				case 8:
+					$this->imageresized = imagerotate($this->imageresized, 90, 0);
+					break;
+			}
+		}
+
+		
         if ($option == 'crop') {
             $this->crop($optimalwidth, $optimalheight, $newwidth, $newheight);
         }
