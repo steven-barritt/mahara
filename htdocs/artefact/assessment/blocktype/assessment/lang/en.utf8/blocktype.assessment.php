@@ -30,10 +30,16 @@ defined('INTERNAL') || die();
 $string['pluginname'] = 'Assessment';
 
 $string['assessment'] = 'Assessment';
+$string['defaulttitledescription'] = '';
 $string['accessdenied'] = 'You do not have permision to edit this assessment';
 $string['title'] = 'Assessment';
 $string['title2'] = '%s Assessment';
 $string['evaluationtype'] = 'Assessment Type';
+$string['evaluationtypedescription'] = 'Tutor, Peer or Self assessment.';
 $string['gradetype'] = 'Grading Scale';
+$string['gradetypedescription'] = 'This is the scale used for grading for the overall grade.';
 $string['assessmentscheme'] = 'Assessment Scheme';
+$string['assessmentschemedescription'] = 'The assessment scheme determines the assessment criteria that will be marked.';
+$string['visibility'] = 'Grade Visibility';
+$string['visibilitydescription'] = 'If this box is ticked the grade will be visible otherwise not.';
 

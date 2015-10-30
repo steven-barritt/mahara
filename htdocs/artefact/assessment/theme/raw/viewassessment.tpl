@@ -44,6 +44,7 @@
 			{/foreach}
 		</tr>
 	{/foreach}
+	{if $assessment->get('visibility')}
 	<tr><td>&nbsp;</td></tr>
 	<tr class="finalgrade">
 		<td>Grade</td>
@@ -54,15 +55,15 @@
 			{/foreach}
 	</tr>
 	<tr>
-<td></td>
-<td colspan="5"></td>
-<td class="gradeheader first" colspan="20">Fail</td>
-<td class="gradeheader" colspan="20">3rd</td>
-<td class="gradeheader" colspan="20">2.2</td>
-<td class="gradeheader" colspan="20">2.1</td>
-<td class="gradeheader last" colspan="20">1st</td>
-</tr>
-
+		<td></td>
+		<td colspan="5"></td>
+		<td class="gradeheader first" colspan="20">Fail</td>
+		<td class="gradeheader" colspan="20">3rd</td>
+		<td class="gradeheader" colspan="20">2.2</td>
+		<td class="gradeheader" colspan="20">2.1</td>
+		<td class="gradeheader last" colspan="20">1st</td>
+	</tr>
+	{/if}
 </table>
 {else}
 <p>You cannot view this item.</p><p> If you are a Tutor the page must be submitted for assessment before you can grade it.</p>

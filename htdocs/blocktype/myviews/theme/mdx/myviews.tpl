@@ -6,7 +6,7 @@
                 <h3 class="title"><a href="{$item.fullurl}">{$item.title}</a></h3>
                 <span class="submitted">{if $item.submittedtime}
                 	<strong>{str tag=viewsubmittedon section=view arg1=$item.submittedtime|format_date:'strftimerecentyear'}</strong>
-                {if $item.submittedtime && ($isstaff || $owner)}<div class="gradecontainer">{if $item.published}{str tag=grade section=blocktype.myviews}<div class="grade">{$item.grade}</div>{else}{str tag=notgraded section=blocktype.myviews}{/if}</div>{/if}
+                {if $item.submittedtime && ($isstaff || $owner) && $item.visible}<div class="gradecontainer">{if $item.published}{str tag=grade section=blocktype.myviews}<div class="grade">{$item.grade}</div>{else}{str tag=notgraded section=blocktype.myviews}{/if}</div>{/if}
                 {elseif $item.duedate}
                 	<strong>{str tag=viewislate section=blocktype.myviews arg1=$item.duedate|format_date:'strftimerecentyear'}</strong>
                 {/if}

@@ -14,6 +14,7 @@ require_once('view.php');
 require_once('group.php');
 require_once('user.php');
 safe_require('artefact', 'comment');
+safe_require('artefact', 'assessment');
 safe_require('interaction', 'schedule');
 define('TITLE', get_string('report', 'group'));
 define('MENUITEM', 'groups/report');
@@ -123,7 +124,8 @@ function get_assessment($user,$assessment){
 			//find the assessment
 			foreach ($sharedviews as &$data) {
 //						bob::bob();
-				require_once(get_config('docroot') . 'blocktype/lib.php');
+					$grades[] = ArtefactTypeAssessment::get_view_grade($data['id']);
+/*				require_once(get_config('docroot') . 'blocktype/lib.php');
 
 				$sql = "SELECT bi.*
 						FROM {block_instance} bi
@@ -147,6 +149,7 @@ function get_assessment($user,$assessment){
 						}
 					}		
 				}
+				*/
 			}
 
 			
@@ -178,9 +181,9 @@ function get_assessments($user,$assessmentgroup){
 					if(!isset($duedate)){
 						$duedate = View::due_date($data['id']);
 					}
-					require_once(get_config('docroot') . 'blocktype/lib.php');
+					$grades[] = ArtefactTypeAssessment::get_view_grade($data['id']);
 
-					
+/*					
 					$sql = "SELECT bi.*
 							FROM {block_instance} bi
 							WHERE bi.view = ?
@@ -203,6 +206,7 @@ function get_assessments($user,$assessmentgroup){
 							}
 						}		
 					}
+					*/
 				}
 
 				
@@ -391,13 +395,25 @@ foreach ($sharedviews as &$data) {
     $view = new View($data['id']);
     $comments = ArtefactTypeComment::get_comments(0, 0, null, $view);
 
-	$selfgrade = 20;
-	$peergrade = 20;
-	$tutorgrade = 20;
+	$selfgrade = new stdClass();
+	$peergrade = new stdClass();
+	$tutorgrade = new stdClass();
 	$published = true;
+	if(!$selfgrade = ArtefactTypeAssessment::get_view_grade($data['id'],ArtefactTypeAssessment::SELF_ASSESSMENT )){
+		$selfgrade->grade = 20;
+		$selfgrade->published = true;
+	}
+	if(!$peergrade = ArtefactTypeAssessment::get_view_grade($data['id'],ArtefactTypeAssessment::PEER_ASSESSMENT )){
+		$peergrade->grade = 20;
+		$peergrade->published = true;
+	}
+	if(!$tutorgrade = ArtefactTypeAssessment::get_view_grade($data['id'],ArtefactTypeAssessment::TUTOR_ASSESSMENT )){
+		$tutorgrade->grade = 20;
+		$tutorgrade->published = false;
+	}
     require_once(get_config('docroot') . 'blocktype/lib.php');
 	
-	$sql = "SELECT bi.*
+/*	$sql = "SELECT bi.*
             FROM {block_instance} bi
             WHERE bi.view = ?
             AND bi.blocktype = 'mdxevaluation'
@@ -420,7 +436,7 @@ foreach ($sharedviews as &$data) {
 			}
 		}		
 	}
-   
+*/   
 	list($attendance, $percentages) = schedule_get_user_group_attendance($view->get('owner'),$group->id);
 
 	$data['attendnace'] = $attendance;
@@ -467,9 +483,9 @@ foreach ($sharedviews as &$data) {
 
     sorttablebycolumn($commenters, 'count', 'desc');
     $data['mcommenters'] = $membercommenters;
-    $data['selfgrade'] = intval($selfgrade);
-    $data['peergrade'] = intval($peergrade);
-    $data['tutorgrade'] = intval($tutorgrade);
+    $data['selfgrade'] = $selfgrade;
+    $data['peergrade'] = $peergrade;
+    $data['tutorgrade'] = $tutorgrade;
     $data['publishedgrade'] = $published;
     $data['postcount'] = isset($data['postcount']) ? $data['postcount'] : 0;
     $data['ecommenters'] = $extcommenters;
@@ -598,6 +614,7 @@ $smarty->display('group/report.tpl');
 
 function publishgrades_submit(Pieform $form, $values){
 	require_once(get_config('docroot') . 'blocktype/lib.php');
+	safe_require('artefact', 'comment');
 	global $SESSION;
     try {
     //$limit=10, $offset=0, $groupid, $copynewuser=false, $getbloginfo=false, $submittedgroup = null
@@ -605,7 +622,10 @@ function publishgrades_submit(Pieform $form, $values){
 		$sharedviews = $sharedviews->data;
 		foreach ($sharedviews as &$data) {
 
-	
+			ArtefactTypeAssessment::publish_grade($data['id']);
+			//now get any unpublished comments and publish them to the user.
+			ArtefactTypeComment::publish_comments($data['id']);
+			/*
 			$sql = "SELECT bi.*
 					FROM {block_instance} bi
 					WHERE bi.view = ?
@@ -627,10 +647,7 @@ function publishgrades_submit(Pieform $form, $values){
 					}
 				}		
 			}
-			
-			//now get any unpublished comments and publish them to the user.
-			safe_require('artefact', 'comment');
-			ArtefactTypeComment::publish_comments($data['id']);
+			*/
 /*			if(ArtefactTypeComment::count_comments(array($data['id']),null, true)){
 				$feedback = ArtefactTypeComment::get_comments(0, 0, null, $data);
 				foreach($feedback as $comment){

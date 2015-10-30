@@ -75,32 +75,22 @@ class PluginBlocktypeMyviews extends SystemBlocktype {
         $views = $views->count ? $views->data : array();
         //TODO: This should be put into a function somewhere or where the grades are stored should be worked out better
         //there must be a better way to link the grades to the view more easily rather than this whole rigmerole.
+//        require_once('artefact/assessment');
+		safe_require('artefact', 'assessment');
+		
         foreach($views as &$view){
+        	
 			$published = false;
+			$visible = false;
 			$grade = 20;
-			require_once(get_config('docroot') . 'blocktype/lib.php');
-	
-			$sql = "SELECT bi.*
-					FROM {block_instance} bi
-					WHERE bi.view = ?
-					AND bi.blocktype = 'mdxevaluation'
-					";
-			if (!$evaldata = get_records_sql_array($sql, array($view['id']))) {
-				$evaldata = array();
-			}
-	
-			foreach ($evaldata as $eval){
-				$bi = new BlockInstance($eval->id, (array)$eval);
-				$configdata = $bi->get('configdata');
-				if(isset($configdata['evaltype'])){
-					if($configdata['evaltype'] == 3){
-						$published = isset($configdata['published']) ? $configdata['published'] : false;
-						$grade = isset($configdata['selfmark']) ? $configdata['selfmark'] : 20;
-					}
-				}		
+			if($gr = ArtefactTypeAssessment::get_view_grade($view['id'])){
+				$grade = $gr->grade;
+				$published = $gr->published;
+				$visible = $gr->visible;
 			}
 			$view['grade'] = $grade;
 			$view['published'] = $published;
+			$view['visible'] = $visible;
 			$view['duedate'] = View::due_date($view['id']);
 		}
 		

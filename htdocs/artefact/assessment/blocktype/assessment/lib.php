@@ -159,7 +159,13 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
             'artefactid' => array(
             		'type'	=> 'hidden',
             		'value' => isset($configdata['artefactid']) ? $configdata['artefactid']:null,
-            		)
+            		),
+			'visibility' => array(
+					'type'         => 'checkbox',
+					'title'        => get_string('visibility', 'blocktype.assessment/assessment'),
+					'description'  => get_string('visibilitydescription', 'blocktype.assessment/assessment'),
+					'defaultvalue' => $assessment->get('visibility'),
+				),
 		);
 		return $returnarr;
     }
@@ -206,6 +212,7 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
         $artefact->set('type',(int)$values['evaltype']);
         $artefact->set('assessment_scheme',(int)$values['assessmentscheme']);
         $artefact->set('grade_type',(int)$values['gradetype']);
+        $artefact->set('visibility',(int)$values['visibility']);
 
         $artefact->commit();
 

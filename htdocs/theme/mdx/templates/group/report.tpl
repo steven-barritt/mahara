@@ -67,17 +67,17 @@
       </td>
       <td class="sg"><label class="hidden">{str tag=selfgrade section=group}: </label>
         <ul>
-        	{$view.selfgrade}
+        	{$view.selfgrade->grade}
         </ul>
       </td>
       <td class="sg"><label class="hidden">{str tag=peergrade section=group}: </label>
         <ul>
-        	{$view.peergrade}
+        	{$view.peergrade->grade}
         </ul>
       </td>
-      <td class="sg {if $view.publishedgrade}published{else}unpublished{/if}"><label class="hidden">{str tag=tutorgrade section=group}: </label>
+      <td class="sg {if $view.tutorgrade->published}published{else}unpublished{/if}"><label class="hidden">{str tag=tutorgrade section=group}: </label>
         <ul>
-        	{$view.tutorgrade}
+        	{$view.tutorgrade->grade}
         </ul>
       </td>
     </tr>

@@ -268,7 +268,6 @@ class ArtefactTypeAssessment extends ArtefactType {
 		$smarty->assign('assessment',$this);
         $smarty->assign('artefacttitle', hsc($this->title));
         $css = $THEME->get_url('style/style.css', false, 'artefact/assessment');
-        error_log($css);
         return array('html' => $smarty->fetch('artefact:assessment:view.tpl'), 'javascript' => '', 'css' => $css);
 		
     }
@@ -381,6 +380,8 @@ class ArtefactTypeAssessment extends ArtefactType {
 
 	public function change_published_state($newstate = null){
 		//pass it the state to change it to
+		//todo here we need to raise a notification for the user that the grade has been published
+
 		if(isset($newstate)){
 			$this->published = (bool)$newstate;
 		}else{
@@ -393,7 +394,118 @@ class ArtefactTypeAssessment extends ArtefactType {
     public static function is_countable_progressbar() {
         return false;
     }
+
+    public static function publish_grade($viewid, $type=self::TUTOR_ASSESSMENT){
+    	//this is  statuc function tht tweaks the db directly so as not to have to load te object first
+    	//this should be much quicker when running through lots of them to publish
+    	
+    	//todo here we need to raise a notification for the user that the grade has been published
+		//activity_occurred('feedback', $activity, 'artefact', 'comment');
+		$sql = "update {artefact_assessment} aa set aa.published = 1
+					Where aa.assessment in (
+					select va.artefact from {view_artefact} va 
+					join {artefact} a on va.artefact = a.id
+					where va.view = ? AND a.artefacttype = 'assessment' ) and aa.type = ?";
+		execute_sql($sql,
+			array($viewid,$type)
+		);
+
+    }
+
+    
+    public static function get_view_grade($viewid, $type=self::TUTOR_ASSESSMENT){
+    	//what if there is the possibility of mulitple grades???
+    	/*
+			select aagl.title from artefact_assessment_grade_level aagl 
+			join artefact_assessment_grade_type aagt on aagl.grade_type = aagt.id
+			join artefact_assessment a_s on aagt.id = a_s.grade_type
+			join view_artefact va on a_s.assessment = va.artefact
+			where va.view = 153 and a_s.type = 0
+			and
+			aagl.min_percent <= (
+			select aa.grade from view_artefact va 
+			join artefact_assessment aa on va.artefact = aa.assessment
+			where
+			va.view = 153
+			and aa.type = 0) and aagl.max_percent >= (
+			select aa.grade from view_artefact va 
+			join artefact_assessment aa on va.artefact = aa.assessment
+			where
+			va.view = 153
+			and aa.type = 0)
+    	*/
+    	$sql = "select aagl.title as grade, a_s.published as published, a_s.visibility as visible from {artefact_assessment_grade_level} aagl 
+			join {artefact_assessment_grade_type} aagt on aagl.grade_type = aagt.id
+			join {artefact_assessment} a_s on aagt.id = a_s.grade_type
+			join {view_artefact} va on a_s.assessment = va.artefact
+			where va.view = ? and a_s.type = ?
+			and
+			aagl.min_percent <= (
+			select aa.grade from {view_artefact} va 
+			join {artefact_assessment} aa on va.artefact = aa.assessment
+			where
+			va.view = ?
+			and aa.type = ?) and aagl.max_percent >= (
+			select aa.grade from {view_artefact} va 
+			join {artefact_assessment} aa on va.artefact = aa.assessment
+			where
+			va.view = ?
+			and aa.type = ?)";
+		if($grade = get_record_sql($sql,array($viewid,$type,$viewid,$type,$viewid,$type))){
+			return $grade;
+		}else{
+			//this is really bad bullshit
+			switch($type){
+				case self::TUTOR_ASSESSMENT :
+					$type = 3;
+					break;
+				case self::PEER_ASSESSMENT :
+					$type = 2;
+					break;
+				case self::SELF_ASSESSMENT :
+					$type = 3;
+					break;
+			}
+			$return = new stdClass();
+			$grade = null;
+			$published = null;
+			//fall back to old school method
+			require_once(get_config('docroot') . 'blocktype/lib.php');
+
+			$sql = "SELECT bi.*
+					FROM {block_instance} bi
+					WHERE bi.view = ?
+					AND bi.blocktype = 'mdxevaluation'
+					";
+			if (!$evaldata = get_records_sql_array($sql, array($viewid))) {
+				$evaldata = array();
+			}
+
+			foreach ($evaldata as $eval){
+				$bi = new BlockInstance($eval->id, (array)$eval);
+				$configdata = $bi->get('configdata');
+				if(isset($configdata['evaltype'])){
+					if($configdata['evaltype'] == $type){
+						$published = isset($configdata['published']) ? $configdata['published'] : false;
+						$grade = isset($configdata['selfmark']) ? $configdata['selfmark'] : 20;
+					}
+				}		
+			}
+			if(isset($grade)){
+				$return->grade = $grade;
+				$return->published = $published;
+				return $return;
+			}		
+			return false;
+		}
+    	
+    }
 }
+
+/*
+class ActivityTypeInteractionAssessmentPublished extends ActivityTypePlugin {
+}
+*/
 
 class AssessmentObject{
 }
