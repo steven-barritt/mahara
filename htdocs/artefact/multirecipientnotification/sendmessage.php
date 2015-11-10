@@ -150,7 +150,7 @@ if(!is_null($groupid)){
 }
 
 
-$returnto = param_alpha('returnto', 'myfriends');
+$returnto = param_alpha('returnto', 'outbox');
 $offset = param_integer('offset', 0);
 switch ($returnto) {
     case 'find':
@@ -165,13 +165,16 @@ switch ($returnto) {
     case 'outbox':
         $goto = 'artefact/multirecipientnotification/outbox.php';
         break;
+    case 'group':
+        $goto = 'artefact/multirecipientnotification/outbox.php';
+        break;
     case 'institution':
         $goto = ($inst = param_alpha('inst', null))
             ? 'institution/index.php?institution=' . $inst
             : 'account/activity';
         break;
     default:
-      $goto = 'user/myfriends.php';
+      $goto = 'account/activity';
 }
 if ($offset > 0) {
     $goto .= (strpos($goto,'?')) ? '&offset=' . $offset : '?offset=' . $offset;
