@@ -1,6 +1,6 @@
 {foreach from=$posts item=post}
   <div class="viewpost_flow">
-	  <div class="post_inner">
+	  <div class="post_inner {if $post->sensitive}sensitive{/if}">
 		<div class="shortpost  {if !$post->images && !$post->shortdesc}hidden{/if}">
 			<h3><a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&view={$options.viewid}" target="_blank">{$post->title}</a></h3>
 			<div class="postdescription">

@@ -1955,7 +1955,7 @@ width: 0;
 width:100%;
 }
 
-.postlist{
+.blockinstance .postlist{
 	max-height:800px;
 	overflow:scroll;
 }
@@ -2078,6 +2078,29 @@ overflow:auto;
 	background-color:#F4F7FF;
 	padding:10px;
 /*	width:305px;*/
+}
+
+.newsfeedpost.sensitive, .sensitive{
+	background-color:#F0F0F0;
+}
+
+.newsfeedpost.sensitive a img,  .sensitive a img{
+	opacity:0.5;
+-webkit-filter: blur(15px) brightness(20%);
+  -moz-filter: blur(15px) brightness(20%);
+  -o-filter: blur(15px) brightness(20%);
+  -ms-filter: blur(15px) brightness(20%);
+  filter: blur(15px) brightness(20%);
+
+}
+
+.sensitive .thumb{
+	opacity:0.5;
+-webkit-filter: blur(15px) brightness(20%);
+  -moz-filter: blur(15px) brightness(20%);
+  -o-filter: blur(15px) brightness(20%);
+  -ms-filter: blur(15px) brightness(20%);
+  filter: blur(15px) brightness(20%);
 }
 
 #postlist .postdescription{

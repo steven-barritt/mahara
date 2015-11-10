@@ -617,6 +617,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
      * @var boolean
      */
     protected $published = false;
+    protected $sensitive = false;
 
     /**
      * We override the constructor to fetch the extra data.
@@ -668,7 +669,8 @@ class ArtefactTypeBlogPost extends ArtefactType {
 
         $data = (object)array(
             'blogpost'  => $this->get('id'),
-            'published' => ($this->get('published') ? 1 : 0)
+            'published' => ($this->get('published') ? 1 : 0),
+            'sensitive' => ($this->get('sensitive') ? 1 : 0)
         );
 
         if ($new) {
@@ -747,7 +749,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
 			}
 		}elseif($this->group){
 			
-			if (group_user_can_edit_views($this->group)) {
+			if (!group_user_can_edit_views($this->group)) {
 				throw new AccessDeniedException(get_string('youarenottheownerofthisblog', 'artefact.blog'));
 			}
 		}else{
@@ -936,7 +938,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
      * @param array
      */
     public static function get_posts($id, $limit, $offset, $viewoptions=null, $order='DESC', $shortpost=false) {
-
+		global $USER;
         $results = array(
             'limit'  => $limit,
             'offset' => $offset,
@@ -954,6 +956,10 @@ class ArtefactTypeBlogPost extends ArtefactType {
             if (isset($viewoptions['before'])) {
                 $from .= " AND a.ctime < '{$viewoptions['before']}'";
             }
+			$artefact = new ArtefactTypeBlog($id);
+            if(!$USER->is_staff_for_user($artefact->owner) && $USER->get('id') != $artefact->owner){
+            	$from .= ' AND !bp.sensitive';
+            }
             $from .= ' AND bp.published = 1';
         }
 
@@ -963,7 +969,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
             SELECT
                 a.id, a.title, a.description, a.author, a.authorname, ' .
                 db_format_tsfield('a.ctime', 'ctime') . ', ' . db_format_tsfield('a.mtime', 'mtime') . ',
-                a.locked, bp.published, a.allowcomments ' . $from . '
+                a.locked, bp.published, a.allowcomments, bp.sensitive ' . $from . '
             ORDER BY bp.published DESC, a.ctime DESC, a.id DESC',
             array($id),
             $offset, $limit

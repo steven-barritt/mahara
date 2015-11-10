@@ -73,23 +73,28 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
 	public static function get_recent($limit=10,$offset=0){
 		require_once('view.php');
 		global $USER;
+		// decide if the user is an staff if so then allow the to see sensitive posts
+		//otherwise don't
+		//its more complicated than this it needs to be on an per post basis
+		//if it is the users own post then show it
+		//if the user is anything other than a member of the group it is shared with then show it
+		//if $USER->is_staff
 		if (!$mostrecent = get_records_sql_array(
-		'SELECT a.title, ' . db_format_tsfield('a.ctime', 'ctime') . ', p.title AS parenttitle, a.id, a.parent, a.description, a.owner,a.author, va.view, a.allowcomments
+		"SELECT distinct a.title, " . db_format_tsfield('a.ctime', 'ctime') . ", p.title AS parenttitle, a.id, a.parent, a.description, a.owner,a.author, va.view, a.allowcomments, ab.sensitive, m.role
 			FROM {artefact} a
 			JOIN {artefact} p ON a.parent = p.id
 			JOIN {artefact_blog_blogpost} ab ON (ab.blogpost = a.id AND ab.published = 1)
 			JOIN {view_artefact} va ON (p.id = va.artefact)
-			WHERE a.artefacttype = \'blogpost\'
-			AND va.view IN (SELECT va.view
-							FROM {view_access} va
-								JOIN {group_member} m ON va.group = m.group AND (va.role = m.role OR va.role IS NULL)
-							WHERE
-								m.member = ?
-								AND (va.startdate IS NULL OR va.startdate < current_timestamp)
-								AND (va.stopdate IS NULL OR va.stopdate > current_timestamp))
+			JOIN {view_access} vaa ON (va.view = vaa.view)
+			JOIN {group_member} m ON (vaa.group = m.group AND (vaa.role = m.role OR vaa.role IS NULL))
+			WHERE a.artefacttype = 'blogpost'
+			AND m.member = ?
+			AND (vaa.startdate IS NULL OR vaa.startdate < current_timestamp)
+			AND (vaa.stopdate IS NULL OR vaa.stopdate > current_timestamp)
+			AND ((!ab.sensitive) || (m.role != 'member') )
 			
 			ORDER BY a.ctime DESC, a.id DESC
-			LIMIT ' . $limit.' OFFSET '.$offset,array($USER->get('id')))) {
+			LIMIT " . $limit." OFFSET ".$offset,array($USER->get('id')))) {
 			$mostrecent = array();
 			/*AND a.owner != ?  ,array($usrid) excludes your own posts but this doesn;t seem right somehow*/
 		}

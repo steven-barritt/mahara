@@ -54,6 +54,15 @@ function xmldb_artefact_blog_upgrade($oldversion=0) {
     if ($oldversion < 2011091400) {
         delete_records('artefact_cron', 'plugin', 'blog', 'callfunction', 'clean_post_files');
     }
+    if ($oldversion < 2015102200) {
+        $table = new XMLDBTable('artefact_blog_blogpost');
+        $field = new XMLDBField('sensitive');
+        $field->setAttributes(XMLDB_TYPE_INTEGER,1, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null,0);
+        $success = add_field($table, $field);
+    	if(!$success){
+    		return false;
+    	}	
+    }
 
     return true;
 }

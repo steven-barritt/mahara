@@ -56,7 +56,8 @@ if (!$blogpost) {
     $title = '';
     $description = '';
     $tags = array($tagselect);
-    $checked = '';
+    $checked = 0;
+    $sensitive = 0;
     $attachments = array();
     define('TITLE', $pagetitle);
 }
@@ -71,6 +72,7 @@ else {
     $description = $blogpostobj->get('description');
     $tags = $blogpostobj->get('tags');
     $checked = !$blogpostobj->get('published');
+    $sensitive = $blogpostobj->get('sensitive');
     $pagetitle = get_string('editblogpost', 'artefact.blog');
     $focuselement = 'description'; // Doesn't seem to work with tinyMCE.
     $attachments = $blogpostobj->attachment_id_list();
@@ -337,6 +339,14 @@ $elements['draft'] = array(
 	'defaultvalue' => $checked,
 	'help' => false,
 );
+$elements['sensitive'] = array(
+	'type' => 'checkbox',
+	'title' => get_string('sensitive', 'artefact.blog'),
+	'description' => get_string('sensitivedescription', 'artefact.blog'),
+	'defaultvalue' => $checked,
+	'help' => false,
+);
+
 $elements['allowcomments'] = array(
 	'type'         => 'checkbox',
 	'title'        => get_string('allowcomments','artefact.comment'),
@@ -545,6 +555,7 @@ function editpost_submit(Pieform $form, $values) {
         $postobj->set('licensorurl', $values['licensorurl']);
     }
     $postobj->set('published', !$values['draft']);
+    $postobj->set('sensitive', $values['sensitive']);
 	if(!$values['draft']){
 		$postobj->set('ctime',time());
 	}

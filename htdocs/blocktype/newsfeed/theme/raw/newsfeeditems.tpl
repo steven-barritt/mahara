@@ -1,13 +1,12 @@
 {if $posts}
     {foreach from=$posts item=post}
         <li>
-
             <div class="friendcell">
                     <a href="{profile_url($post->user)}">
                        <img src="{profile_icon_url user=$post->user maxwidth=40 maxheight=40}" alt="">
                     </a>
                 </div>
-            	<div class="newsfeedpost">
+            	<div class="newsfeedpost {if $post->sensitive}sensitive{/if}">
                     <div><a href="{profile_url($post->user)}">{$post->user|display_default_name|escape}</a></div>
                     Posted {str tag='postedin' section='blocktype.blog/recentposts'} - 
                     <a href="{$WWWROOT}artefact/artefact.php?artefact={$post->parent}&amp;view={$post->view}">{$post->parenttitle}</a>
