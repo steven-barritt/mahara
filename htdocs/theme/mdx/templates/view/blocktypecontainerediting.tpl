@@ -7,7 +7,7 @@
         {if $retractable && !$configure}
             <img src="{theme_url filename=images/retractable.png}" alt="{str tag='retractable' section='view'}" title="{str tag='retractable' section='view'}" class="retractablebtn">
         {/if}
-        {if $configurable && !$configure}    <input type="image" class="btn-big-edit configurebutton" name="action_configureblockinstance_id_{$id}">{/if}
+        {if $configurable && !$configure}    <input type="button" class="btn-big-edit configurebutton" name="action_configureblockinstance_id_{$id}">{/if}
         
         {if !$limitedediting}<!--SB-->
             {if $configure}
