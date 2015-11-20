@@ -556,9 +556,9 @@ function editpost_submit(Pieform $form, $values) {
     }
     $postobj->set('published', !$values['draft']);
     $postobj->set('sensitive', $values['sensitive']);
-	if(!$values['draft']){
+/*	if(!$values['draft']){
 		$postobj->set('ctime',time());
-	}
+	}*/
     $postobj->set('allowcomments', (int) $values['allowcomments']);
     if (!$blogpost) {
         $postobj->set('parent', $blog);
