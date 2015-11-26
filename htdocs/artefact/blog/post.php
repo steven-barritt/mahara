@@ -343,7 +343,7 @@ $elements['sensitive'] = array(
 	'type' => 'checkbox',
 	'title' => get_string('sensitive', 'artefact.blog'),
 	'description' => get_string('sensitivedescription', 'artefact.blog'),
-	'defaultvalue' => $checked,
+	'defaultvalue' => $sensitive,
 	'help' => false,
 );
 
