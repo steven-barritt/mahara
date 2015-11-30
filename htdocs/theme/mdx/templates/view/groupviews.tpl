@@ -29,6 +29,7 @@
 						<a class="btn-big-edit btn" href="{$WWWROOT}collection/edit.php?id={$collection.id}&returnto=" title="{str(tag=editspecific arg1=$view.name)|escape:html|safe}">
 							<span class="accessible-hidden">{str tag=editspecific arg1=$view.name}</span>
 						</a>
+
 						</div>
 						{/if}
 					<ul class="collectionviews hidden">
@@ -39,7 +40,9 @@
 							{if $canedit}
 						<div class="rbuttonssml">
 						<a class="btn-big-edit btn" href="{$WWWROOT}view/blocks.php?id={$view.id}" title="{str(tag=editspecific arg1=$view.name)|escape:html|safe}">
-							<span class="accessible-hidden">{str tag=editspecific arg1=$view.name}</span>
+						</a>
+						<a class="btn-big-del btn" href="{$WWWROOT}view/delete.php?id={$view.id}" title="{str tag=deletethisview section=view}">
+													<span class="accessible-hidden">{str tag=editspecific arg1=$view.name}</span>
 						</a>
 						</div>
 						{/if}

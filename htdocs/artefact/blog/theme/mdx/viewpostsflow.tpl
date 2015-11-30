@@ -8,7 +8,11 @@
 					{if $post->imagecount != 0}
 					<div class="thumb_container">
 						{if $post->imagecount == 1}
-							<a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&amp;view={$options.viewid}"><img class="{$post->images[0].class}" src="{$post->images[0].src}" alt="{$post->images[0].alt}"/></a>
+							<div class="thumbrow_1">
+								<div class="thumb"  style="background-image:url('{$post->images[0].src}')">
+							<a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&amp;view={$options.viewid}"></a>
+								</div>
+							</div>
 						<!-- if there is two show them as two square thumbs -->
 						{elseif $post->imagecount == 2}
 							<div class="thumbrow_2">
@@ -23,8 +27,8 @@
 						<!-- if there is three show them as one big image and two square thumbs -->
 						{elseif $post->imagecount == 3}
 							<div class="thumbrow_1">
-								<div class="thumb">
-						<a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&amp;view={$options.viewid}"><img class="{$post->images[0].class}" src="{$post->images[0].src}" alt="{$post->images[0].alt}"/></a>
+								<div class="thumb"  style="background-image:url('{$post->images[0].src}')">
+						<a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&amp;view={$options.viewid}"></a>
 								</div>
 							</div>
 							<div class="thumbrow_2">
@@ -92,6 +96,9 @@
 
 			<div class="postdetails">{$post->postedby}
 				{if $options.viewid && $post->allowcomments}<br><a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&view={$options.viewid}" target="_blank">{str tag=Comments section=artefact.comment} ({$post->commentcount})</a>{/if}
+				{if $post->mtime != $post->ctime}
+				<br/>            {str tag=modifiedon section=artefact.blog} {$post->mtime}
+				{/if}
 			</div>
 		</div>
 		<div class="longpost {if $post->images || $post->shortdesc}hidden{/if}">
@@ -120,6 +127,8 @@
 			{/if}
 			<div class="postdetails">{$post->postedby}
 				{if $options.viewid && $post->allowcomments}<br><a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&view={$options.viewid}" target="_blank">{str tag=Comments section=artefact.comment} ({$post->commentcount})</a>{/if}
+				<br/>            {str tag=modifiedon section=artefact.blog} {$post->mtime}
+
 			</div>
 		</div>
 		{if $post->imagecount > 1 || (count_characters($post->shortdesc,true) > 380)}

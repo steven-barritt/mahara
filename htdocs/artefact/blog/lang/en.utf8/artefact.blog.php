@@ -98,6 +98,7 @@ $string['postbodyimg'] = 'Comments';
 $string['posturl'] = 'URL';
 $string['postbodydesc'] = ' ';
 $string['postedon'] = 'Posted on';
+$string['modifiedon'] = 'Last edit';
 $string['postedbyon'] = 'Posted by %s on %s';
 $string['posttitle'] = 'Title';
 $string['posts'] = 'entries';

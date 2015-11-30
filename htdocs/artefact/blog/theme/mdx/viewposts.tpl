@@ -27,6 +27,8 @@
 			{/if}
 			<div class="postdetails">{$post->postedby}
 				{if $options.viewid && $post->allowcomments} | <a href="{$WWWROOT}artefact/artefact.php?artefact={$post->id}&view={$options.viewid}" target="_blank">{str tag=Comments section=artefact.comment} ({$post->commentcount})</a>{/if}
+				<br/>{str tag=modifiedon section=artefact.blog} {$post->mtime}
+
 			</div>
 		</div>
 	</div>

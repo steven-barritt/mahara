@@ -49,7 +49,8 @@
             </div>
         {/if}
         <div id="postdetails_{$post->id}" class="postdetails">
-            {str tag=postedon section=artefact.blog} {$post->ctime}
+            {str tag=postedon section=artefact.blog} {$post->ctime}<br/>
+            {str tag=modifiedon section=artefact.blog} {$post->mtime}
         </div>
     </div>
 {/foreach}

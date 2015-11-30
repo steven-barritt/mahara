@@ -19,7 +19,7 @@ function display_posts(post){
 			if(data['data']['tablerows'] != ''){
 				var elems = $j(data['data']['tablerows']);
 				$j("#postlist_"+block).append(elems);
-				$j("#postlist_"+block).imagesLoaded(function(){
+/*				$j("#postlist_"+block).imagesLoaded(function(){*/
 					$j("#postlist_"+block).masonry('appended',elems);
 					$j('#loading').hide();
 
@@ -37,7 +37,7 @@ function display_posts(post){
 						$j(e.target).closest(".viewpost_flow").find( ".expand" ).toggleClass("hidden");
 						$j("#postlist_"+block).masonry('layout');
 						return false;  
-					});
+/*					});*/
 /*					
 $j(".viewpost a").off().on('click',function(e) {
 						e.preventDefault();
