@@ -15,7 +15,7 @@
 </div>
 {/if}
 
-{if $canedit || $assessment->get('published')}
+{if $canedit || $canview}
 <table class="assessment">
 <!-- the header -->
 	<tr>

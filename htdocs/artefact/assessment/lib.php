@@ -264,6 +264,7 @@ class ArtefactTypeAssessment extends ArtefactType {
     public function render_self($options) {
     	global $THEME;
 		$smarty = smarty_core();
+        $smarty->assign('canview',$this->user_can_view_assessment());
 		$smarty->assign('criteria',$this->assessment_scheme->criteria);
 		$smarty->assign('assessment',$this);
         $smarty->assign('artefacttitle', hsc($this->title));
@@ -318,6 +319,44 @@ class ArtefactTypeAssessment extends ArtefactType {
 		}		
 		
 	}
+
+	public function user_can_view_assessment(){
+		global $USER;
+        $userid = (!empty($USER) ? $USER->get('id') : 0);
+        //$view = 
+		$view = $this->get_view();
+		require_once('group.php');
+        if(isset($view)){
+			if($this->type == self::TUTOR_ASSESSMENT){
+				
+				if($view->get('owner') == $userid){
+					//always let the owner see the evaluation
+					//but not if it is unpublished
+					if($this->published){
+						return true; 
+					}else{
+						return false;
+					}
+				}else{
+					$submitteddata = $view->submitted_to();
+					//for now it only lets the tutor of the gorup see it but should let all tutors see it.
+					//$submitteddata = $view->submitted_to();
+					if($submitteddata != NULL && (group_user_can_assess_submitted_views($view->get('id'),$userid) || $view->is_staff_or_admin_for_page())){
+						return true;
+					}else{
+						return false;
+					}
+				}
+
+			}else{
+				return true;
+			}
+		}else{
+			return false;
+		}		
+		
+	}
+
 	
 	//TODO: these might be better as  static functions that directly manipulate the DB
 	//so when we are doing json requests it is not creating the whole object each time

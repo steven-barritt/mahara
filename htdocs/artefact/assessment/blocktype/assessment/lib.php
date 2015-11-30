@@ -32,46 +32,12 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
 
 	
 	public static function can_view_this_instance(BlockInstance $instance){
-		global $USER;
-        $userid = (!empty($USER) ? $USER->get('id') : 0);
-        //$view = 
-        $configdata = $instance->get('configdata');
-		$view = $instance->get_view();
-		require_once('group.php');
-        if(isset($configdata['evaltype'])){
-        	//Special case for tutor feedback - only the owner and tutors can see this
-			if($configdata['evaltype'] == 3){
-				//Page must be submitted AND
-				// User must be a tutor of the group that it is submitted to 
-				// or Tutor or institution staff / admin can view it but not edit it 
-				if($view->get('owner') == $userid){
-					//always let the owner see the evaluation
-					//but not if it is unpublished
-					if(!isset($configdata['published']) || $configdata['published']){
-						return true; 
-					}else{
-						return false;
-					}
-				}
-				else{
-					if($view->get('owner')){
-						//for now it only lets the tutor of the gorup see it but should let all tutors see it.
-						//$submitteddata = $view->submitted_to();
-						if(group_user_can_assess_submitted_views($view->get('id'),$userid) || $view->is_staff_or_admin_for_page()){
-							return true;
-						}else{
-							return false;
-						}
-					}
-					return true;
-				}
-			}else{
-				return true;
-			}
-		}else{
-			//we have to return true for older version of the instance where tutor didnt appear
-			return true;
+	    $configdata = $instance->get('configdata');
+		if (!empty($configdata['artefactid'])) {
+			$assessment = $instance->get_artefact_instance($configdata['artefactid']);
+			return $assessment->user_can_view_assessment();
 		}
+		return false;
 	}
 	
     public static function render_instance(BlockInstance $instance, $editing=false) {
@@ -85,6 +51,7 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
             $assessment =  $instance->get_artefact_instance($configdata['artefactid']);
         }
         $smarty->assign('canedit',PluginBlocktypeAssessment::allow_inlineediting($instance));
+        $smarty->assign('canview',PluginBlocktypeAssessment::can_view_this_instance($instance));
         $smarty->assign('tutor',ArtefactTypeAssessment::TUTOR_ASSESSMENT);
         $smarty->assign('self',ArtefactTypeAssessment::SELF_ASSESSMENT);
         $smarty->assign('peer',ArtefactTypeAssessment::PEER_ASSESSMENT);
