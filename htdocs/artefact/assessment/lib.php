@@ -533,6 +533,7 @@ class ArtefactTypeAssessment extends ArtefactType {
 			if(isset($grade)){
 				$return->grade = $grade;
 				$return->published = $published;
+				$return->visible = true;
 				return $return;
 			}		
 			return false;
@@ -579,6 +580,7 @@ class GradeType{
             $this->grade_levels = GradeType::get_levels($this->id);
             if(count($this->grade_levels) > 0){
             	if($this->grade_levels[0]->mean_percent == -1){
+//		            $this->colspan = 5;
 		            $this->colspan = round(100/(count($this->grade_levels)-1));
 		        }else{
 		            $this->colspan = round(100/count($this->grade_levels));

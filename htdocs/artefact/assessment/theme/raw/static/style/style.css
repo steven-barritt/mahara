@@ -37,7 +37,7 @@
 /*	opacity:.2;*/
 }
 
-.grFail, .grPass, .grGood, .grVGood, .grExc, .gr17 , .gr13 , .gr9 , .gr5 {
+.grFail, .grPass, .grGood, .grVGood, .grExc, .gr17 , .gr13 , .gr9 , .gr5, .grRejected {
 	border-right:solid 1px #555;
 }
 
@@ -53,11 +53,11 @@
 	background: rgb(170,170,170);
 }
 
-.gr20.unselected, .grFail.unselected{
+.gr20.unselected, .grFail.unselected, .grRejected.unselected{
 	background: rgb(255,255,255);
 	background:rgba(187,68,85,0.2);
 }
-.gr20.selected, .gr20.unselected .hovering, .grFail.selected, .grFail.unselected .hovering{
+.gr20.selected, .gr20.unselected .hovering, .grFail.selected, .grFail.unselected .hovering, .grRejected.selected, .grRejected.unselected .hovering{
 	background:rgb(187,68,85);
 }
 

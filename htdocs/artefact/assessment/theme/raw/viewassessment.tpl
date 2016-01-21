@@ -22,7 +22,7 @@
 		<td></td>
 		{assign $assessment->get('grade_type') grade_type}
 		{foreach $assessment->get('grade_type')->grade_levels as level name='gradehead'}
-			<td class="gradeh {if $dwoo.foreach.gradehead.first}first{/if}" colspan="{$grade_type->colspan}">
+			<td class="gradeh {if $dwoo.foreach.gradehead.first}first{/if}" colspan="{if $level->mean_percent == -1}5{else}{$grade_type->colspan}{/if}">
 				<a href="#blockinstance_{$id}" title="{$level->description}">{$level->title}</a>
 			</td>
 		{/foreach}
@@ -49,7 +49,7 @@
 	<tr class="finalgrade">
 		<td>Grade</td>
 			{foreach $assessment->get('grade_type')->grade_levels as level name='gradelevel'}
-				<td class="overallgrade gr{$level->title} {if $assessment->get('grade') >= $level->min_percent && $assessment->get('grade') <= $level->max_percent}selected{else}unselected{/if}" colspan="{$grade_type->colspan}"  data-value="{$level->id}">
+				<td class="overallgrade gr{$level->title} {if $assessment->get('grade') >= $level->min_percent && $assessment->get('grade') <= $level->max_percent}selected{else}unselected{/if}" colspan="{if $level->mean_percent == -1}5{else}{$grade_type->colspan}{/if}"  data-value="{$level->id}">
 					<a href="#blockinstance_{$id}" title="{$level->description}">{$level->title}</a>
 				</td>
 			{/foreach}

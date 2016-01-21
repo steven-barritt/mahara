@@ -37,7 +37,7 @@
 /*	opacity:.2;*/
 }
 
-.grFail, .grPass, .grGood, .grVGood, .grExc, .gr17 , .gr13 , .gr9 , .gr5 {
+.grFail, .grPass, .grGood, .grVGood, .grExc, .gr17 , .gr13 , .gr9 , .gr5, .grRejected {
 	border-right:solid 1px #555;
 }
 
@@ -53,11 +53,11 @@
 	background: rgb(170,170,170);
 }
 
-.gr20.unselected, .grFail.unselected{
+.gr20.unselected, .grFail.unselected, .grRejected.unselected{
 	background: rgb(255,255,255);
 	background:rgba(187,68,85,0.2);
 }
-.gr20.selected, .gr20.unselected .hovering, .grFail.selected, .grFail.unselected .hovering{
+.gr20.selected, .gr20.unselected .hovering, .grFail.selected, .grFail.unselected .hovering, .grRejected.selected, .grRejected.unselected .hovering{
 	background:rgb(187,68,85);
 }
 
@@ -85,11 +85,11 @@
 	background:rgb(238,119,102);
 }
 
-.gr16.unselected, .grPass.unselected{
+.gr16.unselected, .grPass.unselected, .grKeptOnFile.unselected{
 	background: rgb(255,255,255);
 	background:rgba(255,170,102,0.2);
 }
-.gr16.selected, .gr16.unselected .hovering, .grPass.selected, .grPass.unselected .hovering{
+.gr16.selected, .gr16.unselected .hovering, .grPass.selected, .grPass.unselected .hovering, .grKeptOnFile.selected, .grKeptOnFile.unselected .hovering{
 	background:rgb(255,170,102);
 }
 
@@ -149,11 +149,11 @@
 	background:rgb(238,255,102);
 }
 
-.gr8.unselected, .grVGood.unselected{
+.gr8.unselected, .grVGood.unselected, .grPublished.unselected{
 	background: rgb(255,255,255);
 	background:rgba(204,255,102,0.2);
 }
-.gr8.selected, .gr8.unselected .hovering, .grVGood.selected, .grVGood.unselected .hovering{
+.gr8.selected, .gr8.unselected .hovering, .grVGood.selected, .grVGood.unselected .hovering, .grPublished.unselected .hovering, .grPublished.selected{
 	background:rgb(204,255,102);
 }
 
@@ -181,11 +181,11 @@
 	background:rgb(153,255,102);
 }
 
-.gr4.unselected, .grExc.unselected{
+.gr4.unselected, .grExc.unselected, .grCommended.unselected{
 	background: rgb(255,255,255);
 	background:rgba(136,255,102,0.2);
 }
-.gr4.selected, .gr4.unselected .hovering, .grExc.selected, .grExc.unselected .hovering{
+.gr4.selected, .gr4.unselected .hovering, .grExc.selected, .grExc.unselected .hovering, .grCommended.unselected .hovering, .grCommended.selected{
 	background:#8f6;
 }
 
@@ -215,7 +215,7 @@
 }
 
 
-.grPass{
+.grPass, .grKeptOnFile{
 	background:#fa6;
 
 	border-right:solid 1px #555;
@@ -225,12 +225,12 @@
 
 	border-right:solid 1px #555;
 }
-.grVGood{
+.grVGood, .grPublished{
 	background:#cf6;
 
 	border-right:solid 1px #555;
 }
-.grExc{
+.grExc, .grCommended{
 	background:#8f6;
 	border-right:solid 1px #555;
 }

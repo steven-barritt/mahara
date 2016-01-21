@@ -131,7 +131,7 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
 					'type'         => 'checkbox',
 					'title'        => get_string('visibility', 'blocktype.assessment/assessment'),
 					'description'  => get_string('visibilitydescription', 'blocktype.assessment/assessment'),
-					'defaultvalue' => $assessment->get('visibility'),
+					'defaultvalue' => isset($assessment) ? $assessment->get('visibility'): null,
 				),
 		);
 		return $returnarr;
