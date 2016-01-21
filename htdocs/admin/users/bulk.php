@@ -16,7 +16,7 @@ require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 require_once(get_config('docroot') . 'lib/antispam.php');
 require_once(get_config('docroot') . 'lib/view.php');
 require_once(get_config('libroot') . 'group.php');
-
+safe_require('artefact', 'file');
 
 define('TITLE', get_string('bulkactions', 'admin'));
 
@@ -287,6 +287,24 @@ $invitetogroupform = pieform(array(
     ),
 ));
 
+$archivefiles = pieform(array(
+    'name'     => 'archivefiles',
+    'class'    => 'bulkactionform archivefiles',
+    'renderer' => 'oneline',
+    'elements' => array(
+        'users' => $userelement,
+        'title'        => array(
+            'type'         => 'html',
+            'class'        => 'bulkaction-title',
+            'value'        => get_string('archivefiles', 'admin') . ': ',
+        ),
+        'delete' => array(
+            'type'        => 'submit',
+            'confirm'     => get_string('confirmarchivefiles', 'admin'),
+            'value'       => get_string('archive', 'admin'),
+        ),
+    ),
+));
 
 
 $setlimitededitingform = pieform(array(
@@ -343,6 +361,7 @@ $smarty->assign('resetprofileform', $resetprofileform);
 $smarty->assign('archivepagesform', $archivepagesform);
 $smarty->assign('setlimitededitingform', $setlimitededitingform);
 $smarty->assign('resetdashboardform', $resetdashboardform);
+$smarty->assign('archivefiles', $archivefiles);
 $smarty->assign('addtogroupform', $addtogroupform);
 $smarty->assign('invitetogroupform', $invitetogroupform);
 $smarty->assign('deleteform', $deleteform);
@@ -586,6 +605,33 @@ function invitetogroup_submit(Pieform $form, $values) {
     db_commit();
 
     $SESSION->add_ok_msg(get_string('invitationssent', 'group', count($values['users'])));
+    redirect('/admin/users/search.php');
+}
+
+
+function archivefiles_submit(Pieform $form, $values) {
+    global $users, $editable, $SESSION, $USER;
+	    
+	
+	db_begin();
+	$newfolder = 'Archive_'. date('Ymd');
+    foreach ($users as $user) {
+		$data = (object) array(
+			'parent'      => null,
+			'owner'       => $user->id,
+			'title'       => $newfolder,
+	    );
+
+		$f = new ArtefactTypeFolder(0, $data);
+		$f->set('dirty', true);
+		$f->commit();
+		$paramlist = array($f->get('id'),$user->id);
+		execute_sql("UPDATE {artefact} SET parent = ? WHERE Owner = ? and artefacttype in ('image','file')  and parent is null", $paramlist);
+		
+    }
+    db_commit();
+
+    $SESSION->add_ok_msg(get_string('imagesarchived', 'group', count($values['users'])));
     redirect('/admin/users/search.php');
 }
 

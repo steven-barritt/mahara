@@ -812,6 +812,7 @@ $string['exportdownloademailsubject'] = 'Your Leap2A export for "%s" is ready fo
 $string['exportdownloademailmessage'] = '%s, your Leap2A export for "%s" is ready for download. This file will only be available for up to 24 hours after it was generated. Please follow the link below to download the file:';
 $string['exportdownloadurl'] = 'Download exported file';
 $string['limitedediting'] = 'Limited Editing';//SB
+$string['sensitivematerial'] = 'Allow Sensitive Material';//SB
 
 // Add User
 $string['adduser'] = 'Add user';
@@ -1091,6 +1092,8 @@ $string['confirmaddtogroup'] = 'Are you sure you want to add these users to this
 $string['addtogroupcopyviews'] = 'Copy Views';
 $string['invitetogroup'] = 'Invite to Group';
 $string['confirminvitetogroup'] = 'Are you sure you want to Invite these users to this group.';
+$string['archivefiles'] = 'Archive Files to Folder';
+$string['confirmarchivefiles'] = 'Are you sure you want to Archive these users files to a folder?';
 
 // general stuff
 $string['notificationssaved'] = 'Notification settings saved';

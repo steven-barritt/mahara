@@ -11,6 +11,7 @@
   {$archivepagesform|safe}
   {$addtogroupform|safe}
   {$invitetogroupform|safe}
+  {$archivefiles|safe}
   {$setlimitededitingform|safe}
   {$deleteform|safe}
 </div>
