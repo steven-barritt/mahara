@@ -612,19 +612,14 @@ class PluginBlocktypeGallery extends PluginBlocktype {
     }
 
 
-    public function gallery_js() {
-        $js = <<<EOF
-function gallery_success(form, data) {
-		window.location.replace(data.goto);
-        
-    }
-EOF;
+    public function gallery_js($instance) {
+
+        $js = "function gallery_success_".$instance->get('id')."(form, data) { instconf_".$instance->get('id')."_files.callback(form, data); }";
         return "<script>$js</script>";
     }
 
 public function gallery_submit(Pieform $form, $values) {
         $instance = new BlockInstance($values['instance']);
-
         $redirect = get_config('wwwroot').'/view/view.php?id=' . $instance->get('view');
         //$redirect = '/view/index.php';
 
@@ -675,7 +670,7 @@ public function gallery_submit(Pieform $form, $values) {
                     'type' => 'hidden',
                     'value' => $instance->get('id'),
                 	),
-			'submit' => array(
+			'submitit' => array(
                     'type' => 'submit',
                     'value' => get_string('update'),
                 	)
@@ -692,7 +687,7 @@ public function gallery_submit(Pieform $form, $values) {
             'pluginname' => 'gallery',
             'validatecallback' => array('PluginBlocktypeGallery', 'gallery_validate'),
             'successcallback' => array('PluginBlocktypeGallery', 'gallery_submit'),
-            'jssuccesscallback' => 'gallery_success',
+            'jssuccesscallback' => 'gallery_success_'.$instance->get('id'),
             'elements' => $elements
 			)
         );;
