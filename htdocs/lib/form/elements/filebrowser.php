@@ -909,6 +909,23 @@ function pieform_element_filebrowser_upload(Pieform $form, $element, $data) {
                 $img = $imgrs->get_image();
                 if (!empty($img)) {
                     $imgrs->resize_image(array('w' => $resizeonuploadmaxwidth, 'h' => $resizeonuploadmaxheight), $mimetype); //auto
+                    //dodgy hack to make all png files into jpgs
+                    if($mimetype == 'image/png'){
+                    	$mimetype = 'image/jpg';
+                    }
+                    $saveresize = $imgrs->save_image($tmpname, $mimetype, 85);
+                    if (!$saveresize) {
+                        return array('error' => true, 'message' => get_string('problemresizing', 'artefact.file'));
+                    }
+                    $resized = true;
+                }
+            }elseif($mimetype == 'image/png'){
+                $resizeattempted = true;
+                $imgrs = new ImageResizer($tmpname, $mimetype);
+                $img = $imgrs->get_image();
+                if (!empty($img)) {
+                    $imgrs->resize_image(array('w' => $width, 'h' => $height), $mimetype); //auto
+					$mimetype = 'image/jpg';
                     $saveresize = $imgrs->save_image($tmpname, $mimetype, 85);
                     if (!$saveresize) {
                         return array('error' => true, 'message' => get_string('problemresizing', 'artefact.file'));
