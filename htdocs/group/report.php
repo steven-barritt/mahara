@@ -123,8 +123,9 @@ function get_assessment($user,$assessment){
 //					var_dump($sharedviews);
 			//find the assessment
 			foreach ($sharedviews as &$data) {
+					$tmpgrade = ArtefactTypeAssessment::get_view_grade($data['id']);
+					$grades[] = (int)$tmpgrade->grade;
 //						bob::bob();
-					$grades[] = ArtefactTypeAssessment::get_view_grade($data['id']);
 /*				require_once(get_config('docroot') . 'blocktype/lib.php');
 
 				$sql = "SELECT bi.*
@@ -181,7 +182,8 @@ function get_assessments($user,$assessmentgroup){
 					if(!isset($duedate)){
 						$duedate = View::due_date($data['id']);
 					}
-					$grades[] = ArtefactTypeAssessment::get_view_grade($data['id']);
+					$tmpgrade = ArtefactTypeAssessment::get_view_grade($data['id']);
+					$grades[] = (int)$tmpgrade->grade;
 
 /*					
 					$sql = "SELECT bi.*
