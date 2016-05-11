@@ -106,6 +106,7 @@ $string['nposts'] = array(
     '1 entry',
     '%s entries',
 );
+$string['loadall'] = 'Load All';
 
 $string['publish'] = 'Publish';
 $string['unpublish'] = 'Unpublish';

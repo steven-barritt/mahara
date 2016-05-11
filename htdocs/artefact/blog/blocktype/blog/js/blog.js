@@ -6,14 +6,14 @@ var offset = 0;
 var $j = jQuery;
 
 
-function display_posts(post){
+function display_posts(post, limit){
 	$j(window).off('scroll', ScrollHandler);
         //this is well dodgy and assumes only one postlist on the page
     var postlists = $j('[id^=postlist_]');
 	var dstr = postlists[0].id;
 	var block = dstr.split("_").pop();
     sendjsonrequest('../artefact/blog/posts.json.php',
-        {'limit': 5, 'offset': offset,'block': block},
+        {'limit': limit, 'offset': offset,'block': block},
         'GET',
         function(data) {
 			if(data['data']['tablerows'] != ''){
@@ -36,7 +36,7 @@ function display_posts(post){
 						$j(e.target).closest(".viewpost_flow").find( ".longpost" ).toggleClass("hidden");
 						$j(e.target).closest(".viewpost_flow").find( ".expand" ).toggleClass("hidden");
 						$j("#postlist_"+block).masonry('layout');
-						return false;  
+						return true;  
 /*					});*/
 /*					
 $j(".viewpost a").off().on('click',function(e) {
@@ -47,7 +47,7 @@ $j(".viewpost a").off().on('click',function(e) {
 						return false;  
 					});*/
 				});
-				offset += 5;
+				offset += limit;
 				clearTimeout(_throttleTimer);
 				_throttleTimer = setTimeout(function () {
 					$j(window).on('scroll', ScrollHandler);
@@ -55,6 +55,7 @@ $j(".viewpost a").off().on('click',function(e) {
 			}else{
 				$j('#loading').hide();
 				$j('#loaded').show();
+				return false;
 			}
         },
         function(){
@@ -65,7 +66,6 @@ $j(".viewpost a").off().on('click',function(e) {
 			$j('#loading').toggleClass('hidden')		
         }
         );
-
 };
 
 
@@ -80,7 +80,7 @@ function ScrollHandler(e) {
     clearTimeout(_throttleTimer);
     _throttleTimer = setTimeout(function () {
         if ($j(window).scrollTop() + $j(window).height() >= getDocHeight()-800) {
-			display_posts();
+			display_posts(null, 5);
         }
 
     }, _throttleDelay);
@@ -95,11 +95,16 @@ jQuery(window).load(function(){
 		  percentPosition: true,
 		  gutter:0
 		  	});
-	display_posts();
+	display_posts(null, 5);
 });
 
 
-
+$j(document).ready(function(){
+	$j('.loadall').click(function(e){
+		e.preventDefault();
+		display_posts(null, 500)
+	});
+});
 
 
 

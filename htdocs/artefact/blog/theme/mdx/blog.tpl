@@ -14,6 +14,7 @@
 {if $blog->count_published_posts() > 0}
 <div class="message">
 	{$blog->count_published_posts()} {str tag=posts section=artefact.blog}
+	<a href="" class="loadall">{str tag=loadall section=artefact.blog}</a>
 </div>
 {/if}
 <div class="block_instance_blog">
