@@ -408,79 +408,8 @@ a#loggedinform_loggedindate_btn img {
     width: 200px !important;
 }
 /* Users > User search > Bulk edit */
-form#suspend {
-    margin: 0 5px 10px 0;
-    padding: 5px 5px 5px 10px;
-    background: #EEEEEE;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
-form#changeauth {
-    margin: 0 5px 10px 0;
-    padding: 5px 5px 5px 10px;
-    background: #EEEEEE;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
-form#setlimitedediting {
-    margin: 0 5px 10px 0;
-    padding: 5px 5px 5px 10px;
-    background: #EEEEEE;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
-form#addtogroup {
-    margin: 0 5px 10px 0;
-    padding: 5px 5px 5px 10px;
-    background: #EEEEEE;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
-form#invitetogroup {
-    margin: 0 5px 10px 0;
-    padding: 5px 5px 5px 10px;
-    background: #EEEEEE;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
-form#archivefiles {
-    margin: 0 5px 10px 0;
-    padding: 5px 5px 5px 10px;
-    background: #EEEEEE;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
-form#resetprofile {
-    margin: 0 5px 10px 0;
-    padding: 5px 5px 5px 10px;
-    background: #EEEEEE;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
-form#resetdashboard {
-    margin: 0 5px 10px 0;
-    padding: 5px 5px 5px 10px;
-    background: #EEEEEE;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
-form#archivepages {
+
+.bulkactionform{
     margin: 0 5px 10px 0;
     padding: 5px 5px 5px 10px;
     background: #EEEEEE;
@@ -490,23 +419,8 @@ form#archivepages {
     display: inline-block;
 }
 
-form#probation {
-    margin: 0 5px 10px 0;
-    padding: 5px 5px 5px 10px;
-    background: #EEEEEE;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: inline-block;
-}
 form#delete {
-    margin: 0 0 10px 0;
-    padding: 5px 5px 5px 10px;
     background: #FEE7E7;
-    display: inline-block;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
 }
 form#suspend input#suspend_suspend {
     margin-left: 3px;

@@ -13,6 +13,7 @@
   {$invitetogroupform|safe}
   {$archivefiles|safe}
   {$setlimitededitingform|safe}
+  {$removefromgroupsform|safe}
   {$deleteform|safe}
 </div>
 

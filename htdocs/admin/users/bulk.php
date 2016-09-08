@@ -332,6 +332,25 @@ $setlimitededitingform = pieform(array(
 ));
 
 
+$removefromgroupsform = pieform(array(
+    'name'     => 'removefromgroups',
+    'class'    => 'bulkactionform setlimitedediting',
+    'renderer' => 'oneline',
+    'elements' => array(
+        'users' => $userelement,
+        'title'        => array(
+            'type'         => 'html',
+            'class'        => 'bulkaction-title',
+            'value'        => get_string('removefromgroups', 'admin') . ': ',
+        ),
+        'delete' => array(
+            'type'        => 'submit',
+            'confirm'     => get_string('confirmremovefromgroups', 'admin'),
+            'value'       => get_string('remove', 'admin'),
+        ),
+    ),
+));
+
 // Delete users
 $deleteform = pieform(array(
     'name'     => 'delete',
@@ -364,6 +383,7 @@ $smarty->assign('resetdashboardform', $resetdashboardform);
 $smarty->assign('archivefiles', $archivefiles);
 $smarty->assign('addtogroupform', $addtogroupform);
 $smarty->assign('invitetogroupform', $invitetogroupform);
+$smarty->assign('removefromgroupsform', $removefromgroupsform);
 $smarty->assign('deleteform', $deleteform);
 $smarty->assign('probationform', $probationform);
 $smarty->display('admin/users/bulk.tpl');
@@ -635,6 +655,27 @@ function archivefiles_submit(Pieform $form, $values) {
     redirect('/admin/users/search.php');
 }
 
+function removefromgroups_submit(Pieform $form, $values) {
+    global $users, $editable, $SESSION;
+	db_begin();
+
+	foreach($users as $user){
+		// Remove user from any groups they're in, invited to or want to be in
+		$groupids = get_column('group_member', '"group"', 'member', $user->id);
+		if ($groupids) {
+			foreach ($groupids as $groupid) {
+				group_remove_user($groupid, $user->id, true);
+			}
+		}
+		delete_records('group_member_request', 'member', $user->id);
+		delete_records('group_member_invite', 'member', $user->id);
+    }
+        db_commit();
+
+    $SESSION->add_ok_msg(get_string('imagesarchived', 'group', count($values['users'])));
+    redirect('/admin/users/search.php');
+
+}
 
 function probation_submit(Pieform $form, $values) {
     global $SESSION, $users;
