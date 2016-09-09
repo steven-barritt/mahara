@@ -1539,11 +1539,19 @@ function group_get_type($groupid) {
 }
 
 
-function group_get_parent($groupid) {
-    $parent = get_records_sql_array(
-    	'SELECT gh.parent  FROM {group_hierarchy} gh
-        WHERE gh.child = ? AND gh.depth = 1', array($groupid));
-        
+function group_get_parent($groupid,$grouptype=null) {
+	$parent = null;
+	if($grouptype != null){
+		$parent = get_records_sql_array(
+			'SELECT gh.parent  FROM {group_hierarchy} gh
+			JOIN {group} g on gh.parent = g.id
+			WHERE gh.child = ? AND g.grouptype = ?', array($groupid,$grouptype));
+	}else{
+	
+		$parent = get_records_sql_array(
+			'SELECT gh.parent  FROM {group_hierarchy} gh
+			WHERE gh.child = ? AND gh.depth = 1', array($groupid));
+	}		
     if($parent){
 	    return $parent[0]->parent;
 	}else{
@@ -2110,6 +2118,14 @@ function group_current_group() {
     return $group;
 }
 
+function group_get_group($groupid){
+	$returngroup = get_record_select('group', 'id = ? AND deleted = 0', array($groupid), '*, ' . db_format_tsfield('ctime'));
+	if (!$returngroup) {
+		throw new GroupNotFoundException(get_string('groupnotfound', 'group',$groupid));
+	}
+	return $returngroup;
+}
+
 function group_get_associated_groups($userid, $filter='all', $limit=20, $offset=0, $category='') {
 
     // Strangely, casting is only needed for invite, request and admin and only in
@@ -2500,6 +2516,28 @@ function group_get_groupinfo_data($group) {
 
     $group->postcounts = PluginInteractionForum::count_group_posts($group->id);
 
+    return $group;
+}
+
+//function to get information for a group about its Parents Module & Year
+//should probably include deadline date if available
+//tutors & Gaa's with links to their emails maybe a message button.
+function group_get_projectinfo_data($group) {
+    $group->admins = group_get_admins(array($group->id));
+	$group->tutors = group_get_member_ids($group->id,array('tutor'));
+	$group->ta = group_get_member_ids($group->id,array('ta'));
+	$group->desc = 'Middlesex University';
+	$module = group_get_group(group_get_parent($group->id,'module'));
+	if(isset($module)){
+		$group->moduledesc = $module->name;
+	}
+	$level = group_get_group(group_get_parent($group->id,'year'));
+	if(isset($level)){
+		$group->leveldesc = $level->name;
+	}
+	
+	
+	
     return $group;
 }
 
