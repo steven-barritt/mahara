@@ -167,7 +167,7 @@ function create_a_new_group($old,$newparent,$prefix){
 		$newdata['members'][$oldtutor] = 'tutor';
 	}
 	foreach($oldGAA as $oldGAA){
-		$newdata['members'][$oldGAA] = 'gaa';
+		$newdata['members'][$oldGAA] = 'ta';
 	}
 	/*reset some of the defaults - this is a hack for mdx*/
 	$newdata['allowarchives'] = false;
