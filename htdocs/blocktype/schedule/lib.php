@@ -68,6 +68,7 @@ class PluginBlocktypeSchedule extends SystemBlocktype {
     public static function render_instance(BlockInstance $instance, $editing=false) {
         $events = array();
         $role = null;
+        $schedules = null;
         if ($group = self::get_group($instance)) {
 
             require_once('group.php');

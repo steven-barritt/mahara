@@ -134,7 +134,7 @@ for ($i = 1; $i <= 52; $i++) {
 $scheduleoptions = schedule_get_subgroup_schedules($schedule->groupid);
 
 $editform = array(
-    'name'     => isset($event) ? 'editevent' : 'addevent',
+    'name'     => 'editevent',
     'method'   => 'post',
     'autofocus' => isset($event) ? 'desc' : 'title',
     'elements' => array(
@@ -221,21 +221,21 @@ $editform = array(
 			'title'        => get_string('duration', 'interaction.schedule'),
 			'time'			=> true,
 			'defaultvalue' => $defaultdurationtime,
-//			'class'			=> 'hidden',
+			'class'			=> 'hidden',
 			),
 		'numberofgroups' => array(
 			'type'         => 'select',
 			'title'        => get_string('noofgroups', 'interaction.schedule'),
 			'options'      => array_merge(array(0=>'Individual'),$numberoptions),
 			'defaultvalue' => 0,
-//			'class'			=> 'hidden',
+			'class'			=> 'hidden',
 			),
 		'numberoftutors' => array(
 			'type'         => 'select',
 			'title'        => get_string('nooftutors', 'interaction.schedule'),
 			'options'      => $numberoptions,
 			'defaultvalue' => 1,
-//			'class'			=> 'hidden',
+			'class'			=> 'hidden',
 			),
 
         'repeat' => array(
@@ -291,6 +291,61 @@ function addevent_validate(Pieform $form, $values) {
 function editevent_validate(Pieform $form, $values) {
 }
 
+
+function create_times($groupid, $starttime, $duration, $numberoftutors=1, $numberofgroups=null){
+	$tempdate = $starttime;
+	$starttime = date_create("@$tempdate");
+	$endstr = '';
+	$tempdate = $duration;
+	$durationstart = date_create("@$tempdate");
+	$durationend = date_create("@$tempdate");
+	$durationstart->setTime(00,00);
+	$duration = $durationstart->diff($durationend);
+	//Get the members names as an array
+	if($members = group_get_member_names($groupid,array('member'))){
+		$totalmembers = count($members);
+		error_log('members:' . $totalmembers);
+		error_log('noofgroups:' . $totalmembers);
+		if(!isset($numberofgroups)){
+			$numberofgroups = $totalmembers;
+		}
+		error_log('noofgroups:' . $totalmembers);
+		//divide the number of members by number of groups to get the average per group
+		$pergroup = floor($totalmembers/$numberofgroups);
+		$remainder = $totalmembers%$numberofgroups;
+		//round this up
+		$numberofslots = round($numberofgroups/$numberoftutors,0);
+		$currpos = 0;
+		$groupno = 0;
+		//for 1 to number of groups / number of tutors
+		for($i = 0; $i < $numberofslots; $i++){
+			$endstr .= '<p>Time : '.format_date($starttime->getTimestamp(),'strftimetime').'</p>';
+			//for 1 to number of tutors
+			for($j = 1; $j <= $numberoftutors; $j++){
+				$groupno++;
+				//add the time to string
+				if($numberofgroups > 1){
+					$endstr .= '<p>Group '.$groupno.' </p><p>';
+				}else{
+					$endstr .= '<p>';
+				}
+				//for currentpos to average per group
+				for($k = 1; ($k <= $pergroup + ($remainder > 0 ? 1:0) && $currpos < $totalmembers ); $k++){ 
+					//add the members name
+					$endstr .= $members[$currpos].'; <br>';
+					//increase currentpos
+					$currpos++;
+				}
+				$remainder--;
+			}
+			//increase time by duration
+			$starttime->add($duration);
+			$endstr .='</p>';
+		}
+	}
+	return $endstr;
+}
+/*
 function addevent_submit(Pieform $form, $values) {
     global $USER, $SESSION, $schedule;
     $scheduleid = param_integer('schedule');
@@ -308,58 +363,9 @@ function addevent_submit(Pieform $form, $values) {
 	else {
 		$return = '/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view;
 	}
-		if($values['createtimes']){
-		
-		$tempdate = $values['startdate'];
-		$starttime = date_create("@$tempdate");
-
-		$tempdate = $values['duration'];
-		$durationstart = date_create("@$tempdate");
-		$durationend = date_create("@$tempdate");
-		$durationstart->setTime(00,00);
-		$duration = $durationstart->diff($durationend);
-		
-		//Get the members names as an array
-		if($members = group_get_member_names($schedule->groupid,array('member'))){
-			$totalmembers = count($members);
-			if(!($numberofgroups = isset($values['numberofgroups']) ? $values['numberofgroups'] : 1)){
-				$numberofgroups = $totalmembers;
-			}
-			//divide the number of members by number of groups to get the average per group
-			$pergroup = floor($totalmembers/$numberofgroups);
-			$remainder = $totalmembers%$numberofgroups;
-			$numberoftutors = $values['numberoftutors'];
-			//round this up
-			$numberofslots = round($numberofgroups/$numberoftutors,0);
-			$currpos = 0;
-			$groupno = 0;
-			//for 1 to number of groups / number of tutors
-			for($i = 0; $i < $numberofslots; $i++){
-				$endstr .= '<p>Time : '.format_date($starttime->getTimestamp(),'strftimetime').'</p>';
-				//for 1 to number of tutors
-				for($j = 1; $j <= $numberoftutors; $j++){
-					$groupno++;
-					//add the time to string
-					if($numberofgroups > 1){
-						$endstr .= '<p>Group '.$groupno.' </p><p>';
-					}else{
-						$endstr .= '<p>';
-					}
-					//for currentpos to average per group
-					for($k = 1; ($k <= $pergroup + ($remainder > 0 ? 1:0) && $currpos < $totalmembers ); $k++){ 
-						//add the members name
-						$endstr .= $members[$currpos].'; <br>';
-						//increase currentpos
-						$currpos++;
-					}
-					$remainder--;
-				}
-				//increase time by duration
-				$starttime->add($duration);
-				$endstr .='</p>';
-			}
-		}
-				
+	$tutorialtimes = '';
+	if($values['createtimes']){
+		$tutorialtimes = create_times($schedule->groupid, $values['startdate'], $values['duration'], $values['numberoftutors'], $values['numberofgroups']);
 	}
 
 
@@ -369,7 +375,7 @@ function addevent_submit(Pieform $form, $values) {
 		array(
 			'schedule' => $values['schedule'],
 			'title' => $values['title'],
-			'description' => $values['description'],
+			'description' => $values['description'].$tutorialtimes,
 			'startdate' => db_format_timestamp($values['startdate']),
 			'enddate' => db_format_timestamp($values['enddate']),
 			'location' => $values['location'],
@@ -424,18 +430,19 @@ function addevent_submit(Pieform $form, $values) {
     $SESSION->add_ok_msg(get_string('addeventsuccess', 'interaction.schedule'));
     redirect($return);
 }
+*/
 
 function editevent_submit(Pieform $form, $values) {
 
 //TODO: some logic in here to see if the date/time has changed and notify people of the change
-// Maybe there should be a check box to say notify when you are editing?
+// Maybe there should be a check box to say notify when you are editing?   
     global $SESSION, $USER, $event, $schedule;
-    require_once('group.php');
+    $scheduleid = param_integer('schedule');
     $eventid = param_integer('id');
 	$view = param_integer('view',0);
 	$month = param_integer('month',0);
 	$year = param_integer('year',0);
-
+	$adding = $eventid;
 	$returnto = param_integer('returnto', 0);
 	if ($returnto) {
 		$return = '/interaction/schedule/index.php?group=' . $returnto.'&view='.$view;
@@ -446,80 +453,95 @@ function editevent_submit(Pieform $form, $values) {
 	else {
 		$return = '/interaction/schedule/index.php?group=' . $schedule->groupid.'&view='.$view;
 	}
-	$endstr = '';
-
+	$tutorialtimes = '';
 	if($values['createtimes']){
-		
-		$tempdate = $values['startdate'];
-		$starttime = date_create("@$tempdate");
-
-		$tempdate = $values['duration'];
-		$durationstart = date_create("@$tempdate");
-		$durationend = date_create("@$tempdate");
-		$durationstart->setTime(00,00);
-		$duration = $durationstart->diff($durationend);
-		
-		//Get the members names as an array
-		if($members = group_get_member_names($schedule->groupid,array('member'))){
-			$totalmembers = count($members);
-			if(!($numberofgroups = isset($values['numberofgroups']) ? $values['numberofgroups'] : 1)){
-				$numberofgroups = $totalmembers;
-			}
-			//divide the number of members by number of groups to get the average per group
-			$pergroup = floor($totalmembers/$numberofgroups);
-			$remainder = $totalmembers%$numberofgroups;
-			$numberoftutors = $values['numberoftutors'];
-			//round this up
-			$numberofslots = round($numberofgroups/$numberoftutors,0);
-			$currpos = 0;
-			$groupno = 0;
-			//for 1 to number of groups / number of tutors
-			for($i = 0; $i < $numberofslots; $i++){
-				$endstr .= '<p>Time : '.format_date($starttime->getTimestamp(),'strftimetime').'</p>';
-				//for 1 to number of tutors
-				for($j = 1; $j <= $numberoftutors; $j++){
-					$groupno++;
-					//add the time to string
-					if($numberofgroups > 1){
-						$endstr .= '<p>Group '.$groupno.' </p><p>';
-					}else{
-						$endstr .= '<p>';
-					}
-					//for currentpos to average per group
-					for($k = 1; ($k <= $pergroup + ($remainder > 0 ? 1:0) && $currpos < $totalmembers ); $k++){ 
-						//add the members name
-						$endstr .= $members[$currpos].'; <br>';
-						//increase currentpos
-						$currpos++;
-					}
-					$remainder--;
-				}
-				//increase time by duration
-				$starttime->add($duration);
-				$endstr .='</p>';
-			}
-		}
-//		error_log($endstr);
-				
+		$tutorialtimes = create_times($schedule->groupid, $values['startdate'], $values['duration'], $values['numberoftutors'], $values['numberofgroups']);
 	}
+
     db_begin();
     // check the post content actually changed
     // otherwise topic could have been set as sticky/closed
-	update_record(
-		'interaction_schedule_event',
-		array(
-			'schedule' => $values['schedule'],
-			'title' => $values['title'],
-			'description' => $values['description'].$endstr,
-			'startdate' => db_format_timestamp($values['startdate']),
-			'enddate' => db_format_timestamp($values['enddate']),
-			'location' => $values['location'],
-			'attendance' => $values['attendance'],
-		),
-		array('id' => $values['event'])
-	);
+    if(!$eventid){
+		$eventid = insert_record(
+			'interaction_schedule_event',
+			array(
+				'schedule' => $values['schedule'],
+				'title' => $values['title'],
+				'description' => $values['description'].$tutorialtimes,
+				'startdate' => db_format_timestamp($values['startdate']),
+				'enddate' => db_format_timestamp($values['enddate']),
+				'location' => $values['location'],
+				'attendance' => $values['attendance'],
+			), 'id', true
+		);
+	if($values['repeat'] == true){
+		$tempdate = $values['startdate'];
+		$timez = new DateTimeZone(date_default_timezone_get());
+		$newstartdate = date_create("@$tempdate");
+		$newstartdate->setTimezone($timez);
+		$tempdate = $values['enddate'];
+		$newenddate = date_create("@$tempdate");
+		$newenddate->setTimezone($timez);
+    	$diff = new DateInterval('P1D');
+		switch ($values['howoften']) {
+			case 1:
+				$diff = new DateInterval('P1D');
+				break;
+			case 2:
+				$diff = new DateInterval('P2D');
+				break;
+			case 7:
+				$diff = new DateInterval('P7D');
+				break;
+			case 31:
+				$diff = new DateInterval('P3M');
+				break;
+		}
+    	$numberoftimes = $values['numberoftimes'];
+    	$every = $values['howoften'];
+    	for($i = 1; $i <= $numberoftimes; $i++){
+    		$newstartdate = date_add($newstartdate,$diff);
+    		$newenddate = date_add($newenddate,$diff);
+    		
+			$eventid = insert_record(
+				'interaction_schedule_event',
+				array(
+					'schedule' => $values['schedule'],
+					'title' => $values['title'],
+					'description' => $values['description'],
+					'startdate' => db_format_timestamp($newstartdate),
+					'enddate' => db_format_timestamp($newenddate),
+					'location' => $values['location'],
+					'attendance' => $values['attendance'],
+				), 'id', true
+			);
+    		
+    	}
+    }
+
+
+    }else{
+		update_record(
+			'interaction_schedule_event',
+			array(
+				'schedule' => $values['schedule'],
+				'title' => $values['title'],
+				'description' => $values['description'].$tutorialtimes,
+				'startdate' => db_format_timestamp($values['startdate']),
+				'enddate' => db_format_timestamp($values['enddate']),
+				'location' => $values['location'],
+				'attendance' => $values['attendance'],
+			),
+			array('id' => $values['event'])
+		);
+	}
+
     db_commit();
-    $SESSION->add_ok_msg(get_string('editeventsuccess', 'interaction.schedule'));
+    if($adding){
+		$SESSION->add_ok_msg(get_string('addeventsuccess', 'interaction.schedule'));
+	}else{
+		$SESSION->add_ok_msg(get_string('editeventsuccess', 'interaction.schedule'));
+	}
     redirect($return);
 /*    if ($returnto) {
         redirect('/interaction/schedule/index.php?group=' . $returnto.'&view='.$view);
@@ -531,11 +553,11 @@ function editevent_submit(Pieform $form, $values) {
 
 $javascript = <<<EOF
 function addchangeables(){
-    var s = $('addevent_repeat');
-    var m = $('addevent_numberoftimes_container');
-    var t = $('addevent_howoften_container');
-    var u = $('addevent_numberoftimes');
-    var v = $('addevent_howoften');
+    var s = $('editevent_repeat');
+    var m = $('editevent_numberoftimes_container');
+    var t = $('editevent_howoften_container');
+    var u = $('editevent_numberoftimes');
+    var v = $('editevent_howoften');
     if (!m) {
         return;
     }
@@ -552,12 +574,40 @@ function addchangeables(){
         addElementClass(v, 'hidden');
     }
 }
+function addchangeables2(){
+    var a = $('editevent_createtimes');
+    var b = $('editevent_duration_container');
+    var c = $('editevent_numberofgroups_container');
+    var d = $('editevent_numberofgroups');
+    var e = $('editevent_numberoftutors_container');
+    var f = $('editevent_numberoftutors');
+    if (!b) {
+        return;
+    }
+    if (a.checked == true) {
+        removeElementClass(b, 'hidden');
+        removeElementClass(c, 'hidden');
+        removeElementClass(d, 'hidden');
+        removeElementClass(e, 'hidden');
+        removeElementClass(f, 'hidden');
+    }
+    else {
+        addElementClass(b, 'hidden');
+        addElementClass(c, 'hidden');
+        addElementClass(d, 'hidden');
+        addElementClass(e, 'hidden');
+        addElementClass(f, 'hidden');
+    }
+}
 addLoadEvent(function() {
-    connect('addevent_repeat', 'onclick', addchangeables);
+    connect('editevent_repeat', 'onclick', addchangeables);
+    connect('editevent_createtimes', 'onclick', addchangeables2);
 });
 
 
 EOF;
+
+
 
 
 $smarty = smarty(array('interaction/schedule/js/edit.js'));
