@@ -65,6 +65,60 @@ function schedule_get_event($eventid){
 
 }
 
+//basically takes a group and copies its schedule to another groups schedule
+//if you specify the datejump parameter this is in weeks so you could say copy this to another 
+//group with plus 6 weeks for multiple project runs
+//or with plus 52 weeks for the next year
+//mainly used form manageing groups when the year end is run to keep all the events
+function copy_schedules_for_group($oldgroup, $newgroup, $datejump=0){
+	$oldschedules = get_schedule_list($oldgroup);
+	if(!$oldschedules){
+		return;
+	}
+	$newschedules = get_schedule_list($newgroup);
+	$oldevents = get_schedule_events($oldschedules[0]->id);
+	if($oldevents){
+    db_begin();
+		foreach($oldevents as $oldevent){
+			$startdate = $oldevent->startdate;
+			$enddate = $oldevent->enddate;
+			if($datejump != 0){
+				//echo date('Y-m-d (l, W)').<br/>;
+				//echo date('Y-m-d (l, W)', strtotime("-52 week"));
+					$tempdate = $startdate;
+					$timez = new DateTimeZone(date_default_timezone_get());
+					$startdate = date_create("@$tempdate");
+					$startdate->setTimezone($timez);
+				$startdate->modify('+'.$datejump.' week');
+					$tempdate = $enddate;
+					$timez = new DateTimeZone(date_default_timezone_get());
+					$enddate = date_create("@$tempdate");
+					$enddate->setTimezone($timez);
+				$enddate->modify('+'.$datejump.' week');
+
+			}
+			$eventid = insert_record(
+				'interaction_schedule_event',
+				array(
+					'schedule' => $newschedules[0]->id,
+					'title' => $oldevent->title,
+					'description' => $oldevent->description,
+					'startdate' => db_format_timestamp($startdate),
+					'enddate' => db_format_timestamp($enddate),
+					'location' => $oldevent->location,
+					'attendance' => $oldevent->attendance,
+				), 'id', true
+			);
+		}
+		db_commit();
+    }
+
+
+	
+	
+}
+
+
 function schedule_get_user_events($mindate,$maxdate){
 	global $USER;
 	$events = array();
@@ -360,7 +414,7 @@ function schedule_events_per_cal_day($events,$groupid, $month,$year){
 }
 
 
-function get_schedule_events($schedule){
+function get_schedule_events($scheduleid){
 	$events = array();
 	
         $events = get_records_sql_array(
@@ -381,7 +435,7 @@ function get_schedule_events($schedule){
 	JOIN {interaction_instance} s on e.schedule = s.id
 	WHERE e.schedule = ? AND e.deleted = 0
 	ORDER BY e.startdate, e.enddate, e.title",
-            array($schedule->id)
+            array($scheduleid)
         );
  	 
     return $events;

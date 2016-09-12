@@ -711,6 +711,7 @@ function group_update($new, $create=false) {
 
     $diff = array_diff_assoc((array)$new, (array)$old);
     if (empty($diff)) {
+
         return null;
     }
 
@@ -720,9 +721,10 @@ function group_update($new, $create=false) {
         group_update_members($new->id, $new->members);
         unset($new->members);
     }
-
     update_record('group', $new, 'id');
-    group_update_hierarchy($new->parent,$new->id);
+	if(isset($new->parent)){
+	    group_update_hierarchy($new->parent,$new->id);
+    }
 
     // Add users who have requested membership of a group that's becoming
     // open
@@ -1539,7 +1541,17 @@ function group_get_type($groupid) {
 }
 
 
-function group_get_parent($groupid,$grouptype=null) {
+function group_get_parent($groupid) {
+    $parent = get_records_sql_array(
+    	'SELECT gh.parent  FROM {group_hierarchy} gh
+        WHERE gh.child = ? AND gh.depth = 1', array($groupid));
+    if($parent){
+	    return $parent[0]->parent;
+	}else{
+		return null;
+	}
+}
+function group_get_parent_type($groupid,$grouptype=null) {
 	$parent = null;
 	if($grouptype != null){
 		$parent = get_records_sql_array(
@@ -2527,11 +2539,11 @@ function group_get_projectinfo_data($group) {
 	$group->tutors = group_get_member_ids($group->id,array('tutor'));
 	$group->ta = group_get_member_ids($group->id,array('ta'));
 	$group->desc = 'Middlesex University';
-	$module = group_get_group(group_get_parent($group->id,'module'));
+	$module = group_get_group(group_get_parent_type($group->id,'module'));
 	if(isset($module)){
 		$group->moduledesc = $module->name;
 	}
-	$level = group_get_group(group_get_parent($group->id,'year'));
+	$level = group_get_group(group_get_parent_type($group->id,'year'));
 	if(isset($level)){
 		$group->leveldesc = $level->name;
 	}

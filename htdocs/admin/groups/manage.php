@@ -150,12 +150,12 @@ function create_a_new_group($old,$newparent,$prefix){
 	
 	//rename the old one first
 	$old_data['name'] = $prefix . $old_data['name'];
-//	var_dump($old_data);
 	group_update((object)$old_data);
 
 	//copy only the admins and tutors over
 	$oldadmins = group_get_member_ids($old,array('admin'));
 	$oldtutors = group_get_member_ids($old,array('tutor'));
+	$oldGAA = group_get_member_ids($old,array('ta'));
 	//need to add admin user to members so it can copy stuff over
 	$newdata['members'] = array($USER->get('id') => 'admin');
 	foreach($oldadmins as $oldadmin){
@@ -166,6 +166,9 @@ function create_a_new_group($old,$newparent,$prefix){
 	foreach($oldtutors as $oldtutor){
 		$newdata['members'][$oldtutor] = 'tutor';
 	}
+	foreach($oldGAA as $oldGAA){
+		$newdata['members'][$oldGAA] = 'gaa';
+	}
 	/*reset some of the defaults - this is a hack for mdx*/
 	$newdata['allowarchives'] = false;
 	$newdata['viewnotify'] = 2;
@@ -175,6 +178,13 @@ function create_a_new_group($old,$newparent,$prefix){
 	//create the new group
 	$newdata['id'] = group_create($newdata);
 	
+	//Need to copy scheduled events over to the new year
+	//start by getting all events for the group schedule
+	//Then for each we need to convert it to the appropriate day
+	//so find the day and add a year to it
+	//echo date('Y-m-d (l, W)').<br/>;
+	//echo date('Y-m-d (l, W)', strtotime("+52 week"));
+	copy_schedules_for_group($old_data['id'],$newdata['id'],52);
 	//then copy any of the old groups subgroups
 	if($subgroups = get_group_subgroups_array($old_data['id'],null,1)){
 		foreach($subgroups as $subgroup){
