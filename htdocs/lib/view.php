@@ -5633,8 +5633,15 @@ class View {
 
 function create_view_form($group=null, $institution=null, $template=null, $collection=null) {
     global $USER;
+    $name = 'creatview';
+    if($collection){
+    	$name .='col'.$collection;
+    }
+    if($institution){
+    	$name .='ins'.$institution;
+    }
     $form = array(
-        'name'            => 'createview',
+        'name'            => $name,
         'method'          => 'post',
         'plugintype'      => 'core',
         'pluginname'      => 'view',
