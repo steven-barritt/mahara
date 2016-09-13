@@ -1,5 +1,4 @@
 {include file="header.tpl"}
-
 {if $GROUP}<h2>{str tag=groupviews section=view}</h2>
 {/if}
 {if !$limitedediting}
