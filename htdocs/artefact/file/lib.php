@@ -572,12 +572,11 @@ abstract class ArtefactTypeFileBase extends ArtefactType {
         $select = '
             SELECT
                 a.id, a.artefacttype, a.mtime, f.size, a.title, a.description, a.license, a.licensor, a.licensorurl, a.locked, a.allowcomments, u.profileicon AS defaultprofileicon,
-                COUNT(DISTINCT c.id) AS childcount, COUNT (DISTINCT aa.artefact) AS attachcount, COUNT(DISTINCT va.view) AS viewcount, COUNT(DISTINCT s.id) AS skincount,
+                COUNT (DISTINCT aa.artefact) AS attachcount, COUNT(DISTINCT va.view) AS viewcount, COUNT(DISTINCT s.id) AS skincount,
                 COUNT(DISTINCT api.id) AS profileiconcount';
         $from = '
             FROM {artefact} a
                 LEFT OUTER JOIN {artefact_file_files} f ON f.artefact = a.id
-                LEFT OUTER JOIN {artefact} c ON c.parent = a.id
                 LEFT OUTER JOIN {artefact} api ON api.parent = a.id AND api.artefacttype = \'profileicon\'
                 LEFT OUTER JOIN {view_artefact} va ON va.artefact = a.id
                 LEFT OUTER JOIN {artefact_attachment} aa ON aa.attachment = a.id
