@@ -18,7 +18,7 @@
 				<td class="weekday">
 				<div  class="yearplanday{if $admin} editable{/if}">
 					{if $admin}
-					<a href="{$WWWROOT}interaction/schedule/editevent.php?schedule={$schedule->id}&view={$view}&returnto={$groupid}&day={$weeksanddays[$i][$j].date|format_date:'strftimenday'}&month={$weeksanddays[$i][$j].date|format_date:'strftimenmonth'}&year={$weeksanddays[$i][$j].date|format_date:'strftimenyear'}"></a>
+					<a href="{$WWWROOT}interaction/schedule/editevent.php?id=0&schedule={$schedule->id}&view={$view}&returnto={$groupid}&day={$weeksanddays[$i][$j].date|format_date:'strftimenday'}&month={$weeksanddays[$i][$j].date|format_date:'strftimenmonth'}&year={$weeksanddays[$i][$j].date|format_date:'strftimenyear'}"></a>
 					{/if}
 				<div class="daynumber">{$weeksanddays[$i][$j].date|format_date:'strftimedatevshort'}</div>
 				<ul>
