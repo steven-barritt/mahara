@@ -579,6 +579,7 @@ class GradeType{
         if ($this->id) {
             $this->grade_levels = GradeType::get_levels($this->id);
             if(count($this->grade_levels) > 0){
+            	//-1 represents an NA column so we need a different colspan to account for it
             	if($this->grade_levels[0]->mean_percent == -1){
 //		            $this->colspan = 5;
 		            $this->colspan = round(100/(count($this->grade_levels)-1));
@@ -691,6 +692,32 @@ class AssessmentScheme{
 
 	}
 	
+	
+	public function get_user_averages($userid, $type){
+		//Need logic to calculate averages
+		//For each criteria search for any results
+		//average the results and then build them into an assessment object
+		//pass this object to the display so that it can show as it is.
+		//Get user
+//		$this->assessment = new ArtefactTypeAssessment();
+//		$this->assessment->assessmentscheme = $this->id;
+//		var_dump($this->criteria);
+    	$sql = "SELECT  r.criteria as criteria, AVG(r.grade) as average FROM {artefact_assessment_results} r
+					JOIN {artefact_assessment_criteria} aac on r.criteria = aac.id
+					JOIN {artefact_assessment} aa on r.assessment = aa.assessment 
+					JOIN {artefact} a on a.id = aa.assessment 
+					WHERE a.owner = ? and aa.type = ? and aac.scheme = ? and aa.published
+					GROUP BY r.criteria";
+		if($results = get_records_sql_assoc($sql,array($userid,$type,$this->id))){
+			foreach($this->criteria as $criterium){
+				$criterium->grade = $results[$criterium->id]->average;
+			}
+		}else{
+			//No results not sure if we need to do anything here...
+		}
+		
+	}
+	
 	public static function get_criteria($id, $assessment=0){
 		$criteria = array();
 		if($records = get_records_array('artefact_assessment_criteria','scheme',$id,'criteria_group, `order`, id')){
@@ -700,6 +727,7 @@ class AssessmentScheme{
 		}
 		return $criteria;
 	}
+	
 	
 	//function returns a list of schemes for select objects
 	public static function get_assessment_scheme_options($institutions){
