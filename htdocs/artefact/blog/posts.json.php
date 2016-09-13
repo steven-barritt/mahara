@@ -20,6 +20,7 @@ require_once(get_config('docroot') . 'artefact/blog/blocktype/blog/lib.php');
 
 $offset = param_integer('offset', 0);
 $limit = param_integer('limit',10);
+$order = param_variable('order','DESC');
 
 
 if ($blockid = param_integer('block', null)) {
@@ -34,7 +35,8 @@ if ($blockid = param_integer('block', null)) {
     $flowview = isset($configdata['flowview']) ? $configdata['flowview'] :false;
     $configdata['countcomments'] = true;
     $configdata['viewid'] = $bi->get('view');
-    $posts = ArtefactTypeBlogpost::get_posts($configdata['artefactid'], $limit, $offset, $configdata,'DESC',$flowview);
+    error_log($order);
+    $posts = ArtefactTypeBlogpost::get_posts($configdata['artefactid'], $limit, $offset, $configdata,$order,$flowview);
     $template = 'artefact:blog:viewposts.tpl';
 	if($flowview){
 		$template = 'artefact:blog:viewpostsflow.tpl';

@@ -107,6 +107,7 @@ $string['nposts'] = array(
     '%s entries',
 );
 $string['loadall'] = 'Load All';
+$string['reverseorder'] = 'Reverse Order';
 
 $string['publish'] = 'Publish';
 $string['unpublish'] = 'Unpublish';

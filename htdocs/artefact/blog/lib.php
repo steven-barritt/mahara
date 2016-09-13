@@ -970,7 +970,7 @@ class ArtefactTypeBlogPost extends ArtefactType {
                 a.id, a.title, a.description, a.author, a.authorname, ' .
                 db_format_tsfield('a.ctime', 'ctime') . ', ' . db_format_tsfield('a.mtime', 'mtime') . ',
                 a.locked, bp.published, a.allowcomments, bp.sensitive ' . $from . '
-            ORDER BY bp.published DESC, a.ctime DESC, a.id DESC',
+            ORDER BY bp.published '.$order.', a.ctime '.$order.', a.id '.$order,
             array($id),
             $offset, $limit
         );

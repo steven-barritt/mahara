@@ -13,8 +13,9 @@
 </div>
 {if $blog->count_published_posts() > 0}
 <div class="message">
-	{$blog->count_published_posts()} {str tag=posts section=artefact.blog}
-	<a href="" class="loadall">{str tag=loadall section=artefact.blog}</a>
+	{$blog->count_published_posts()} {str tag=posts section=artefact.blog} |
+	<a href="" class="loadall hidden">{str tag=loadall section=artefact.blog}</a> | 
+	<a href="" class="order hidden">{str tag=reverseorder section=artefact.blog}</a>
 </div>
 {/if}
 <div class="block_instance_blog">
