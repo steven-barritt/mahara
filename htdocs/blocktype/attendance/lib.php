@@ -62,6 +62,8 @@ class PluginBlocktypeAttendance extends SystemBlocktype {
 		$attendances = array();
 		$events = array();
 		$cansee = true;
+		$canedit = false;
+		$groupid = null;
 		if($instance->get_view()->get('type') == 'profile'){
 			if($instance->get_view()->get('owner') == $USER->get('id') || $USER->is_staff_for_user($instance->get_view()->get('owner'))){
 				list($attendances,$percentages) = schedule_get_user_attendance($instance->get_view()->get('owner'));
@@ -74,6 +76,9 @@ class PluginBlocktypeAttendance extends SystemBlocktype {
 		}else{
 			$groups = self::get_groups($instance);
 			if(count($groups) > 0){
+				$userid = (!empty($USER) ? $USER->get('id') : 0);
+				$canedit = group_user_can_assess_submitted_views($groups[0]->id,$userid);
+				$groupid = $groups[0]->id;
 				$schedules = get_schedule_list($groups[0]->id);
 				if($schedules){
 					$scheduleid = $schedules[0]->id;
@@ -99,6 +104,8 @@ class PluginBlocktypeAttendance extends SystemBlocktype {
 		$smarty->assign('events',$events);
 		$smarty->assign('columnheight',$columnheight);
 		$smarty->assign('attendances', $attendances);
+		$smarty->assign('groupid', $groupid);
+		$smarty->assign('canedit', $canedit);
 /*		$smarty->assign('limittext', $limittext);
 		$smarty->assign('group', $group);
 		$smarty->assign('events', $events);*/
