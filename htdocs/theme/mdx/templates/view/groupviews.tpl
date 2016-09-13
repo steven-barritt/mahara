@@ -12,6 +12,9 @@
 						<a class="btn-big-edit btn" href="{$WWWROOT}view/blocks.php?id={$view.id}" title="{str(tag=editspecific arg1=$view.name)|escape:html|safe}">
 							<span class="accessible-hidden">{str tag=editspecific arg1=$view.name}</span>
 						</a>
+						<a class="btn-big-del btn" href="{$WWWROOT}view/delete.php?id={$view.id}" title="{str tag=deletethisview section=view}">
+													<span class="accessible-hidden">{str tag=editspecific arg1=$view.name}</span>
+						</a>
 						</div>
 						{/if}
 					</li>
