@@ -73,6 +73,15 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
 	public static function get_recent($limit=10,$offset=0){
 		require_once('view.php');
 		global $USER;
+		
+		//TODO:
+		//need to set a session variable with the current time this then forms the basis for the newsfeed search
+		//this is because if you are viewing the page and it is loading more posts but someone else is posting
+		//then the posts get shifted down and you get repeat posts in the newsfeed
+		
+		//what would be good is if it could work out if new posts had been made and add them to the top
+		//as well as knowing exactly where you had got to 
+		
 		// decide if the user is an staff if so then allow the to see sensitive posts
 		//otherwise don't
 		//its more complicated than this it needs to be on an per post basis
@@ -91,10 +100,10 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
 			AND m.member = ?
 			AND (vaa.startdate IS NULL OR vaa.startdate < current_timestamp)
 			AND (vaa.stopdate IS NULL OR vaa.stopdate > current_timestamp)
-			AND ((!ab.sensitive) || (m.role != 'member') )
+			AND ((!ab.sensitive) || (m.role != 'member') || (ab.sensitive && a.owner = ? ))
 			
 			ORDER BY a.ctime DESC, a.id DESC
-			LIMIT " . $limit." OFFSET ".$offset,array($USER->get('id')))) {
+			LIMIT " . $limit." OFFSET ".$offset,array($USER->get('id'),$USER->get('id')))) {
 			$mostrecent = array();
 			/*AND a.owner != ?  ,array($usrid) excludes your own posts but this doesn;t seem right somehow*/
 		}
