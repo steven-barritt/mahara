@@ -37,6 +37,7 @@ $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%l:%%M %%p'; //Thu, 06 Nov 2
 $string['strftimetime'] = '%%l:%%M %%p';
 $string['strftimetimezero'] = '%%k:%%M';
 $string['strfdaymonthyearshort'] = '%%d/%%m/%%Y'; //  22/09/2015
+$string['strfdaymonthyearshortdot'] = '%%d.%%m.%%Y'; //  22/09/2015
 $string['strfdateofbirth'] = '%%Y/%%m/%%d';
 $string['strftimew3cdatetime'] = '%%Y-%%m-%%dT%%H:%%M:%%S%%z';
 $string['strftimew3cdate'] = '%%Y-%%m-%%d';
