@@ -1,5 +1,7 @@
 {include file="header.tpl"}
-
+<div>
+<a href="#" class="export">Export Table data into Excel</a>
+</div>
 <table class="fullwidth groupreport" id="assessmentreport">
   <thead>
   	{if $modulegroups}
@@ -52,7 +54,7 @@
 	    	<td class="percent {if ($user.percentages[2]->percentage > 30) && ($user.percentages.total > 0)}absent{/if}">{$user.percentages[2]->percentage}%</td>
 	    	<td class="percent {if ($user.percentages[3]->percentage > 25) && ($user.percentages.total > 0)}excused{/if}">{$user.percentages[3]->percentage}%</td>
 	    	{for i 1 $colcount}
-	    		<td class="gradecolumn {if $user[$i][2]}absent{/if}"><label class="hidden">{$assessmentgroups[$i-1]->name}: </label>{if $user[$i][2]}20{elseif $user[$i][1] == 0}-{else}{$user[$i][1]}{/if}</td>
+	    		<td class="gradecolumn {if $user[$i][2]}absent{/if}">{if $user[$i][2]}20{elseif $user[$i][1] == 0}-{else}{$user[$i][1]}{/if}</td>
 	    	{/for}
 	    </tr>    	
     	{/foreach}

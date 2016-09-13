@@ -1,4 +1,8 @@
 {include file="header.tpl"}
+<div>
+<a href="#" class="export">Export Table data into Excel</a>
+</div>
+
 	<h2>{$schedule->title}</h2>
 	<div id="viewschedule">
 	<table id="attendancelist" class="fullwidth nohead">
@@ -18,10 +22,7 @@
 				</div></th>
 			{cycle values='r0,r1' assign=class}
 			{foreach from=$attendnaceevents item=attendanceevent}
-			<th class="attendanceColumnHeadVertical {$attendanceevent->startdate|format_date:'strftimeday'}" style="height:{$columnheight}">
-				<div class="verticalText"><span>{$attendanceevent->startdate|format_date:'strftimedayvshortyear'}</span>
-				</div>
-			</th>
+			<th class="attendanceColumnHeadVertical {$attendanceevent->startdate|format_date:'strftimeday'}" style="height:{$columnheight}"><div class="verticalText"><span>{$attendanceevent->startdate|format_date:'strfdaymonthyearshortdot'}</span></div></th>
 			{/foreach}
 			
 		</tr>
@@ -42,21 +43,8 @@
 	    	<td class="percent {if ($user.percentages[2]->percentage > 30) && ($user.percentages.total > 0)}absent{/if}">{$user.percentages[2]->percentage}%</td>
 	    	<td class="percent {if ($user.percentages[3]->percentage > 25) && ($user.percentages.total > 0)}excused{/if}">{$user.percentages[3]->percentage}%</td>
 			{assign '' olddate}
-	    	{foreach from=$user.attendances item=attendance name=att}
-				{if $olddate != $attendance->startdate|format_date:'strfdaymonthyearshort'} 
-					{if !$dwoo.foreach.att.first}
-						</tr></table></td>
-					{/if}
-					<td class="attend {$attendance->startdate|format_date:'strftimeday'}"><table class="innerattendnace"><tr>
-				{/if}
-				{if $attendance->attendance != null}
-	    		<td  class="attendancecol {if $attendance->attendance == 1}attendPresent{/if}{if $attendance->attendance == 2}attendLate{/if}{if $attendance->attendance == 3}attendAbsent{/if}{if $attendance->attendance == 4}attendExcused{/if}"><a class="eventlink" href="{$WWWROOT}interaction/schedule/view.php?event={$attendance->id}" title="{$attendance->title} - {$attendance->scheduletitle}&#13;{str tag=when section=interaction.schedule}{$attendance->startdate|format_date:'strftimetime'}&#13;{str tag=where section=interaction.schedule}{$atendance->location}">{if $attendance->attendance != null}&nbsp;{/if}</td>
-				{/if}
-				{assign $attendance->startdate|format_date:'strfdaymonthyearshort' olddate}
-	    	{/foreach}
-	    	{if $user.attendances}
-	    	</tr></table></td>
-	    	{/if}
+	    	{foreach from=$user.attendances item=attendance name=att}{if $olddate != $attendance->startdate|format_date:'strfdaymonthyearshort'}{if !$dwoo.foreach.att.first}</tr></table></td>{/if}<td class="attend {$attendance->startdate|format_date:'strftimeday'}"><table class="innerattendnace"><tr>{/if}{if $attendance->attendance != null}<td  class="attendancecol {if $attendance->attendance == 1}attendPresent{/if}{if $attendance->attendance == 2}attendLate{/if}{if $attendance->attendance == 3}attendAbsent{/if}{if $attendance->attendance == 4}attendExcused{/if}"><a class="eventlink" href="{$WWWROOT}interaction/schedule/view.php?event={$attendance->id}" title="{$attendance->title} - {$attendance->scheduletitle}&#13;{str tag=when section=interaction.schedule}{$attendance->startdate|format_date:'strftimetime'}&#13;{str tag=where section=interaction.schedule}{$atendance->location}">{if $attendance->attendance != null}{if $attendance->attendance == 1}Y{/if}{if $attendance->attendance == 2}L{/if}{if $attendance->attendance == 3}N{/if}{if $attendance->attendance == 4}A{/if}{/if}</td>{/if}{assign $attendance->startdate|format_date:'strfdaymonthyearshort' olddate}{/foreach}
+	    	{if $user.attendances}</tr></table></td>{/if}
 	    </tr>    	
     	{/foreach}
   {else}

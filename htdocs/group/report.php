@@ -356,11 +356,19 @@ if(in_array($group->grouptype, array('year','module','assessment')) ){
 	));
 
 $js = <<< EOF
+
 addLoadEvent(function () {
-	p = {$pagination['javascript']}
+    p = {$pagination['javascript']}
+    jQuery(".export").on('click', function (event) {
+        // CSV
+        exportTableToCSV.apply(this, ['#assessmentreport', 'export.csv']);
+        
+        // IF CSV, don't do event.preventDefault() or return false
+        // We actually need this to be a typical hyperlink
+    });
+
 });
 EOF;
-
 $smarty = smarty(array('paginator'),array(),array(),array('sidebars' => false));
 	$smarty->assign('baseurl', get_config('wwwroot') . 'group/report.php?group=' . $group->id);
 	$smarty->assign('heading', $group->name);
@@ -592,8 +600,17 @@ $pagination = build_pagination(array(
 ));
 
 $js = <<< EOF
+
 addLoadEvent(function () {
     p = {$pagination['javascript']}
+    jQuery(".export").on('click', function (event) {
+        // CSV
+        exportTableToCSV.apply(this, ['#sharedviewsreport', 'export.csv']);
+        
+        // IF CSV, don't do event.preventDefault() or return false
+        // We actually need this to be a typical hyperlink
+    });
+
 });
 EOF;
 

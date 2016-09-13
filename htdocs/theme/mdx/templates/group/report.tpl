@@ -1,4 +1,7 @@
 {include file="header.tpl"}
+<div>
+<a href="#" class="export">Export Table data into Excel</a>
+</div>
 
 {if !$sharedviews && !$groupviews}
 <p>{str tag=youhaventcreatedanyviewsyet section=view}</p>
@@ -38,7 +41,7 @@
 {foreach from=$sharedviews item=view}
     <tr class="{cycle values='r0,r1'}">
       <td class="sv"><h3 class="title"><a href="{$view.baseurl}">{$view.title}</a></h3></td>
-      <td class="sb"><label class="hidden">{str tag=sharedby section=view}: </label>
+      <td class="sb">
 {if $view.owner}
         <a href="{$WWWROOT}user/view.php?id={$view.owner}">{$view.user->id|display_name:null:true|escape}</a>
 {elseif $view.group}
@@ -47,12 +50,12 @@
         <a href="{$WWWROOT}institution/view.php?id={$view.institution}">{$view.institution|escape}</a>
 {/if}
       </td>
-      <td class="sd"><label class="hidden">{str tag=submitteddate section=group}: </label>
+      <td class="sd">
         <ul>
         	{$view.submittedtime|format_date}
         </ul>
       </td>
-      <td class="pc"><label class="hidden">{str tag=postcount section=group}: </label>
+      <td class="pc">
         <ul>
              {if $view.artefacts}
      	<div class="bloginfo"> {str tag=posts section=blocktype.groupviews arg1=$view.postcount}</div>
@@ -60,22 +63,22 @@
 
         </ul>
       </td>
-      <td class="sg"><label class="hidden">{str tag=attendance section=group}: </label>
+      <td class="sg">
         <ul>
         	<a href="{$WWWROOT}interaction/schedule/viewattendance.php?group={$group->id}" title="{str tag=present section=interaction.schedule}: {$view.percentages[0]->percentage}%&#13;{str tag=late section=interaction.schedule}: {$view.percentages[1]->percentage}%&#13;{str tag=absent section=interaction.schedule}: {$view.percentages[2]->percentage}%&#13;{str tag=excused section=interaction.schedule}: {$view.percentages[3]->percentage}%">{$view.percentages[0]->percentage + $view.percentages[1]->percentage}</a>
         </ul>
       </td>
-      <td class="sg"><label class="hidden">{str tag=selfgrade section=group}: </label>
+      <td class="sg">
         <ul>
         	{$view.selfgrade->grade}
         </ul>
       </td>
-      <td class="sg"><label class="hidden">{str tag=peergrade section=group}: </label>
+      <td class="sg">
         <ul>
         	{$view.peergrade->grade}
         </ul>
       </td>
-      <td class="sg {if $view.tutorgrade->published}published{else}unpublished{/if}"><label class="hidden">{str tag=tutorgrade section=group}: </label>
+      <td class="sg {if $view.tutorgrade->published}published{else}unpublished{/if}">
         <ul>
         	{$view.tutorgrade->grade}
         </ul>

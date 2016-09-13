@@ -125,6 +125,27 @@ $sortable[] = 'lastname';
 if (in_array($sort, $sortable)) {
 	sorttablebycolumn($userdata, $sort, $direction);
 }
+/*    jQuery(".export").on('click', function (event) {
+        // CSV
+        exportTableToCSV.apply(this, [jQuery('#assessmentreport'), 'export.csv']);
+        
+        // IF CSV, don't do event.preventDefault() or return false
+        // We actually need this to be a typical hyperlink
+    });
+*/
+$js = <<< EOF
+
+addLoadEvent(function () {
+    jQuery(".export").on('click', function (event) {
+        // CSV
+        exportTableToCSV.apply(this, ['#attendancelist', 'export.csv']);
+        
+        // IF CSV, don't do event.preventDefault() or return false
+        // We actually need this to be a typical hyperlink
+    });
+
+});
+EOF;
 
 
 //$attendance = array();
@@ -136,7 +157,7 @@ if (in_array($sort, $sortable)) {
 $headers = array();
 
 
-$smarty = smarty(array(), $headers, array(), array());
+$smarty = smarty(array(), $headers, array(), array('sidebars'=>false));
 $smarty->assign('groupid', $groupid);
 $smarty->assign('heading', $group->name);
 $smarty->assign('admin', $membership == 'admin');
@@ -144,6 +165,8 @@ $smarty->assign('columnheight', $columnheight);
 $smarty->assign('colcount', $nocols);
 $smarty->assign('userdata', $userdata);
 $smarty->assign('groupadmins', group_get_admins(array($groupid)));
+$smarty->assign('INLINEJAVASCRIPT', $js);
+
 if($schedules){
 $smarty->assign('schedule',$schedules[0]);
 }

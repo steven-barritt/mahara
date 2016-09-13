@@ -23,6 +23,7 @@ safe_require('interaction', 'schedule');
 require_once('pieforms/pieform.php');
 require_once(get_config('docroot') . 'interaction/lib.php');
 
+
 $groupid = param_integer('group');
 define('GROUP', $groupid);
 $group = group_current_group();
@@ -194,6 +195,7 @@ $smarty->assign('heading', $group->name);
 $smarty->assign('admin', $membership == 'admin');
 $smarty->assign('userdata', $userdata);
 $smarty->assign('returnto', $returnto);
+$smarty->assign('return',$_SERVER['HTTP_REFERER']);
 $smarty->assign('groupadmins', group_get_admins(array($groupid)));
 $smarty->assign('event',$event);
 $smarty->display('interaction:schedule:takeattendance.tpl');
