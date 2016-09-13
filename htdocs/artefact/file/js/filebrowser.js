@@ -357,14 +357,17 @@ function FileBrowser(idprefix, folderid, config, globalconfig) {
                             if (self.filedata[id].viewcount > 0) {
                                 warn += get_string('folderappearsinviews') + ' ';
                             }
-                            if (self.filedata[id].childcount > 0) {
+							warn += get_string('foldernotempty') + ' ';
+							warn += get_string('confirmdeletefolderandcontents');
+/*                            if (self.filedata[id].childcount > 0) {
                                 warn += get_string('foldernotempty') + ' ';
                                 if (self.filedata[id].profileiconcount > 0) {
                                     warn += get_string('foldercontainsprofileicons', self.filedata[id].profileiconcount) + ' ';
                                 }
                                 warn += get_string('confirmdeletefolderandcontents');
                             }
-                            else if (warn != '') {
+                            else*/ 
+                            if (warn != '') {
                                 warn += get_string('confirmdeletefolder');
                             }
                         }
