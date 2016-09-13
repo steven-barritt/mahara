@@ -4,7 +4,11 @@
 	<h1>{str tag=takeattendance section=interaction.schedule}</h1>
 <div id="schedulebtns">
 	<a href="{$WWWROOT}interaction/schedule/takeattendance.php?event={$event->id}&amp;group={$groupid}&amp;returnto={$returnto}&amp;fillall=true" class="btn">{str tag="fillall" section=interaction.schedule}</a>
+	{if $returnto == 'last'}
+	<a href="{$return}" class="btn">{str tag="done" section=interaction.schedule}</a>
+	{else}
 	<a href="{$WWWROOT}interaction/schedule/{$returnto}.php?schedule={$event->schedule}&amp;group={$groupid}&amp;returnto=index" class="btn">{str tag="done" section=interaction.schedule}</a>
+	{/if}
 	</div>
 	<h2>{$event->title} - {$event->startdate|format_date:'strftimetimedayyearshort'}</h2>
 	<div id="viewschedule"><table id="attendancelist" class="fullwidth nohead takeattendance">
@@ -40,6 +44,9 @@
 	    	</td>
 			<td class="attendancecol {if $user.attendance->attendance == 4}excused{/if}" id="excused_{$user.id}">
 	    		<a href="{$WWWROOT}interaction/schedule/takeattendance.php?event={$event->id}&amp;group={$groupid}&amp;userid={$user.id}&amp;attendance=4&amp;returnto={$returnto}#row{$user.id}" class="attendancelink"><img class="{if $user.attendance->attendance != 4}greyedout{/if}" src="{theme_url filename='images/excused.png' plugin='interaction/schedule'}"/></a>
+			</td>
+			<td class="attendancecol" id="reset_{$user.id}">
+	    		<a href="{$WWWROOT}interaction/schedule/takeattendance.php?event={$event->id}&amp;group={$groupid}&amp;userid={$user.id}&amp;attendance=5&amp;returnto={$returnto}#row{$user.id}" class="attendancelink"><img class="" src="{theme_url filename='images/undo.svg' plugin='interaction/schedule'}" width='25px' style='opacity:.4'/></a>
 			</td>
 	    </tr>    	
     	{/foreach}

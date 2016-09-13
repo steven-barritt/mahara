@@ -144,7 +144,7 @@ function schedule_get_user_events($mindate,$maxdate){
 			JOIN {interaction_instance} i on i.group = gm.group
 			JOIN {interaction_schedule_event} se on i.id = se.schedule
 			LEFT JOIN {interaction_schedule_instance_config} sc on se.schedule = sc.schedule AND sc.field = 'color' 
-			WHERE gm.member = ? AND se.deleted = 0 AND se.startdate > ? AND se.startdate <= ? 
+			WHERE gm.member = ? AND se.deleted = 0 AND g.deleted = 0 AND se.startdate > ? AND se.startdate <= ? 
 			ORDER BY se.startdate, se.enddate",
             array($USER->get('id'),$mindate->format('Y-m-d'),$maxdate->format('Y-m-d'))
         );
@@ -177,7 +177,7 @@ function schedule_get_all_groupevents($groupid,$mindate=null,$maxdate=null,$subg
 			LEFT JOIN {interaction_schedule_instance_config} sc on e.schedule = sc.schedule AND sc.field = 'color' 
 			JOIN {interaction_instance} s on e.schedule = s.id
 			JOIN {group} g on s.group = g.id
-			WHERE s.plugin = 'schedule' AND e.deleted = 0
+			WHERE s.plugin = 'schedule' AND e.deleted = 0 AND g.deleted = 0
 			AND s.group in ";
 		//if the user is a member of staff then show all events in all groups and sub groups
 		if($USER->is_institutional_staff()){
@@ -706,13 +706,15 @@ function schedule_update_attendance($eventid, $userid, $attendance, $excuse=null
 					WHERE event = ? AND user = ?",
 					array($eventid,$userid)
 				);
-				insert_record('interaction_schedule_attendance', (object)array(
-					'event' => $eventid,
-					'user' => $userid,
-					'attendance' => $attendance,
-					'excuse' => $excuse,
-					'attachment' => $attachment,
-				));
+				if($attendance != 5){
+					insert_record('interaction_schedule_attendance', (object)array(
+						'event' => $eventid,
+						'user' => $userid,
+						'attendance' => $attendance,
+						'excuse' => $excuse,
+						'attachment' => $attachment,
+					));
+				}
 			db_commit();
 		}
 	}
