@@ -27,6 +27,9 @@
 {assign var='author_link_index' value=1}
 {include file=author.tpl}
 <p>
+    {if $releaseform}<div class="releaseviewform">{$releaseform|safe}</div>{/if}
+    {if $view_group_submission_form}<div class="submissionform">{$view_group_submission_form|safe}</div>{/if}
+    {if $forcesubmitform}<div class="releaseviewform">{$forcesubmitform|safe}</div>{/if}
 
 <div id="view-description">{$viewdescription|clean_html|safe}</div>
 
@@ -40,8 +43,6 @@
         </div>
   <div class="viewfooter">
     {if $tags}<div class="tags"><strong>{str tag=tags}:</strong> {list_tags owner=$owner tags=$tags}</div>{/if}
-    {if $releaseform}<div class="releaseviewform">{$releaseform|safe}</div>{/if}
-    {if $view_group_submission_form}<div class="submissionform">{$view_group_submission_form|safe}</div>{/if}
     {if $feedback->position eq 'base'}
         {if $feedback->count || $enablecomments}
         <h3 class="title">{str tag="feedback" section="artefact.comment"}</h3>
