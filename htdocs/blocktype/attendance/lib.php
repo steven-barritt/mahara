@@ -64,6 +64,7 @@ class PluginBlocktypeAttendance extends SystemBlocktype {
 		$cansee = true;
 		$canedit = false;
 		$groupid = null;
+		$percentages = null;
 		if($instance->get_view()->get('type') == 'profile'){
 			if($instance->get_view()->get('owner') == $USER->get('id') || $USER->is_staff_for_user($instance->get_view()->get('owner'))){
 				list($attendances,$percentages) = schedule_get_user_attendance($instance->get_view()->get('owner'));
