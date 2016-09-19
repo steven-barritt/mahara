@@ -11,6 +11,7 @@
 
 defined('INTERNAL') || die();
 safe_require('artefact', 'assessment');
+require_once('group.php');
 
 class PluginBlocktypeAssessment extends PluginBlocktype {
 
@@ -47,6 +48,12 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
         $smarty = smarty_core();
         $smarty->assign('id', $instance->get('id'));
         $assessment = null;
+        $groupid = 0;
+		$groupids = group_get_user_course_groups($instance->get_view()->get('owner'),$instance->get_view()->get('id'));
+		if(count($groupids) >0 ){
+			$groupid = $groupids[0]->id;
+		}
+
         if (!empty($configdata['artefactid'])) {
             $assessment =  $instance->get_artefact_instance($configdata['artefactid']);
         }
@@ -55,6 +62,7 @@ class PluginBlocktypeAssessment extends PluginBlocktype {
         $smarty->assign('tutor',ArtefactTypeAssessment::TUTOR_ASSESSMENT);
         $smarty->assign('self',ArtefactTypeAssessment::SELF_ASSESSMENT);
         $smarty->assign('peer',ArtefactTypeAssessment::PEER_ASSESSMENT);
+        $smarty->assign('groupid',$groupid);
         $smarty->assign('assessment',$assessment);
 		return $smarty->fetch('artefact:assessment:viewassessment.tpl');
 		

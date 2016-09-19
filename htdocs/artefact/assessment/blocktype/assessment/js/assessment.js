@@ -120,6 +120,10 @@ $j(document).ready(function(){
 	$j('.bt-assessment .done').click(function(e){
 		e.preventDefault();
 		edit_assessment(this);
+		if($j(this).attr('href').length > 0){
+	    	window.location = $j(this).attr('href');
+    	}
+		
 	});
 	$j('.bt-assessment .publish').click(function(e){
 		e.preventDefault();

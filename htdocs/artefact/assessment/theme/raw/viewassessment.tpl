@@ -75,7 +75,7 @@
 		<div>
 		<!--<a href="#editbtn_{$id}" class="btn reset" data-assessment="{$assessment->get('id')}">Reset</a>-->
 		
-		<a href="#editbtn_{$id}" class="btn done">{str tag='done' section='artefact.assessment'}</a></div>
+		<a href="{if $assessment->get('type') == $tutor}{$WWWROOT}group/report.php?group={$groupid}{/if}" class="btn done">{str tag='done' section='artefact.assessment'}</a></div>
 	</div>
 	<div class="editingmsg hidden">{str tag='editingmsg' section='artefact.assessment'}</div>
 {/if}
