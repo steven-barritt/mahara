@@ -12,6 +12,17 @@ function display_posts(post){
         'GET',
         function(data) {
 			$j("#recentblogpost").append(data['data']);
+			$j(".newsfeedpost").each(function(){
+				$j(this).featherlight($j(this).find( ".longpost" ));
+			});
+			$j(".expand").off().on('click',function(e) {
+				e.preventDefault();
+				$j(e.target).closest(".newsfeedpost").find( ".shortpost" ).toggleClass("hidden");
+				$j(e.target).closest(".newsfeedpost").find( ".longpost" ).toggleClass("hidden");
+				$j(e.target).closest(".newsfeedpost").find( ".expand" ).toggleClass("hidden");
+				return true;  
+			});
+	
 			offset += 5;
 			clearTimeout(_throttleTimer);
 			_throttleTimer = setTimeout(function () {

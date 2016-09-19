@@ -27,6 +27,7 @@
 
 defined('INTERNAL') || die();
 
+
 class PluginBlocktypeNewsFeed extends SystemBlocktype {
 
     public static function get_title() {
@@ -47,6 +48,9 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
     
     public static function get_instance_javascript() {
         return array(
+			array(
+				'file'   => '../../js/featherlight.min.js',
+			),
             array(
                 'file'   => 'js/newsfeed.js',
                 'initjs' => "add_click_events();",
@@ -116,8 +120,13 @@ class PluginBlocktypeNewsFeed extends SystemBlocktype {
 			}
 			$postcontent = $data->description;
 			safe_require('artefact', 'file');
+			safe_require('artefact', 'blog');
 			$postcontent = ArtefactTypeFolder::append_view_url($postcontent, $data->view);
 			$data->description = $postcontent;
+			$data->shortdesc = ArtefactTypeBlogPost::extract_shortdescription($data->description);
+			$data->images = ArtefactTypeBlogPost::extract_images($data->description);
+			$data->imagecount = count($data->images);
+			
 			if ($data->allowcomments) {
 				safe_require('artefact', 'comment');
 				$empty = array();
