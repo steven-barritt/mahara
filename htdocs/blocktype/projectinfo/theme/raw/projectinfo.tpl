@@ -1,6 +1,4 @@
 <div class="project-info">
-	<p>
-	{$text|clean_html|safe}</p>
 		{if $group->leveldesc}<p> {$group->leveldesc}</p>{/if}
 		{if $group->moduledesc}<p>{str tag=groupmodule section=blocktype.projectinfo} {$group->moduledesc}</p>{/if}
 		{if count($group->admins) > 0}
@@ -18,5 +16,7 @@
 			<a href="{profile_url($user)}">{$user|display_name}</a>{if !$.foreach.admins.last}, {/if}
 			{/foreach}</p>
 		{/if}
-	</ul>
+			<p>
+	{$text|clean_html|safe}</p>
+
 </div>
