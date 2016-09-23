@@ -12,11 +12,6 @@
 
 defined('INTERNAL') || die();
 
-$string['title'] = 'Project info';
-$string['description'] = 'Display information about the project';
-$string['grouplevel'] = 'Level';
-$string['groupmodule'] = 'Module :';
-$string['groupadmins'] = 'Project Admin(s) :';
-$string['grouptutors'] = 'Project Tutor(s) :';
-$string['groupta'] = 'Project GAA/ SLA :';
-$string['defaulttitledescription'] = 'Project Information';
+$string['title'] = 'Social Icons';
+$string['description'] = 'Display social icons';
+$string['defaulttitledescription'] = 'Social Icons';
