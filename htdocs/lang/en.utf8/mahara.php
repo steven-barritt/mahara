@@ -240,7 +240,11 @@ $string['accountexpired'] = 'Sorry, your account has expired. You can <a href="%
 $string['accountcreated'] = '%s: New account';
 $string['accountcreatedtext'] = 'Dear %s,
 
-A new account has been created for you on %s. Your details are as follows:
+A new account has been created for you on %s. %s is an online workbook system for Middlesex Photography Students.
+$s allows you to submit your work electronically for assessment as well as showing you your schedule, grades and attendance.
+It is an online photographic community that allows you to share your work and process with your peers and tutors and receive feedback in an always available online platform.
+
+Your details are as follows:
 
 Username: %s
 Password: %s
