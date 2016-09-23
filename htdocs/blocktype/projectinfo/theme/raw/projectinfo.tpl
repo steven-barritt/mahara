@@ -8,15 +8,15 @@
 		{/if}
 		{if count($group->tutors) > 0}
 			<p>{str tag=grouptutors section=blocktype.projectinfo} {foreach name=tutors from=$group->tutors item=user}
-			<a href="{profile_url($user)}">{$user|display_name}</a>{if !$.foreach.admins.last}, {/if}
+			<a href="{profile_url($user)}">{$user|display_name}</a>{if !$.foreach.tutors.last}, {/if}
 			{/foreach}</p>
 		{/if}
 		{if count($group->ta) > 0}
-			<p>{str tag=groupta section=blocktype.projectinfo} {foreach name=tutors from=$group->ta item=user}
-			<a href="{profile_url($user)}">{$user|display_name}</a>{if !$.foreach.admins.last}, {/if}
+			<p>{str tag=groupta section=blocktype.projectinfo} {foreach name=gaas from=$group->ta item=user}
+			<a href="{profile_url($user)}">{$user|display_name}</a>{if !$.foreach.gaas.last}, {/if}
 			{/foreach}</p>
 		{/if}
-			<p>
+	<p>
 	{$text|clean_html|safe}</p>
 
 </div>
