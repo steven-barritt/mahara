@@ -481,7 +481,7 @@ function activity_get_viewaccess_users($view) {
                 ) AS userlist
                 JOIN {usr} usr ON usr.id = userlist.userid
                 LEFT JOIN {usr_activity_preference} actpref ON actpref.usr = usr.id
-                LEFT JOIN {activity_type} acttype ON actpref.activity = acttype.id AND acttype.name = 'viewaccess'
+                INNER JOIN {activity_type} acttype ON actpref.activity = acttype.id AND acttype.name = 'viewaccess'
                 LEFT JOIN {usr_account_preference} accpref ON accpref.usr = usr.id AND accpref.field = 'lang'";
     $values = array($view, $view, $view, $view);
     if (!$u = get_records_sql_assoc($sql, $values)) {
