@@ -2538,7 +2538,7 @@ function group_get_projectinfo_data($group) {
     $group->admins = group_get_admins(array($group->id));
 	$group->tutors = group_get_member_ids($group->id,array('tutor'));
 	$group->ta = group_get_member_ids($group->id,array('ta'));
-	$modueid = group_get_parent_type($group->id,'module');
+	$moduleid = group_get_parent_type($group->id,'module');
 	if($moduleid){
 		$module = group_get_group($moduleid);
 		if(isset($module)){
@@ -2547,7 +2547,7 @@ function group_get_projectinfo_data($group) {
 	}
 	$levelid = group_get_parent_type($group->id,'year');
 	if($levelid){
-		$level = group_get_group();
+		$level = group_get_group($levelid);
 		if(isset($level)){
 			$group->leveldesc = $level->name;
 		}
