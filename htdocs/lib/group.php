@@ -2538,16 +2538,20 @@ function group_get_projectinfo_data($group) {
     $group->admins = group_get_admins(array($group->id));
 	$group->tutors = group_get_member_ids($group->id,array('tutor'));
 	$group->ta = group_get_member_ids($group->id,array('ta'));
-	$group->desc = 'Middlesex University';
-	$module = group_get_group(group_get_parent_type($group->id,'module'));
-	if(isset($module)){
-		$group->moduledesc = $module->name;
+	$modueid = group_get_parent_type($group->id,'module');
+	if($moduleid){
+		$module = group_get_group($moduleid);
+		if(isset($module)){
+			$group->moduledesc = $module->name;
+		}
 	}
-	$level = group_get_group(group_get_parent_type($group->id,'year'));
-	if(isset($level)){
-		$group->leveldesc = $level->name;
-	}
-	
+	$levelid = group_get_parent_type($group->id,'year');
+	if($levelid){
+		$level = group_get_group();
+		if(isset($level)){
+			$group->leveldesc = $level->name;
+		}
+	}	
 	
 	
     return $group;
