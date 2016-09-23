@@ -56,6 +56,7 @@ $string['location'] = 'Location';
 $string['myschedule'] = ' My Schedule';
 
 $string['name'] = 'Schedule';
+$string['myschedule'] = 'My Schedule';
 $string['nameplural'] = 'Schedules';
 $string['newschedule'] = 'New Schedule';
 $string['newevent'] = 'New event';

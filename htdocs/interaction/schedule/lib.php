@@ -933,7 +933,7 @@ EOF;
                 'path' => 'schedule',
                 'url' => 'interaction/schedule/schedule.php',
 	            'icon' => $THEME->get_url('images/btn_calendar.svg'),
-                'title' => get_string('name', 'interaction.schedule'),
+                'title' => get_string('myschedule', 'interaction.schedule'),
 				'count' => $scheduleditems,
 				'countclass' => 'unreadmessagecount',
                 'weight' => 45,
