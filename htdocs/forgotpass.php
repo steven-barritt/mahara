@@ -158,15 +158,17 @@ function forgotpass_submit(Pieform $form, $values) {
                 $user->username,
                 get_config('wwwroot') . 'forgotpass.php?key=' . $pwrequest->key,
                 get_config('wwwroot') . 'contact.php',
-                $sitename),
-            get_string('forgotusernamepasswordemailmessagehtml', 'mahara',
+                $sitename));
+            //something funky was going on in the HTML bit fucking the link so have jsut commented it out for now
+            /*get_string('forgotusernamepasswordemailmessagehtml', 'mahara',
                 $fullname,
                 $sitename,
                 $user->username,
                 get_config('wwwroot') . 'forgotpass.php?key=' . $pwrequest->key,
                 get_config('wwwroot') . 'forgotpass.php?key=' . $pwrequest->key,
                 get_config('wwwroot') . 'contact.php',
-                $sitename));
+                $sitename)*/
+
         insert_record('usr_password_request', $pwrequest);
     }
     catch (SQLException $e) {
