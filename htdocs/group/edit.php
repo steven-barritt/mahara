@@ -56,7 +56,7 @@ else {
         'category'       => 0,
         'public'         => 0,
         'usersautoadded' => 0,
-        'viewnotify'     => GROUP_ROLES_NONMEMBER,
+        'viewnotify'     => 0,
         'submittableto'  => 1,
         'allowarchives'  => 0,
         'editroles'      => 'notmember',

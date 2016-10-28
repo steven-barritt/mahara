@@ -171,7 +171,7 @@ function create_a_new_group($old,$newparent,$prefix){
 	}
 	/*reset some of the defaults - this is a hack for mdx*/
 	$newdata['allowarchives'] = false;
-	$newdata['viewnotify'] = 2;
+	$newdata['viewnotify'] = 0;
 	$newdata['feedbacknotify'] = 2;
 	//resetdates
 	//todo: this would be good but for now we will leave it...
