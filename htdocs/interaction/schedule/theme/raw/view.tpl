@@ -24,7 +24,7 @@
 	</tr>
 	<tr>
 		<td>{str tag=details section=interaction.schedule}</td>
-		<td>{$event->description}</td>
+		<td>{$event->description|clean_html|safe}</td>
 	</tr>
 	<tr>
 		<td>{str tag=location section=interaction.schedule}</td>
