@@ -5,8 +5,7 @@
 
 		<tr>
 			<th class="attendanceColumnHead usericon"></th>
-			<th class="attendanceColumnHead">First Name</th>
-			<th class="attendanceColumnHead">Last Name</th>
+			<th class="attendanceColumnHead">Name</th>
 			<th class="attendanceColumnHead studentnumber">Student Number</th>
 			{assign '' olddate}
 			{cycle values='r0,r1' assign=class}
@@ -28,8 +27,7 @@
                <img src="{profile_icon_url user=$user.id maxwidth=40 maxheight=40}"  style="max-width:40px;max-height:40px;" alt="{str tag=profileimagetext arg1=$user.id|display_default_name}" title="{$user.id|display_default_name|escape}">
             </a>
             </td>
-	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.firstname}</a></h3></td>
-	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.lastname}</a></h3></td>
+	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.id|display_name:null:true|escape}</a></h3></td>
 	    	<td class="sv studentnumber"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.studentnumber}</a></h3></td>
 	    	{for i 1 $colcount}
 	    		<td class="attendancecol {if $user[$i]->attendance == 1}attendPresent{/if}{if $user[$i]->attendance == 2}attendLate{/if}{if $user[$i]->attendance == 3}attendAbsent{/if}{if $user[$i]->attendance == 4}attendExcused{/if}">{if $user[$i]->attendance == null}-{/if}</td>

@@ -15,8 +15,7 @@
 
 		<tr>
 			<th class="attendanceColumnHead usericon">Mugshot</th>
-			<th class="attendanceColumnHead">First Name</th>
-			<th class="attendanceColumnHead">Last Name</th>
+			<th class="attendanceColumnHead">Name</th>
 			<th class="attendanceColumnHead studentnumber">Student Number</th>
 			<th class="attendanceColumnHead"></th>
 			
@@ -30,8 +29,7 @@
                <img src="{profile_icon_url user=$user.id maxwidth=40 maxheight=40}" style="max-width:40px;max-height:40px;" alt="{str tag=profileimagetext arg1=$user.id|display_default_name}" title="{$user.id|display_default_name|escape}">
             </a>
             </td>
-	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.firstname}</a></h3></td>
-	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.lastname}</a></h3></td>
+	    	<td class="sv"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.id|display_name:null:true|escape}</a></h3></td>
 	    	<td class="sv studentnumber"><h3 class="title"><a href="{$WWWROOT}user/view.php?id={$user.id}">{$user.studentnumber}</a></h3></td>
 	    	<td class="attendancecol {if $user.attendance->attendance == 1}present{/if}" id="present_{$user.id}">
 				<a href="{$WWWROOT}interaction/schedule/takeattendance.php?event={$event->id}&amp;group={$groupid}&amp;userid={$user.id}&amp;attendance=1&amp;returnto={$returnto}#row{$user.id}" class="attendancelink"><img class="{if $user.attendance->attendance != 1}greyedout{/if}" src="{theme_url filename='images/present.png' plugin='interaction/schedule'}"/></a>
