@@ -12,8 +12,8 @@ function display_posts(post){
         'GET',
         function(data) {
 			$j("#recentblogpost").append(data['data']);
-			$j(".newsfeedpost").each(function(){
-				$j(this).featherlight($j(this).find( ".longpost" ));
+			$j(".post_body").each(function(){
+				$j(this).featherlight($j(this).closest(".newsfeedpost").find( ".longpost" ));
 			});
 			$j(".expand").off().on('click',function(e) {
 				e.preventDefault();
