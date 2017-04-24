@@ -20,6 +20,7 @@ class HtmlExportBlog extends HtmlExportArtefactPlugin {
         if ($artefact instanceof ArtefactTypeBlog) {
             return array(
                 'perpage'    => ArtefactTypeBlog::pagination,
+				'limit'	=> false,
                 'childcount' => $artefact->count_published_posts(),
                 'plural'     => get_string('blogs', 'artefact.blog'),
             );
