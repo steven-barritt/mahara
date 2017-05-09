@@ -1,7 +1,55 @@
 <?PHP
+
+
+define('INTERNAL', 1);
+require(dirname(dirname(__FILE__)) . '/init.php');
+require_once('view.php');
+require_once('group.php');
+require_once('user.php');
+safe_require('artefact', 'comment');
+safe_require('artefact', 'assessment');
+safe_require('interaction', 'schedule');
+define('TITLE', 'Statements');
+define('MENUITEM', 'groups/report');
+define('GROUP', param_integer('group'));
+
+$wwwroot = get_config('wwwroot');
+$needsubdomain = get_config('cleanurlusersubdomains');
+
+$group = group_current_group();
+error_log($group->id);
+$role = group_user_access($group->id);
+if (!group_role_can_access_report($group, $role)) {
+    throw new AccessDeniedException();
+}
+
+
+$sql = "
+	SELECT DISTINCT u.firstname, u.lastname, 
+			TRIM(BOTH '\"' FROM SUBSTRING_INDEX(SUBSTRING_INDEX(bi.configdata,';',8),':',-1)) AS statement
+	FROM {view} v
+		JOIN {view_access} va ON v.id = va.view
+		JOIN {usr} u ON v.owner = u.id
+		JOIN {block_instance} bi ON bi.view = v.id
+		WHERE va.group = ?
+		AND v.group IS NULL
+		AND v.type = 'portfolio'
+		AND bi.title = 'Exhibition Statement'
+							";
+	if (!$statementdata = get_records_sql_array($sql, array($group->id))) {
+		$statementdata = array();
+	}
+	
+$smarty = smarty(array(),array(),array(),array());
+	$smarty->assign('baseurl', get_config('wwwroot') . 'group/report.php?group=' . $group->id);
+	$smarty->assign('heading', $group->name);
+	$smarty->assign('statementdata', $statementdata);
+	$smarty->display('group/statement.tpl');
+	
+
   // Original PHP code by Chirp Internet: www.chirp.com.au
   // Please acknowledge use of this code by including this header.
-
+/*
   function cleanData(&$str)
   {
     if($str == 't') $str = 'TRUE';
@@ -34,5 +82,5 @@
 
   fclose($out);
   exit;
-  
+  */
 ?>
