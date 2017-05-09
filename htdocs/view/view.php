@@ -154,6 +154,35 @@ else {
     $releaseform = '';
 }
 
+if($USER->get('admin')){
+	$insertform = pieform(array(
+		'name'     => 'insertblock',
+		'method'   => 'post',
+		'plugintype' => 'core',
+		'pluginname' => 'view',
+		'autofocus' => false,
+		'elements' => array(
+			'submit' => array(
+				'type'  => 'submit',
+				'value' => get_string('insertblock', 'view'),
+			),
+		),
+	));
+}else{
+	$insertform = '';
+}
+
+function insertblock_submit() {
+    global $USER, $SESSION, $view;
+	$values = array('blocktype'=>'text', 'row'=>'1', 'column'=>'1', 'order'=>'4','returnbi'=>'true');
+	$bi = $view->addblocktype($values);
+	$bi->set('title','Exhibition Statement');
+	$bi->set('configdata',array('retractable'=>0,'retractedonload'=>0,'inlineediting'=>1,'text'=>'<p>Title of project<p/><p>Final truman exhibition statement (max 100 words)</p><p>Your Name – as you want it to appear at the show</p>'));
+	$bi->commit();
+
+	redirect($view->get_url());
+}
+
 function releaseview_submit() {
     global $USER, $SESSION, $view, $collection, $submittedgroup, $releasecollection;
 
@@ -385,6 +414,7 @@ if ($mnetviewlist = $SESSION->get('mnetviewaccess')) {
 $smarty->assign('viewdescription', $view->get('description'));
 $smarty->assign('viewcontent', $viewcontent);
 $smarty->assign('releaseform', $releaseform);
+$smarty->assign('insertblock', $insertform);
 if (isset($addfeedbackform)) {
     $smarty->assign('enablecomments', 1);
     $smarty->assign('addfeedbackform', $addfeedbackform);

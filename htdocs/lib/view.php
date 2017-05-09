@@ -2126,6 +2126,10 @@ class View {
         $bi->commit();
         $this->dirtycolumns[$values['row']][$values['column']] = 1;
 
+        if (!empty($values['returnbi'])){
+        	return $bi;
+        }
+
         if ($values['returndata']) {
             // Return new block rendered in both configure mode and (editing) display mode
             $result = array(

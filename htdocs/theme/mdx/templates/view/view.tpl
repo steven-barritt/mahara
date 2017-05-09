@@ -30,6 +30,7 @@
     {if $releaseform}<div class="releaseviewform">{$releaseform|safe}</div>{/if}
     {if $view_group_submission_form}<div class="submissionform">{$view_group_submission_form|safe}</div>{/if}
     {if $forcesubmitform}<div class="releaseviewform">{$forcesubmitform|safe}</div>{/if}
+<!---    {if $insertblock}<div class="releaseviewform">{$insertblock|safe}</div>{/if} --->
 
 <div id="view-description">{$viewdescription|clean_html|safe}</div>
 
