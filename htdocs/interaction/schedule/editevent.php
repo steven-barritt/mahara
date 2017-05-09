@@ -304,12 +304,12 @@ function create_times($groupid, $starttime, $duration, $numberoftutors=1, $numbe
 	//Get the members names as an array
 	if($members = group_get_member_names($groupid,array('member'))){
 		$totalmembers = count($members);
-		error_log('members:' . $totalmembers);
-		error_log('noofgroups:' . $totalmembers);
+//		error_log('members:' . $totalmembers);
+//		error_log('noofgroups:' . $totalmembers);
 		if(!isset($numberofgroups)){
 			$numberofgroups = $totalmembers;
 		}
-		error_log('noofgroups:' . $totalmembers);
+//		error_log('noofgroups:' . $totalmembers);
 		//divide the number of members by number of groups to get the average per group
 		$pergroup = floor($totalmembers/$numberofgroups);
 		$remainder = $totalmembers%$numberofgroups;
