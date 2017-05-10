@@ -17,7 +17,6 @@ $wwwroot = get_config('wwwroot');
 $needsubdomain = get_config('cleanurlusersubdomains');
 
 $group = group_current_group();
-error_log($group->id);
 $role = group_user_access($group->id);
 if (!group_role_can_access_report($group, $role)) {
     throw new AccessDeniedException();
@@ -26,7 +25,7 @@ if (!group_role_can_access_report($group, $role)) {
 
 $sql = "
 	SELECT DISTINCT u.firstname, u.lastname, 
-			TRIM(BOTH '\"' FROM SUBSTRING_INDEX(SUBSTRING_INDEX(bi.configdata,';',8),':',-1)) AS statement
+			TRIM(BOTH '\"' FROM SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(bi.configdata,'\"text\";',-1),';',1),':',-1)) AS statement
 	FROM {view} v
 		JOIN {view_access} va ON v.id = va.view
 		JOIN {usr} u ON v.owner = u.id

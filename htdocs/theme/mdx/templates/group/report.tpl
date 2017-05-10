@@ -2,6 +2,9 @@
 <div>
 <a href="#" class="export">Export Table data into Excel</a>
 </div>
+<p>
+<a href="reportdownload.php?group={$group->id}" class="statements">View Statements</a>
+</p>
 
 {if !$sharedviews && !$groupviews}
 <p>{str tag=youhaventcreatedanyviewsyet section=view}</p>
